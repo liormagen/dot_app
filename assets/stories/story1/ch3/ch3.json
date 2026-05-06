@@ -10,7 +10,7 @@
   "difficulty": "medium",
   "canvas_width": 1402,
   "canvas_height": 1122,
-  "image_outline": "assets/stories/story1/ch3/ch3_outline.png",
+  "image_outline": null,
   "image_colored": "assets/stories/story1/ch3/ch3_colored.png",
   "audio_path": "assets/stories/story1/ch3/ch3_audio.mp3",
   "tutorial_steps": [],
