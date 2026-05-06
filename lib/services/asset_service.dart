@@ -27,8 +27,11 @@ class AssetService {
   Future<DrawingModel> loadDrawing(String id) async {
     if (_drawingCache.containsKey(id)) return _drawingCache[id]!;
 
+    final parts = id.split('_');
+    final storyId = parts[0];
+    final chId = parts[1];
     final jsonString =
-        await rootBundle.loadString('assets/drawings/$id/$id.json');
+        await rootBundle.loadString('assets/stories/$storyId/$chId/$chId.json');
     final jsonMap = json.decode(jsonString) as Map<String, dynamic>;
     final model = DrawingModel.fromJson(jsonMap);
     _drawingCache[id] = model;

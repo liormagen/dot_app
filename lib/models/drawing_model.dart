@@ -13,6 +13,7 @@ class DrawingModel {
     required this.imageColored,
     required this.tutorialSteps,
     required this.dots,
+    this.audioPath,
   });
 
   final String id;
@@ -22,10 +23,11 @@ class DrawingModel {
   final String difficulty;
   final int canvasWidth;
   final int canvasHeight;
-  final String imageOutline;
+  final String? imageOutline;
   final String imageColored;
   final List<String> tutorialSteps;
   final List<DotModel> dots;
+  final String? audioPath;
 
   int get hintDelaySeconds {
     switch (difficulty) {
@@ -54,12 +56,13 @@ class DrawingModel {
       difficulty: json['difficulty'] as String? ?? 'medium',
       canvasWidth: (json['canvas_width'] as num).toInt(),
       canvasHeight: (json['canvas_height'] as num).toInt(),
-      imageOutline: json['image_outline'] as String,
+      imageOutline: json['image_outline'] as String?,
       imageColored: json['image_colored'] as String,
       tutorialSteps: tutorialRaw.map((e) => e as String).toList(),
       dots: dotsRaw
           .map((e) => DotModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      audioPath: json['audio_path'] as String?,
     );
   }
 }

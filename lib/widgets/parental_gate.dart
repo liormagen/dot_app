@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../l10n/app_localizations.dart';
+
 class ParentalGate {
   static DateTime? _unlockedUntil;
 
@@ -100,19 +102,20 @@ class _ParentalGateDialogState extends State<_ParentalGateDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final displayOp = _op == 'x' ? '×' : _op;
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      title: const Text(
-        'Parent Check',
-        style: TextStyle(fontWeight: FontWeight.bold),
+      title: Text(
+        l10n.parentalGateTitle,
+        style: const TextStyle(fontWeight: FontWeight.bold),
         textAlign: TextAlign.center,
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            'Please solve this to continue:',
+          Text(
+            l10n.parentalGateInstruction,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
@@ -139,9 +142,9 @@ class _ParentalGateDialogState extends State<_ParentalGateDialog> {
           ),
           if (_showError) ...[
             const SizedBox(height: 8),
-            const Text(
-              'Wrong answer. Try again!',
-              style: TextStyle(color: Colors.red),
+            Text(
+              l10n.parentalGateWrong,
+              style: const TextStyle(color: Colors.red),
               textAlign: TextAlign.center,
             ),
           ],
@@ -150,11 +153,11 @@ class _ParentalGateDialogState extends State<_ParentalGateDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(false),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancelButton),
         ),
         ElevatedButton(
           onPressed: _checkAnswer,
-          child: const Text('Submit'),
+          child: Text(l10n.submitButton),
         ),
       ],
     );

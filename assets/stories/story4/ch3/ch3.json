@@ -1,0 +1,94 @@
+{
+  "id": "story4_ch3",
+  "names": {
+    "en": "Together!",
+    "he": "יחד!",
+    "ar": "معاً!"
+  },
+  "story_id": "story4",
+  "chapter": 3,
+  "difficulty": "easy",
+  "canvas_width": 1402,
+  "canvas_height": 1122,
+  "image_outline": "assets/stories/story1/ch3/ch3_outline.png",
+  "image_colored": "assets/stories/story1/ch3/ch3_colored.png",
+  "audio_path": "assets/stories/story4/ch3/ch3_audio.mp3",
+  "tutorial_steps": [],
+  "dots": [
+    {
+      "id": 1,
+      "x": 1090,
+      "y": 368
+    },
+    {
+      "id": 2,
+      "x": 1149,
+      "y": 412
+    },
+    {
+      "id": 3,
+      "x": 1354,
+      "y": 374
+    },
+    {
+      "id": 4,
+      "x": 1336,
+      "y": 527
+    },
+    {
+      "id": 5,
+      "x": 1123,
+      "y": 621
+    },
+    {
+      "id": 6,
+      "x": 942,
+      "y": 674
+    },
+    {
+      "id": 7,
+      "x": 827,
+      "y": 886
+    },
+    {
+      "id": 8,
+      "x": 735,
+      "y": 825
+    },
+    {
+      "id": 9,
+      "x": 566,
+      "y": 848
+    },
+    {
+      "id": 10,
+      "x": 315,
+      "y": 810
+    },
+    {
+      "id": 11,
+      "x": 188,
+      "y": 723
+    },
+    {
+      "id": 12,
+      "x": 17,
+      "y": 316
+    },
+    {
+      "id": 13,
+      "x": 188,
+      "y": 53
+    },
+    {
+      "id": 14,
+      "x": 879,
+      "y": 195
+    },
+    {
+      "id": 15,
+      "x": 1052,
+      "y": 205
+    }
+  ]
+}

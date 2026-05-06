@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../../models/drawing_model.dart';
 
 // ---------------------------------------------------------------------------
@@ -115,7 +116,7 @@ class _ColorFillCanvasState extends State<ColorFillCanvas> {
   Future<void> _loadImage() async {
     try {
       final data =
-          await rootBundle.load(widget.drawing.imageOutline);
+          await rootBundle.load(widget.drawing.imageOutline ?? '');
       final bytes = data.buffer.asUint8List();
       final completer = Completer<ui.Image>();
       ui.decodeImageFromList(bytes, (img) => completer.complete(img));
@@ -269,7 +270,7 @@ class _ColorFillCanvasState extends State<ColorFillCanvas> {
               ElevatedButton.icon(
                 onPressed: widget.onDone,
                 icon: const Icon(Icons.check),
-                label: const Text('Done'),
+                label: Text(AppLocalizations.of(context)!.done),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF6B4EFF),
                   foregroundColor: Colors.white,

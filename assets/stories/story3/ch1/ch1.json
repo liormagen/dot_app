@@ -1,0 +1,109 @@
+{
+  "id": "story3_ch1",
+  "names": {
+    "en": "The Knight",
+    "he": "הפרש",
+    "ar": "الفارس"
+  },
+  "story_id": "story3",
+  "chapter": 1,
+  "difficulty": "medium",
+  "canvas_width": 1122,
+  "canvas_height": 1402,
+  "image_outline": "assets/stories/story1/ch1/ch1_outline.png",
+  "image_colored": "assets/stories/story1/ch1/ch1_colored.png",
+  "audio_path": "assets/stories/story3/ch1/ch1_audio.mp3",
+  "tutorial_steps": [],
+  "dots": [
+    {
+      "id": 1,
+      "x": 272,
+      "y": 491
+    },
+    {
+      "id": 2,
+      "x": 350,
+      "y": 494
+    },
+    {
+      "id": 3,
+      "x": 450,
+      "y": 572
+    },
+    {
+      "id": 4,
+      "x": 510,
+      "y": 647
+    },
+    {
+      "id": 5,
+      "x": 521,
+      "y": 719
+    },
+    {
+      "id": 6,
+      "x": 531,
+      "y": 805
+    },
+    {
+      "id": 7,
+      "x": 555,
+      "y": 908
+    },
+    {
+      "id": 8,
+      "x": 533,
+      "y": 979
+    },
+    {
+      "id": 9,
+      "x": 550,
+      "y": 1037
+    },
+    {
+      "id": 10,
+      "x": 532,
+      "y": 1093
+    },
+    {
+      "id": 11,
+      "x": 537,
+      "y": 1219
+    },
+    {
+      "id": 12,
+      "x": 418,
+      "y": 1292
+    },
+    {
+      "id": 13,
+      "x": 240,
+      "y": 1210
+    },
+    {
+      "id": 14,
+      "x": 264,
+      "y": 1109
+    },
+    {
+      "id": 15,
+      "x": 241,
+      "y": 986
+    },
+    {
+      "id": 16,
+      "x": 235,
+      "y": 871
+    },
+    {
+      "id": 17,
+      "x": 259,
+      "y": 741
+    },
+    {
+      "id": 18,
+      "x": 245,
+      "y": 647
+    }
+  ]
+}

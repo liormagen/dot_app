@@ -9,7 +9,7 @@
       },
       "companion_asset": "assets/characters/the_knight.png",
       "preview_asset": "assets/story_cards/story1.png",
-      "drawing_ids": ["knight", "dragon", "castle"],
+      "drawing_ids": ["story1_ch1", "story1_ch2", "story1_ch3"],
       "chapters": [
         {
           "chapter": 1,
@@ -46,7 +46,7 @@
       },
       "companion_asset": "assets/characters/the_dragon.png",
       "preview_asset": "assets/story_cards/story1.png",
-      "drawing_ids": ["knight_s2", "dragon_s2", "castle_s2"],
+      "drawing_ids": ["story2_ch1", "story2_ch2", "story2_ch3"],
       "chapters": [
         {
           "chapter": 1,
@@ -83,7 +83,7 @@
       },
       "companion_asset": "assets/characters/the_knight.png",
       "preview_asset": "assets/story_cards/story1.png",
-      "drawing_ids": ["knight_s3", "dragon_s3", "castle_s3"],
+      "drawing_ids": ["story3_ch1", "story3_ch2", "story3_ch3"],
       "chapters": [
         {
           "chapter": 1,
@@ -120,7 +120,7 @@
       },
       "companion_asset": "assets/characters/the_dragon.png",
       "preview_asset": "assets/story_cards/story1.png",
-      "drawing_ids": ["knight_s4", "dragon_s4", "castle_s4"],
+      "drawing_ids": ["story4_ch1", "story4_ch2", "story4_ch3"],
       "chapters": [
         {
           "chapter": 1,
@@ -157,7 +157,7 @@
       },
       "companion_asset": "assets/characters/the_knight.png",
       "preview_asset": "assets/story_cards/story1.png",
-      "drawing_ids": ["knight_s5", "dragon_s5", "castle_s5"],
+      "drawing_ids": ["story5_ch1", "story5_ch2", "story5_ch3"],
       "chapters": [
         {
           "chapter": 1,

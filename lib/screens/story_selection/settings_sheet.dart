@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../../services/audio_service.dart';
 import '../../services/progress_service.dart';
 import '../../services/purchase_service.dart';
@@ -44,7 +45,7 @@ class SettingsSheet extends ConsumerWidget {
                       horizontal: 24, vertical: 16),
                   children: [
                     Text(
-                      'Settings',
+                      AppLocalizations.of(context)!.settings,
                       style:
                           Theme.of(context).textTheme.headlineSmall?.copyWith(
                                 fontWeight: FontWeight.bold,
@@ -53,7 +54,7 @@ class SettingsSheet extends ConsumerWidget {
                     const SizedBox(height: 24),
                     // Language selector
                     Text(
-                      'Language',
+                      AppLocalizations.of(context)!.language,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 8),
@@ -90,7 +91,7 @@ class SettingsSheet extends ConsumerWidget {
                     const SizedBox(height: 24),
                     // Music toggle
                     SwitchListTile(
-                      title: const Text('Music'),
+                      title: Text(AppLocalizations.of(context)!.music),
                       value: progress.musicEnabled,
                       onChanged: (val) {
                         ref
@@ -101,7 +102,7 @@ class SettingsSheet extends ConsumerWidget {
                     ),
                     // SFX toggle
                     SwitchListTile(
-                      title: const Text('Sound Effects'),
+                      title: Text(AppLocalizations.of(context)!.soundEffects),
                       value: progress.sfxEnabled,
                       onChanged: (val) {
                         ref
@@ -114,7 +115,7 @@ class SettingsSheet extends ConsumerWidget {
                     // Replay Onboarding
                     ListTile(
                       leading: const Icon(Icons.replay),
-                      title: const Text('Replay Tutorial'),
+                      title: Text(AppLocalizations.of(context)!.replayOnboarding),
                       onTap: () async {
                         await ref
                             .read(progressProvider.notifier)
@@ -127,21 +128,21 @@ class SettingsSheet extends ConsumerWidget {
                     // Restore Purchases
                     ListTile(
                       leading: const Icon(Icons.restore),
-                      title: const Text('Restore Purchases'),
+                      title: Text(AppLocalizations.of(context)!.restorePurchases),
                       onTap: () {
                         ref
                             .read(purchaseServiceProvider)
                             .restorePurchases();
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Restoring purchases...')),
+                          SnackBar(
+                              content: Text(AppLocalizations.of(context)!.restoringPurchases)),
                         );
                       },
                     ),
                     const Divider(height: 32),
                     Center(
                       child: Text(
-                        'Version 1.0.0',
+                        AppLocalizations.of(context)!.version,
                         style: TextStyle(color: Colors.grey.shade500),
                       ),
                     ),

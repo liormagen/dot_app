@@ -1,6 +1,6 @@
 # Dot Story
 
-An iPad game for children where numbered dots are connected to reveal drawings, followed by a coloring phase — all wrapped in a narrative story experience with voiceover audio, multilingual support, and in-app purchases.
+An iPad game for children where numbered dots are connected to reveal drawings — all wrapped in a narrative story experience with voiceover audio, multilingual support, and in-app purchases.
 
 ---
 
@@ -27,8 +27,8 @@ An iPad game for children where numbered dots are connected to reveal drawings, 
 
 Dot Story is a Flutter-based iPad app designed for young children. Each "story" consists of multiple chapters. In each chapter the child:
 
-1. **Connects numbered dots** on a canvas to reveal a hidden drawing (knight, dragon, castle, etc.)
-2. **Colors the completed drawing** using a flood-fill paint tool
+1. **Connects numbered dots** on a clean canvas to reveal a hidden drawing (knight, dragon, castle, etc.)
+2. **Sees the colored image revealed** with an animated sweep after all dots are connected
 3. **Advances through story narration** between chapters
 
 The app ships with voiceover audio (per language), encouragement sounds, and a gallery to revisit completed drawings.
@@ -41,7 +41,7 @@ The app ships with voiceover audio (per language), encouragement sounds, and a g
 |---|---|
 | Dot-to-dot drawing | Tap numbered dots in sequence; animated lines connect them |
 | 3 line animation styles | Sparkle, Wave, Glow — cycle with each connection |
-| Coloring phase | Flood-fill algorithm run in an isolate so UI stays smooth |
+| Colored image reveal | Animated left-to-right sweep reveals the colored drawing after all dots connected |
 | Story narration | Chapter transitions with character animations and voiceover |
 | Hint system | Timer-based pulsing of the next expected dot (configurable per difficulty) |
 | Parental gate | Arithmetic dialog locks the Settings sheet |
@@ -307,21 +307,18 @@ Core gameplay screen. `DrawingSessionState` (autoDispose provider) tracks:
 The `HintController` starts a timer after each correct tap. If the child doesn't tap the next dot within `hintDelaySeconds`, the next expected dot pulses.
 
 `DotCanvasPainter` renders:
-1. The outline image scaled/centered on canvas
+1. A plain white background (no image shown during dot-connect)
 2. Completed connection lines (with their stored style)
 3. The current animating line (lerped end-point)
-4. All dots as numbered circles; completed dots dimmed
+4. All dots as numbered circles; completed dots show a checkmark
 
 On final dot connected → navigate to `/completion/:drawingId`.
 
 ### Completion (`/completion/:drawingId`)
 Multi-phase screen:
-1. **Reveal** — fades in the colored reference image with confetti
+1. **Reveal** — colored image sweeps in from left over a white background
 2. **Name reveal** — displays and pronounces the drawing's name
-3. **Tutorial steps** — shows any coloring guide images
-4. **Coloring** — `ColorFillCanvas` with a color palette
-
-`ColorFillCanvas` runs BFS flood-fill in a `compute()` isolate on the raw RGBA pixel buffer. Dark pixels (outline) act as barriers. On fill complete it re-encodes the image and updates state.
+3. **Tutorial steps** — shows any guide images (if present); then navigates to next chapter
 
 ### Transition (`/transition/:storyId/:chapterIndex`)
 Displays localized chapter narration text, plays the voiceover, and shows the companion character with an elastic scale animation. A "Continue" button appears after audio finishes (3-second fallback timer if audio fails).
@@ -374,19 +371,29 @@ Language is stored in `ProgressModel.selectedLanguage` and applied by rebuilding
 {
   "id": "knight",
   "names": { "en": "Knight", "he": "אביר", "ar": "فارس" },
-  "storyId": "story1",
+  "story_id": "story1",
   "chapter": 1,
   "difficulty": "easy",
-  "canvasWidth": 1122,
-  "canvasHeight": 1402,
-  "outlineImagePath": "assets/drawings/knight/knight_outline.png",
-  "coloredImagePath": "assets/drawings/knight/knight_colored.png",
-  "tutorialSteps": [],
+  "canvas_width": 1122,
+  "canvas_height": 1402,
+  "image_colored": "assets/drawings/knight/colored.png",
+  "tutorial_steps": [],
   "dots": [
     { "id": 1, "x": 561.0, "y": 112.0 },
     ...
   ]
 }
+```
+
+### Image file naming convention
+
+Each drawing folder requires **one image file**:
+
+| File | Purpose |
+|------|---------|
+| `assets/drawings/{id}/colored.png` | Final colored illustration — revealed after all dots are connected |
+
+The `image_outline` field is optional and no longer used in gameplay. You only need to supply `colored.png` per drawing.
 ```
 
 ### Stories JSON format (`assets/stories/stories.json`)
