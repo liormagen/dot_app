@@ -43,9 +43,20 @@ final _router = GoRouter(
     ),
     GoRoute(
       path: '/completion/:drawingId',
-      builder: (context, state) {
+      pageBuilder: (context, state) {
         final drawingId = state.pathParameters['drawingId']!;
-        return CompletionScreen(drawingId: drawingId);
+        final skipReveal =
+            state.uri.queryParameters['skipReveal'] == 'true';
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: CompletionScreen(
+              drawingId: drawingId, skipReveal: skipReveal),
+          transitionsBuilder:
+              (context, animation, secondaryAnimation, child) =>
+                  FadeTransition(opacity: animation, child: child),
+          transitionDuration: const Duration(milliseconds: 600),
+          reverseTransitionDuration: const Duration(milliseconds: 300),
+        );
       },
     ),
     GoRoute(

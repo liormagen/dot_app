@@ -152,7 +152,10 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
       })
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
-          _navigateToCompletion();
+          // Pause so the child can enjoy the fully-revealed image, then fade over
+          Future.delayed(const Duration(milliseconds: 500), () {
+            if (mounted) _navigateToCompletion(imageRevealed: true);
+          });
         }
       });
 
@@ -335,13 +338,17 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
     }
   }
 
-  Future<void> _navigateToCompletion() async {
+  Future<void> _navigateToCompletion({bool imageRevealed = false}) async {
     if (!mounted) return;
     await ref
         .read(progressProvider.notifier)
         .markDrawingComplete(widget.drawingId);
     if (!mounted) return;
-    context.go('/completion/${widget.drawingId}');
+    if (imageRevealed) {
+      context.go('/completion/${widget.drawingId}?skipReveal=true');
+    } else {
+      context.go('/completion/${widget.drawingId}');
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -453,7 +460,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
           right: 20,
           bottom: 28,
           child: GestureDetector(
-            onTap: _navigateToCompletion,
+            onTap: () => _navigateToCompletion(),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
               decoration: BoxDecoration(

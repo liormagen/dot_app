@@ -38,9 +38,16 @@ enum _CompletionPhase {
 }
 
 class CompletionScreen extends ConsumerStatefulWidget {
-  const CompletionScreen({super.key, required this.drawingId});
+  const CompletionScreen({
+    super.key,
+    required this.drawingId,
+    this.skipReveal = false,
+  });
 
   final String drawingId;
+  // When true the colored image was already revealed on the drawing canvas —
+  // skip the sweep animation and go straight to celebration.
+  final bool skipReveal;
 
   @override
   ConsumerState<CompletionScreen> createState() => _CompletionScreenState();
@@ -130,10 +137,23 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
             ? story.drawingIds[chapterIdx + 1]
             : null;
         _loading = false;
+        if (widget.skipReveal) _phase = _CompletionPhase.nameReveal;
       });
 
-      ref.read(audioServiceProvider).playDrawingComplete();
-      _revealController.forward();
+      if (widget.skipReveal) {
+        // Image was already revealed on the canvas — jump to name celebration
+        Future.delayed(const Duration(milliseconds: 200), () {
+          if (!mounted) return;
+          setState(() => _nameVisible = true);
+          ref.read(audioServiceProvider).playDrawingName(lang, drawing.id);
+        });
+        Future.delayed(const Duration(seconds: 2, milliseconds: 200), () {
+          if (mounted && _phase == _CompletionPhase.nameReveal) _nextPhase();
+        });
+      } else {
+        ref.read(audioServiceProvider).playDrawingComplete();
+        _revealController.forward();
+      }
     } catch (e) {
       if (!mounted) return;
       setState(() => _loading = false);
@@ -259,10 +279,10 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
   Widget build(BuildContext context) {
     if (_loading || _drawing == null) {
       return Scaffold(
-        backgroundColor: _kNight,
+        backgroundColor: _kPaper,
         body: const Center(
           child: CircularProgressIndicator(
-            color: _kPrimaryLight,
+            color: _kBlue,
             strokeWidth: 3,
           ),
         ),
