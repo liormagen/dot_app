@@ -14,13 +14,21 @@ import '../../services/asset_service.dart';
 import '../../services/audio_service.dart';
 import '../../services/progress_service.dart';
 
-// Stardust Claymorphism tokens
-const _kGold = Color(0xFFFFD93D);
-const _kCoral = Color(0xFFFF6B6B);
-const _kNight = Color(0xFF1A0E3F);
-const _kPrimary = Color(0xFF6C48FF);
-const _kPrimaryLight = Color(0xFF9C6FFF);
-const _kBorder = Color(0xFFD4C8FF);
+// Toca Boca / Handmade tokens
+const _kRed    = Color(0xFFE82D2D);
+const _kYellow = Color(0xFFF5C800);
+const _kGreen  = Color(0xFF2DB84B);
+const _kBlue   = Color(0xFF1FA3E8);
+const _kInk    = Color(0xFF1A1A2E);
+const _kPaper  = Color(0xFFFFF8E7);
+
+// Legacy aliases so unchanged sub-widgets compile without edits
+const _kGold    = _kYellow;
+const _kCoral   = _kRed;
+const _kNight   = _kInk;
+const _kPrimary = _kBlue;
+const _kPrimaryLight = Color(0xFF6BBFFF);
+const _kBorder  = _kInk;
 
 enum _CompletionPhase {
   colorReveal,       // Colored image sweeps in
@@ -262,7 +270,7 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
     }
 
     return Scaffold(
-      backgroundColor: _kNight,
+      backgroundColor: _kPaper,
       body: SafeArea(child: _buildPhase()),
     );
   }
@@ -284,62 +292,28 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
 
   Widget _buildColorReveal() {
     final drawing = _drawing!;
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Container(color: const Color(0xFFFFF9F0)),
-        if (_coloredImage != null)
-          ClipRect(
-            child: Align(
-              alignment: Alignment.centerLeft,
-              widthFactor: _revealAnim.value,
-              child: SizedBox.expand(
-                child: CustomPaint(
-                  painter: _FullImagePainter(image: _coloredImage!),
-                ),
+    final lang = ref.read(progressProvider).selectedLanguage;
+
+    return Container(
+      color: _kPaper,
+      child: Column(
+        children: [
+          Expanded(
+            flex: 3,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
+              child: _RevealImageBox(
+                coloredImage: _coloredImage,
+                revealProgress: _revealAnim.value,
               ),
             ),
           ),
-        // Name badge
-        Positioned(
-          top: 20,
-          left: 0,
-          right: 0,
-          child: Center(
-            child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 28, vertical: 10),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF6C48FF), Color(0xFF9C6FFF)],
-                ),
-                borderRadius: BorderRadius.circular(99),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0xFF3B1FCC),
-                    blurRadius: 0,
-                    offset: Offset(0, 4),
-                  ),
-                  BoxShadow(
-                    color: Color(0x446C48FF),
-                    blurRadius: 16,
-                    offset: Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: Text(
-                drawing.getName(
-                    ref.read(progressProvider).selectedLanguage),
-                style: GoogleFonts.fredoka(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 4, 24, 32),
+            child: _TocaNameBadge(name: drawing.getName(lang)),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -348,86 +322,94 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
   Widget _buildNameReveal() {
     final drawing = _drawing!;
     final lang = ref.read(progressProvider).selectedLanguage;
+
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
         _nextPhase();
       },
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          if (_coloredImage != null)
-            CustomPaint(
-              painter: _FullImagePainter(image: _coloredImage!),
-            ),
-          const DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0x00000000), Color(0xCC1A0E3F)],
-                stops: [0.4, 1.0],
+      child: Container(
+        color: _kPaper,
+        child: Column(
+          children: [
+            // Image — top portion, correct aspect ratio
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    _RevealImageBox(
+                      coloredImage: _coloredImage,
+                      revealProgress: 1.0,
+                    ),
+                    AnimatedBuilder(
+                      animation: _celebController,
+                      builder: (_, __) => CustomPaint(
+                        painter: _CelebStarsPainter(
+                            progress: _celebController.value),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          AnimatedBuilder(
-            animation: _celebController,
-            builder: (_, __) => CustomPaint(
-              painter:
-                  _CelebStarsPainter(progress: _celebController.value),
-            ),
-          ),
-          Positioned(
-            bottom: 60,
-            left: 24,
-            right: 24,
-            child: AnimatedOpacity(
-              opacity: _nameVisible ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 600),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    drawing.getName(lang),
-                    style: GoogleFonts.fredoka(
-                      color: Colors.white,
-                      fontSize: 58,
-                      fontWeight: FontWeight.w700,
-                      shadows: const [
-                        Shadow(
-                            color: Color(0xFF1A0E3F),
-                            blurRadius: 12,
-                            offset: Offset(0, 4)),
-                      ],
-                    ),
-                    textAlign: TextAlign.center,
+            // Name + celebration text — bottom portion
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(28, 4, 28, 28),
+                child: AnimatedOpacity(
+                  opacity: _nameVisible ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 600),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        drawing.getName(lang),
+                        style: GoogleFonts.boogaloo(
+                          color: _kInk,
+                          fontSize: 52,
+                          height: 1.0,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.star_rounded,
+                              color: _kYellow, size: 30),
+                          const SizedBox(width: 8),
+                          Text(
+                            AppLocalizations.of(context)!.youDrewIt,
+                            style: GoogleFonts.boogaloo(
+                              color: _kRed,
+                              fontSize: 28,
+                              height: 1.0,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          const Icon(Icons.star_rounded,
+                              color: _kYellow, size: 30),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        AppLocalizations.of(context)!.tapToContinue,
+                        style: GoogleFonts.boogaloo(
+                          color: _kInk.withValues(alpha: 0.45),
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    AppLocalizations.of(context)!.youDrewIt,
-                    style: GoogleFonts.fredoka(
-                      color: _kGold,
-                      fontSize: 30,
-                      fontWeight: FontWeight.w700,
-                      shadows: const [
-                        Shadow(color: Color(0xFF1A0E3F), blurRadius: 8),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  Text(
-                    AppLocalizations.of(context)!.tapToContinue,
-                    style: GoogleFonts.nunito(
-                      color: Colors.white.withValues(alpha: 0.7),
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -436,105 +418,85 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
 
   Widget _buildChapterNarration() {
     final l10n = AppLocalizations.of(context)!;
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        // Colored image as atmospheric background
-        if (_coloredImage != null)
-          CustomPaint(painter: _FullImagePainter(image: _coloredImage!)),
-        // Deep gradient overlay
-        Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color(0xBB1A0E3F),
-                Color(0xF01A0E3F),
-              ],
-              stops: [0.0, 0.6],
+
+    return Container(
+      color: _kPaper,
+      child: Column(
+        children: [
+          // Image — top ~40%, correct aspect ratio
+          Expanded(
+            flex: 2,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 20, 24, 8),
+              child: _RevealImageBox(
+                coloredImage: _coloredImage,
+                revealProgress: 1.0,
+              ),
             ),
           ),
-        ),
-        // Twinkling stars
-        AnimatedBuilder(
-          animation: _celebController,
-          builder: (_, __) =>
-              CustomPaint(painter: _StarsPainter(t: _celebController.value)),
-        ),
-        // Content
-        SafeArea(
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              // Chapter badge
-              _ChapterBadge(chapterLabel: l10n.chapter(_chapterNumber)),
-              const SizedBox(height: 24),
-              // Narration clay card (scrollable if long)
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 28),
-                  child: Center(
+          // Story content — bottom ~60%
+          Expanded(
+            flex: 3,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 4, 24, 20),
+              child: Column(
+                children: [
+                  _TocaChapterBadge(chapter: _chapterNumber),
+                  const SizedBox(height: 10),
+                  // Narration text card
+                  Expanded(
                     child: Container(
-                      constraints: const BoxConstraints(maxWidth: 700),
+                      width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.97),
-                        borderRadius: BorderRadius.circular(28),
-                        border: Border.all(color: _kBorder, width: 3),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: _kInk, width: 3),
                         boxShadow: const [
                           BoxShadow(
-                            color: Color(0xFF3B1FCC),
-                            blurRadius: 0,
-                            offset: Offset(5, 5),
-                          ),
-                          BoxShadow(
-                            color: Color(0x556C48FF),
-                            blurRadius: 30,
-                            offset: Offset(0, 12),
-                          ),
+                              color: _kInk,
+                              blurRadius: 0,
+                              offset: Offset(5, 5)),
                         ],
                       ),
                       child: SingleChildScrollView(
-                        padding: const EdgeInsets.fromLTRB(28, 24, 28, 24),
+                        padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
                         child: Text(
-                          _narrationText.isNotEmpty
-                              ? _narrationText
-                              : '…',
-                          style: GoogleFonts.nunito(
+                          _narrationText.isNotEmpty ? _narrationText : '…',
+                          style: GoogleFonts.boogaloo(
                             fontSize: 22,
-                            height: 1.65,
-                            color: const Color(0xFF1A0A3F),
-                            fontWeight: FontWeight.w700,
+                            height: 1.6,
+                            color: _kInk,
                           ),
                           textAlign: TextAlign.center,
                         ),
                       ),
                     ),
                   ),
-                ),
+                  const SizedBox(height: 12),
+                  // Bottom row: voice replay + continue
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _VoiceReplayButton(
+                        playing: _narrationPlaying,
+                        onTap: _playNarration,
+                        tooltip: l10n.playVoice,
+                      ),
+                      const SizedBox(width: 16),
+                      _CelebButton(
+                        label: _nextDrawingId != null
+                            ? l10n.letsDraw
+                            : l10n.keepGoing,
+                        onTap: _nextPhase,
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
-              // Replay voice button
-              _VoiceReplayButton(
-                playing: _narrationPlaying,
-                onTap: _playNarration,
-                tooltip: l10n.playVoice,
-              ),
-              const SizedBox(height: 24),
-              // Continue button
-              Padding(
-                padding: const EdgeInsets.only(bottom: 36),
-                child: _CelebButton(
-                  label: _nextDrawingId != null
-                      ? l10n.letsDraw
-                      : l10n.keepGoing,
-                  onTap: _nextPhase,
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -821,6 +783,146 @@ class _VoiceReplayButtonState extends State<_VoiceReplayButton>
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+// ── Aspect-ratio-correct image box with optional sweep reveal ────────────────
+
+class _RevealImageBox extends StatelessWidget {
+  const _RevealImageBox({
+    required this.coloredImage,
+    required this.revealProgress,
+  });
+
+  final ui.Image? coloredImage;
+  // 0.0 = fully hidden, 1.0 = fully revealed (left-to-right sweep)
+  final double revealProgress;
+
+  @override
+  Widget build(BuildContext context) {
+    final img = coloredImage;
+    if (img == null) {
+      return Container(
+        decoration: BoxDecoration(
+          color: _kPaper,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: _kInk, width: 3),
+        ),
+      );
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final imgW = img.width.toDouble();
+        final imgH = img.height.toDouble();
+        final scale = math.min(
+          constraints.maxWidth / imgW,
+          constraints.maxHeight / imgH,
+        );
+        final displayW = imgW * scale;
+        final displayH = imgH * scale;
+
+        return Center(
+          child: Container(
+            width: displayW,
+            height: displayH,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: _kInk, width: 3),
+              boxShadow: const [
+                BoxShadow(
+                    color: _kInk, blurRadius: 0, offset: Offset(6, 6)),
+              ],
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                RawImage(image: img, fit: BoxFit.fill),
+                // Sweep mask: covers right side and shrinks left as progress → 1
+                if (revealProgress < 1.0)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: FractionallySizedBox(
+                      widthFactor: 1.0 - revealProgress,
+                      child: Container(color: _kPaper),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+// ── Toca Boca name badge (used in color-reveal phase) ────────────────────────
+
+class _TocaNameBadge extends StatelessWidget {
+  const _TocaNameBadge({required this.name});
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 10),
+      decoration: BoxDecoration(
+        color: _kYellow,
+        borderRadius: BorderRadius.circular(99),
+        border: Border.all(color: _kInk, width: 3),
+        boxShadow: const [
+          BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(4, 4)),
+        ],
+      ),
+      child: Text(
+        name,
+        style: GoogleFonts.boogaloo(
+          color: _kInk,
+          fontSize: 26,
+          height: 1.0,
+        ),
+      ),
+    );
+  }
+}
+
+// ── Toca Boca chapter badge (used in narration phase) ────────────────────────
+
+class _TocaChapterBadge extends StatelessWidget {
+  const _TocaChapterBadge({required this.chapter});
+  final int chapter;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
+      decoration: BoxDecoration(
+        color: _kBlue,
+        borderRadius: BorderRadius.circular(99),
+        border: Border.all(color: _kInk, width: 3),
+        boxShadow: const [
+          BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.auto_stories_rounded,
+              color: Colors.white, size: 18),
+          const SizedBox(width: 8),
+          Text(
+            l10n.chapter(chapter),
+            style: GoogleFonts.boogaloo(
+              color: Colors.white,
+              fontSize: 20,
+              height: 1.0,
+            ),
+          ),
+        ],
       ),
     );
   }
