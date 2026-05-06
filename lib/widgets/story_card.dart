@@ -5,14 +5,22 @@ import 'package:google_fonts/google_fonts.dart';
 import '../l10n/app_localizations.dart';
 import '../models/story_model.dart';
 
-// Stardust Claymorphism tokens
-const _kPrimary = Color(0xFF6C48FF);
-const _kPrimaryDark = Color(0xFF3B2099);
-const _kMint = Color(0xFF6BCB77);
-const _kBorderColor = Color(0xFFD4C8FF);
-const _kForeground = Color(0xFF1A0A3F);
+// Toca Boca / Handmade tokens (match app-wide design system)
+const _kRed = Color(0xFFE82D2D);
+const _kYellow = Color(0xFFF5C800);
+const _kGreen = Color(0xFF2DB84B);
+const _kBlue = Color(0xFF1FA3E8);
+const _kInk = Color(0xFF1A1A2E);
+const _kPaper = Color(0xFFFFF8E7);
+
+// Keep legacy names used internally in _ClayCard / _ProgressRow / _StarBadge
+const _kPrimary = _kBlue;
+const _kPrimaryDark = _kInk;
+const _kMint = _kGreen;
+const _kBorderColor = _kInk;
+const _kForeground = _kInk;
 const _kMuted = Color(0xFF7C6FA0);
-const _kRadius = 28.0;
+const _kRadius = 18.0;
 const _kBorderWidth = 3.0;
 
 class StoryCard extends StatefulWidget {
@@ -22,12 +30,15 @@ class StoryCard extends StatefulWidget {
     required this.completedCount,
     required this.onTap,
     required this.language,
+    this.completedImagePath,
   });
 
   final StoryModel story;
   final int completedCount;
   final VoidCallback onTap;
   final String language;
+  // If non-null, the story is fully completed — show this colored image.
+  final String? completedImagePath;
 
   @override
   State<StoryCard> createState() => _StoryCardState();
@@ -104,13 +115,17 @@ class _StoryCardState extends State<StoryCard>
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      Image.asset(
-                        widget.story.previewAsset,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _PlaceholderImage(
-                          index: widget.story.id.hashCode,
-                        ),
-                      ),
+                      widget.completedImagePath != null
+                          ? Image.asset(
+                              widget.completedImagePath!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => _PlaceholderImage(
+                                index: widget.story.id.hashCode,
+                              ),
+                            )
+                          : _PlaceholderImage(
+                              index: widget.story.id.hashCode,
+                            ),
                       // Rich gradient into info panel
                       Positioned(
                         bottom: 0,
@@ -329,7 +344,7 @@ class _StarBadge extends StatelessWidget {
   }
 }
 
-// ── Placeholder image ────────────────────────────────────────────────────────
+// ── Placeholder image — shown for stories not yet completed ──────────────────
 
 class _PlaceholderImage extends StatelessWidget {
   const _PlaceholderImage({required this.index});
@@ -337,34 +352,56 @@ class _PlaceholderImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const gradients = [
-      [Color(0xFFE0E7FF), Color(0xFFC7D2FE)],
-      [Color(0xFFFFE4E6), Color(0xFFFECACA)],
-      [Color(0xFFD1FAE5), Color(0xFFA7F3D0)],
-      [Color(0xFFFEF3C7), Color(0xFFFDE68A)],
-      [Color(0xFFF3E8FF), Color(0xFFE9D5FF)],
-    ];
-    const symbols = ['✦', '◆', '★', '●', '▲'];
-    final g = gradients[index.abs() % gradients.length];
-    final sym = symbols[index.abs() % symbols.length];
+    const bgColors = [_kRed, _kBlue, _kGreen, _kYellow];
+    final bg = bgColors[index.abs() % bgColors.length];
 
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: g,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Center(
-        child: Text(
-          sym,
-          style: TextStyle(
-            fontSize: 52,
-            color: _kPrimary.withValues(alpha: 0.35),
+      color: _kPaper,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Dot grid texture
+          CustomPaint(painter: _DotGridPainter(color: bg)),
+          // Lock icon in the center
+          Center(
+            child: Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: bg,
+                shape: BoxShape.circle,
+                border: Border.all(color: _kInk, width: 3),
+                boxShadow: const [
+                  BoxShadow(
+                      color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
+                ],
+              ),
+              child: const Icon(Icons.lock_rounded,
+                  color: Colors.white, size: 30),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
+}
+
+class _DotGridPainter extends CustomPainter {
+  const _DotGridPainter({required this.color});
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color.withValues(alpha: 0.18)
+      ..style = PaintingStyle.fill;
+    for (double y = 16; y < size.height; y += 22) {
+      for (double x = 16; x < size.width; x += 22) {
+        canvas.drawCircle(Offset(x, y), 2.5, paint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DotGridPainter old) => old.color != color;
 }

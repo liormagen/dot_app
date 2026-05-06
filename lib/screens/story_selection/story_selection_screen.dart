@@ -110,6 +110,10 @@ class StorySelectionScreen extends ConsumerWidget {
                                 completedCount: completedCount,
                                 language: progress.selectedLanguage,
                                 onTap: () {},
+                                completedImagePath: _completedImagePath(
+                                  story.drawingIds,
+                                  progress.completedDrawingIds,
+                                ),
                               ),
                             ),
                           );
@@ -125,6 +129,17 @@ class StorySelectionScreen extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  /// Returns the colored image path for the last chapter if ALL drawings in
+  /// the story are completed, otherwise null.
+  String? _completedImagePath(
+      List<String> drawingIds, Set<String> completed) {
+    if (drawingIds.isEmpty) return null;
+    if (!drawingIds.every(completed.contains)) return null;
+    final lastId = drawingIds.last; // e.g. "story1_ch3"
+    final parts = lastId.split('_'); // ["story1", "ch3"]
+    return 'assets/stories/${parts[0]}/${parts[1]}/${parts[1]}_colored.png';
   }
 
   void _onStoryTap(
