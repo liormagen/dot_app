@@ -448,6 +448,34 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
         Positioned.fill(
           child: ConfettiOverlay(key: _confettiKey),
         ),
+        // ── DEBUG SKIP BUTTON — remove before release ──────────────────────
+        Positioned(
+          right: 20,
+          bottom: 28,
+          child: GestureDetector(
+            onTap: _navigateToCompletion,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+              decoration: BoxDecoration(
+                color: _kRed,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: _kInk, width: 3),
+                boxShadow: const [
+                  BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(4, 4)),
+                ],
+              ),
+              child: Text(
+                'Next ▶',
+                style: GoogleFonts.boogaloo(
+                  color: Colors.white,
+                  fontSize: 22,
+                  height: 1.0,
+                ),
+              ),
+            ),
+          ),
+        ),
+        // ── END DEBUG ──────────────────────────────────────────────────────
       ],
     );
   }
