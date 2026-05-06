@@ -400,10 +400,32 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
     }
 
     if (isLast) {
-      Future.delayed(const Duration(milliseconds: 400), () {
+      final firstDot = sortedDots.first;
+      // Wait for the last-dot animation (300 ms) then draw the closing line
+      // connecting last dot back to first dot, then begin the image reveal.
+      Future.delayed(const Duration(milliseconds: 310), () {
         if (!mounted) return;
-        setState(() => _isRevealing = true);
-        _revealController.forward();
+        final sess = ref.read(drawingSessionProvider);
+        final closingConn = Connection(
+          from: tappedDot,
+          to: firstDot,
+          style: _styleForIndex(sess.connections.length),
+          color: _kLineColors[sess.connections.length % _kLineColors.length],
+        );
+        setState(() => _animatingConnection = closingConn);
+        _lineAnimController.forward(from: 0).then((_) {
+          if (!mounted) return;
+          ref
+              .read(drawingSessionProvider.notifier)
+              .addConnection(closingConn, tappedDot.id, true);
+          setState(() => _animatingConnection = null);
+          // Short pause to admire the closed shape, then reveal the image
+          Future.delayed(const Duration(milliseconds: 200), () {
+            if (!mounted) return;
+            setState(() => _isRevealing = true);
+            _revealController.forward();
+          });
+        });
       });
     }
   }
