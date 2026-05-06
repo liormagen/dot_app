@@ -1,12 +1,13 @@
 # Dot Story
 
-An iPad game for children where numbered dots are connected to reveal drawings — all wrapped in a narrative story experience with voiceover audio, multilingual support, and in-app purchases.
+An iPad game for children (ages 3–7) where numbered dots are connected to reveal drawings — all wrapped in a narrative story experience with voiceover audio, multilingual support, and in-app purchases. Built with Flutter, targeting iPad.
 
 ---
 
 ## Table of Contents
 
 - [Overview](#overview)
+- [Design System](#design-system)
 - [Features](#features)
 - [Architecture](#architecture)
 - [Project Structure](#project-structure)
@@ -35,6 +36,38 @@ The app ships with voiceover audio (per language), encouragement sounds, and a g
 
 ---
 
+## Design System
+
+The app uses a **Toca Boca / Handmade** visual language throughout all screens. The goal is a bold, playful aesthetic that feels crafted — not digital.
+
+### Color Tokens
+
+```dart
+const _kRed    = Color(0xFFE82D2D);  // Primary action, danger, accents
+const _kYellow = Color(0xFFF5C800);  // Headers, highlights, stars
+const _kGreen  = Color(0xFF2DB84B);  // Success, positive feedback
+const _kBlue   = Color(0xFF1FA3E8);  // Secondary actions, progress
+const _kInk    = Color(0xFF1A1A2E);  // All outlines, borders, text
+const _kPaper  = Color(0xFFFFF8E7);  // App background, canvas surface
+```
+
+### Typography
+
+**`GoogleFonts.boogaloo`** is used for all text — headings, labels, counters, and buttons. No other font family is used anywhere in the app.
+
+### Visual Rules
+
+| Rule | Value |
+|------|-------|
+| Container borders | `Border.all(color: _kInk, width: 3–4)` |
+| Drop shadows | `BoxShadow(color: _kInk, offset: Offset(x, y), blurRadius: 0)` — hard/flat, no blur |
+| Gradients | **None** — flat solid colors only |
+| Border radius | Chunky rounded corners (12–22px depending on element) |
+| Text outlines | 8-directional `TextStyle.shadows` via `_inkOutline(w)` helper |
+| Animations | Spring physics: `Curves.elasticOut` for bounce-backs; `Curves.easeOutQuart` for initial press |
+
+---
+
 ## Features
 
 | Feature | Description |
@@ -50,6 +83,7 @@ The app ships with voiceover audio (per language), encouragement sounds, and a g
 | Gallery | Displays all completed colored drawings |
 | Onboarding | Interactive 3-dot tutorial with animated hand guide |
 | Confetti | Particle celebration overlay on drawing/story completion |
+| Interactive welcome | Wandering blobs with tap-squeeze + elastic line drag-to-reconnect |
 
 ---
 
@@ -62,10 +96,11 @@ The app ships with voiceover audio (per language), encouragement sounds, and a g
 ├──────────────┬──────────────┬──────────────┬───────────────┤
 │   Screens    │   Widgets    │   Services   │    Models     │
 │              │              │              │               │
-│ Onboarding   │ StoryCard    │ AssetService │ DotModel      │
-│ StorySelect  │ ParentalGate │ ProgressSvc  │ DrawingModel  │
-│ Drawing      │ ConfettiOver │ AudioService │ StoryModel    │
-│ Completion   │              │ PurchaseSvc  │ ProgressModel │
+│ Welcome      │ StoryCard    │ AssetService │ DotModel      │
+│ Onboarding   │ ParentalGate │ ProgressSvc  │ DrawingModel  │
+│ StorySelect  │ ConfettiOver │ AudioService │ StoryModel    │
+│ Drawing      │              │ PurchaseSvc  │ ProgressModel │
+│ Completion   │              │              │               │
 │ Transition   │              │              │               │
 │ StoryComplete│              │              │               │
 │ Gallery      │              │              │               │
@@ -97,7 +132,7 @@ dot_app/
 │   │
 │   ├── models/
 │   │   ├── dot_model.dart                 # Single dot: id, x, y (JSON-serializable)
-│   │   ├── drawing_model.dart             # Full drawing: dots, canvas size, difficulty, i18n names
+│   │   ├── drawing_model.dart             # Full drawing: dots, canvas size, difficulty, audioPath
 │   │   ├── story_model.dart               # Story + chapters with localized narrations
 │   │   └── progress_model.dart            # Immutable user state (completed drawings, settings)
 │   │
@@ -108,6 +143,8 @@ dot_app/
 │   │   └── purchase_service.dart          # In-app purchase: buy + restore
 │   │
 │   ├── screens/
+│   │   ├── welcome/
+│   │   │   └── welcome_screen.dart        # Animated welcome with interactive blobs + elastic lines
 │   │   ├── onboarding/
 │   │   │   └── onboarding_screen.dart     # 3-dot tutorial with animated hand
 │   │   ├── story_selection/
@@ -134,24 +171,29 @@ dot_app/
 │   │   └── confetti_overlay.dart           # Particle animation overlay
 │   │
 │   └── l10n/
-│       ├── app_en.arb                      # English strings (28 keys)
+│       ├── app_en.arb                      # English strings
 │       ├── app_he.arb                      # Hebrew strings
 │       └── app_ar.arb                      # Arabic strings
 │
 ├── assets/
-│   ├── drawings/
-│   │   ├── knight/                         # story1 knight: dots from real content-tool output
-│   │   ├── dragon/                         # Placeholder dot coordinates (needs real content)
-│   │   ├── castle/                         # Placeholder dot coordinates (needs real content)
-│   │   └── *_s2-5/                         # Story 2–5 variants for each character
 │   ├── stories/
-│   │   └── stories.json                    # Story metadata + chapter narrations
+│   │   ├── stories.json                    # Story metadata + chapter narrations + drawing_ids
+│   │   ├── story1/
+│   │   │   ├── ch1/
+│   │   │   │   ├── ch1.json               # Dot coordinates, canvas size, difficulty
+│   │   │   │   ├── ch1_outline.png        # Black-and-white outline shown during gameplay
+│   │   │   │   ├── ch1_colored.png        # Full-color image revealed on completion
+│   │   │   │   └── ch1_audio.mp3          # Narration voiceover for this chapter
+│   │   │   ├── ch2/  (same structure)
+│   │   │   └── ch3/  (same structure)
+│   │   ├── story2/ … story5/              # Same structure; image files reference story1/
+│   │   │                                  # (placeholder audio: replace with real recordings)
 │   ├── story_cards/                        # Preview images shown in the story grid
 │   ├── characters/                         # Character sprites for transition screens
 │   └── audio/
 │       ├── en/ he/ ar/                     # Voiceover files per language
-│       │   └── numbers/                    # Individual number pronunciations
-│       ├── encouragement/                  # Random praise clips (6 per language)
+│       │   └── numbers/                    # Individual number pronunciations (1.mp3 … N.mp3)
+│       ├── encouragement/                  # Random praise clips
 │       └── sfx/                            # dot_connect.mp3, confetti.mp3, complete.mp3, etc.
 │
 ├── pubspec.yaml
@@ -186,9 +228,10 @@ Navigation uses **GoRouter** with path parameters:
 | Route | Screen | Notes |
 |---|---|---|
 | `/` | Splash / redirect | Checks onboarding flag → `/onboarding` or `/stories` |
+| `/welcome` | `WelcomeScreen` | Animated entry with interactive blob layer |
 | `/onboarding` | `OnboardingScreen` | Shown on first launch only |
 | `/stories` | `StorySelectionScreen` | Main hub |
-| `/drawing/:drawingId` | `DrawingScreen` | `:drawingId` matches drawing JSON filename |
+| `/drawing/:drawingId` | `DrawingScreen` | `:drawingId` = `story{N}_ch{N}` format |
 | `/completion/:drawingId` | `CompletionScreen` | Coloring phase after drawing complete |
 | `/transition/:storyId/:chapterIndex` | `TransitionScreen` | Narration between chapters |
 | `/story-complete/:storyId` | `StoryCompletionScreen` | End-of-story celebration |
@@ -202,7 +245,7 @@ Navigation uses **GoRouter** with path parameters:
 ```dart
 class DotModel {
   final int id;
-  final double x;  // normalized to canvas coordinate space
+  final double x;  // canvas coordinate space
   final double y;
 }
 ```
@@ -210,15 +253,16 @@ class DotModel {
 ### `DrawingModel`
 ```dart
 class DrawingModel {
-  final String id;
-  final Map<String, String> names;   // { "en": "Knight", "he": "אביר", "ar": "فارس" }
-  final String storyId;
+  final String id;                    // e.g. "story1_ch1"
+  final Map<String, String> names;    // { "en": "The Knight", "he": "הפרש", "ar": "الفارس" }
+  final String storyId;               // e.g. "story1"
   final int chapter;
-  final String difficulty;           // "easy" | "medium" | "hard"
-  final double canvasWidth;
-  final double canvasHeight;
-  final String outlineImagePath;
-  final String coloredImagePath;
+  final String difficulty;            // "easy" | "medium" | "hard"
+  final int canvasWidth;
+  final int canvasHeight;
+  final String? imageOutline;         // path to black-and-white outline PNG
+  final String imageColored;          // path to full-color PNG
+  final String? audioPath;            // path to chapter narration MP3
   final List<String> tutorialSteps;
   final List<DotModel> dots;
 
@@ -233,7 +277,7 @@ class StoryModel {
   final Map<String, String> titles;
   final String companionAsset;
   final String previewAsset;
-  final List<String> drawingIds;
+  final List<String> drawingIds;      // e.g. ["story1_ch1", "story1_ch2", "story1_ch3"]
   final List<StoryChapter> chapters;
 }
 
@@ -263,7 +307,7 @@ Immutable — updated via `copyWith()`. Persisted to `SharedPreferences` by `Pro
 ### `AssetService`
 Loads bundled JSON files and caches results in memory.
 - `loadStories()` → parses `assets/stories/stories.json`
-- `loadDrawing(id)` → parses `assets/drawings/{id}/{id}.json`
+- `loadDrawing(id)` → splits `"story1_ch1"` into `storyId="story1"`, `chId="ch1"`, then loads `assets/stories/story1/ch1/ch1.json`
 - `loadStoryDrawings(story)` → batch loads all drawings for a story
 
 ### `ProgressService`
@@ -279,7 +323,7 @@ Manages **three separate `AudioPlayer` instances**:
 - `_sfxPlayer` — dot connect, confetti, completion sounds
 - `_musicPlayer` — background music (loops)
 
-Key methods: `playNumber(lang, n)`, `playEncouragement(lang)` (random from 6 clips), `playDotConnect()`, `playDrawingComplete()`, `playChapterNarration(lang, storyId, chapter)`.
+Key methods: `playNumber(lang, n)`, `playEncouragement(lang)` (random from available clips), `playDotConnect()`, `playDrawingComplete()`, `playChapterNarration(lang, storyId, chapter)`.
 
 ### `PurchaseService`
 Wraps `in_app_purchase`. Product ID: `com.dotstory.fullaccess`.
@@ -291,11 +335,24 @@ Wraps `in_app_purchase`. Product ID: `com.dotstory.fullaccess`.
 
 ## Screens
 
+### Welcome (`/welcome`)
+Full-screen Toca Boca-styled entry screen. Features:
+- **Wandering blobs** — 6 soft colored circles that drift slowly using sine-wave paths; transparent, playful
+- **Elastic lines** — bezier curves connecting the blobs; rotate endpoints on a timer
+- **Interactive blobs** — tap a blob to trigger a jelly squeeze animation (`TweenSequence`: fast `easeOutQuart` squish + `elasticOut` spring-back over 420ms)
+- **Line dragging** — touch a line to disconnect one endpoint and drag it to a new blob; snaps on release or reverts if dropped in empty space
+- **"Dot Story" title** — Boogaloo 100px, `_kYellow` fill with 8-directional `_kInk` outline
+- **Play button** — round `_kRed` badge with hard drop shadow
+
 ### Onboarding (`/onboarding`)
 Interactive tutorial with 3 dots. Walks the child through the tap-to-connect mechanic using an animated hand sprite. Completes by saving `onboardingComplete = true` then navigating to `/stories`.
 
 ### Story Selection (`/stories`)
-2-column grid of story cards. Each card shows the story preview image, title, and a progress bar (`X of Y drawings complete`). A parental gate (arithmetic dialog) guards access to the Settings sheet. The gallery button is always accessible.
+2-column grid of story cards. Design features:
+- **Floating sticker header** — yellow `_kYellow` badge rotated slightly, with double drop shadow (`_kInk` + `_kRed`), displaying "Dot Story" in Boogaloo with flanking stars
+- **Story cards** — press animation: fast 90ms `easeOut` scale-down + 550ms `elasticOut` spring-back; thick black border + hard offset shadow
+- **Wandering blobs** — same as welcome screen (no lines), providing ambient background motion
+- **Parental gate** guards the Settings sheet
 
 ### Drawing (`/drawing/:drawingId`)
 Core gameplay screen. `DrawingSessionState` (autoDispose provider) tracks:
@@ -304,13 +361,14 @@ Core gameplay screen. `DrawingSessionState` (autoDispose provider) tracks:
 - Active line style (sparkle/wave/glow — cycles per connection)
 - Hint state (pulsing dot)
 
-The `HintController` starts a timer after each correct tap. If the child doesn't tap the next dot within `hintDelaySeconds`, the next expected dot pulses.
+**Progress bar** (Toca Boca design):
+- `_kYellow` bar, 72px tall, 4px black bottom border + hard `BoxShadow(offset: Offset(0,5), blurRadius: 0)`
+- Round `_kRed` home button with hard shadow; navigates to `/stories`
+- `_kInk` counter badge showing `★ N / total` in Boogaloo white
+- Chunky white progress track with `TweenAnimationBuilder` smooth fill; fill color cycles: `_kRed` (0–35%) → `_kBlue` (35–68%) → `_kGreen` (68–100%)
+- Counter starts at **1** (not 0) and ends at total, showing current progress intuitively
 
-`DotCanvasPainter` renders:
-1. A plain white background (no image shown during dot-connect)
-2. Completed connection lines (with their stored style)
-3. The current animating line (lerped end-point)
-4. All dots as numbered circles; completed dots show a checkmark
+The `HintController` starts a timer after each correct tap. If the child doesn't tap the next dot within `hintDelaySeconds`, the next expected dot pulses.
 
 On final dot connected → navigate to `/completion/:drawingId`.
 
@@ -334,7 +392,7 @@ Displays all completed drawings across every story. Stories are tab-filtered. Sh
 ## Widgets
 
 ### `StoryCard`
-Grid item showing: story preview image, localized title, `LinearProgressIndicator` (completed / total drawings), and a lock icon if the story requires a purchase.
+Grid item showing: story preview image, localized title, progress bar (completed / total drawings), and a lock icon if the story requires a purchase. Uses Toca Boca press animation.
 
 ### `ParentalGate`
 Modal dialog with a randomly generated arithmetic question (e.g. "7 + 4 = ?"). On correct answer, unlocks a 60-second window so the parent doesn't need to re-solve it for quick follow-up taps.
@@ -366,65 +424,91 @@ Language is stored in `ProgressModel.selectedLanguage` and applied by rebuilding
 
 ## Assets
 
-### Drawing JSON format (`assets/drawings/{id}/{id}.json`)
+### Asset folder structure
+
+```
+assets/stories/
+├── stories.json
+├── story1/
+│   ├── ch1/
+│   │   ├── ch1.json          ← dot data, canvas size, difficulty, image & audio paths
+│   │   ├── ch1_outline.png   ← black-and-white outline (shown during gameplay)
+│   │   ├── ch1_colored.png   ← full-color illustration (revealed on completion)
+│   │   └── ch1_audio.mp3     ← chapter narration voiceover  ← PLACEHOLDER — replace with recording
+│   ├── ch2/  (same structure)
+│   └── ch3/  (same structure)
+├── story2/ … story5/
+│   └── ch1-3/
+│       ├── ch{N}.json        ← dot data (different difficulty/dot count per story)
+│       └── ch{N}_audio.mp3   ← PLACEHOLDER — replace with recording
+│       (images reference story1/ — update json fields when new art is ready)
+```
+
+Stories 2–5 currently reuse story1's images (`image_outline` / `image_colored` fields in their JSON files point to `assets/stories/story1/chN/`). Update those fields in each chapter's JSON once new artwork is created.
+
+### Chapter JSON format (`assets/stories/story{N}/ch{N}/ch{N}.json`)
+
 ```json
 {
-  "id": "knight",
-  "names": { "en": "Knight", "he": "אביר", "ar": "فارس" },
+  "id": "story1_ch1",
+  "names": { "en": "The Knight", "he": "הפרש", "ar": "الفارس" },
   "story_id": "story1",
   "chapter": 1,
-  "difficulty": "easy",
+  "difficulty": "medium",
   "canvas_width": 1122,
   "canvas_height": 1402,
-  "image_colored": "assets/drawings/knight/colored.png",
+  "image_outline": "assets/stories/story1/ch1/ch1_outline.png",
+  "image_colored": "assets/stories/story1/ch1/ch1_colored.png",
+  "audio_path": "assets/stories/story1/ch1/ch1_audio.mp3",
   "tutorial_steps": [],
   "dots": [
-    { "id": 1, "x": 561.0, "y": 112.0 },
+    { "id": 1, "x": 272, "y": 491 },
     ...
   ]
 }
 ```
 
-### Image file naming convention
+**Difficulty levels** control the hint timer:
 
-Each drawing folder requires **one image file**:
-
-| File | Purpose |
-|------|---------|
-| `assets/drawings/{id}/colored.png` | Final colored illustration — revealed after all dots are connected |
-
-The `image_outline` field is optional and no longer used in gameplay. You only need to supply `colored.png` per drawing.
-```
+| Difficulty | Hint delay |
+|------------|-----------|
+| `"easy"` | 2 seconds |
+| `"medium"` | 3 seconds |
+| `"hard"` | 5 seconds |
 
 ### Stories JSON format (`assets/stories/stories.json`)
+
 ```json
-[
-  {
-    "id": "story1",
-    "titles": { "en": "The Knight's Quest", "he": "מסע האביר", "ar": "مسيرة الفارس" },
-    "companionAsset": "assets/characters/knight_companion.png",
-    "previewAsset": "assets/story_cards/story1_card.png",
-    "drawingIds": ["knight", "dragon", "castle"],
-    "chapters": [
-      {
-        "chapterNumber": 1,
-        "narrations": {
-          "en": "Once upon a time...",
-          "he": "היה היה פעם...",
-          "ar": "كان يا ما كان..."
+{
+  "stories": [
+    {
+      "id": "story1",
+      "titles": { "en": "The Knight's Quest", "he": "מסע הפרש", "ar": "رحلة الفارس" },
+      "companion_asset": "assets/characters/the_knight.png",
+      "preview_asset": "assets/story_cards/story1.png",
+      "drawing_ids": ["story1_ch1", "story1_ch2", "story1_ch3"],
+      "chapters": [
+        {
+          "chapter": 1,
+          "narrations": {
+            "en": "Once upon a time...",
+            "he": "פעם היה פרש אמיץ...",
+            "ar": "كان يا ما كان..."
+          }
         }
-      }
-    ]
-  }
-]
+      ]
+    }
+  ]
+}
 ```
 
-### Audio file naming conventions
+### Audio file conventions
+
 ```
-assets/audio/{lang}/numbers/{n}.mp3       # e.g. audio/en/numbers/7.mp3
-assets/audio/{lang}/encouragement/{n}.mp3 # n = 1..6
-assets/audio/{lang}/{storyId}/chapter_{n}.mp3
-assets/audio/{lang}/{drawingId}_name.mp3
+assets/stories/story{N}/ch{N}/ch{N}_audio.mp3   ← chapter narration (one per chapter)
+
+assets/audio/{lang}/numbers/{n}.mp3              ← number pronunciation  e.g. audio/en/numbers/7.mp3
+assets/audio/encouragement/{n}.mp3              ← random praise clips
 assets/audio/sfx/dot_connect.mp3
 assets/audio/sfx/confetti.mp3
 assets/audio/sfx/drawing_complete.mp3
@@ -459,8 +543,8 @@ flutter gen-l10n
 cd ios && pod install && cd ..
 
 # 6. Run on a simulator
-flutter devices                  # list available devices
-flutter run -d "iPad (10th generation)"   # or any iPad simulator name
+flutter devices                           # list available devices
+flutter run -d "iPad Air 13-inch (M4)"   # or any iPad simulator name
 ```
 
 ### Building for a physical iPad
@@ -475,11 +559,12 @@ flutter run -d <device-udid>
 
 | Area | Status |
 |---|---|
-| Audio files | Not included — the content creation pipeline produces them. App handles missing files silently. |
-| `dragon.json` / `castle.json` dot coordinates | Placeholder values — need real content-tool output. |
-| UI strings | Mostly hardcoded English in screen widgets; ARB files exist for proper localization wiring. |
+| Audio files | All 15 chapter audio files are empty placeholders. Replace `assets/stories/story{N}/ch{N}/ch{N}_audio.mp3` with real narration recordings. |
+| Artwork for stories 2–5 | Chapter JSON files for stories 2–5 currently reference story1 images. Create new art per story and update the `image_outline` / `image_colored` fields in each chapter JSON. |
+| Dot coordinates for stories 2–5 | Placeholder coordinates copied from story1. Each story's chapters need their own dot placements. |
 | StoreKit product | `com.dotstory.fullaccess` must be created in App Store Connect before IAP works. |
-| Tutorial step images | `tutorialSteps` arrays are empty — no images yet. |
-| Confetti position | Offset by ~56px (progress bar height) — minor visual nit. |
+| Tutorial step images | `tutorial_steps` arrays are empty — no guide images yet. |
 | App Store compliance | Privacy manifest, COPPA declaration, and age rating need to be set in App Store Connect. |
-| Story 2–5 content | Asset folders (`*_s2-5/`) exist but drawing JSON files have placeholder data. |
+| Number audio files | `assets/audio/{lang}/numbers/` needs one MP3 per dot number, per language. |
+| Encouragement audio | `assets/audio/encouragement/` needs random praise clips. |
+| SFX files | `assets/audio/sfx/` needs `dot_connect.mp3`, `confetti.mp3`, `drawing_complete.mp3`. |
