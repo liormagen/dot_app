@@ -1,0 +1,18 @@
+{
+  "id": "story4_ch5",
+  "names": {
+    "en": "Chapter 5",
+    "he": "פרק 5",
+    "ar": "الفصل 5"
+  },
+  "story_id": "story4",
+  "chapter": 5,
+  "difficulty": "medium",
+  "canvas_width": 1402,
+  "canvas_height": 1122,
+  "image_outline": null,
+  "image_colored": "assets/stories/story4/ch5/ch5_colored.png",
+  "audio_path": "assets/stories/story4/ch5/ch5_audio.mp3",
+  "tutorial_steps": [],
+  "dots": []
+}

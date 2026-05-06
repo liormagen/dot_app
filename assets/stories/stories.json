@@ -30,9 +30,9 @@
         {
           "chapter": 3,
           "narrations": {
-            "en": "At last, the brave knight found the enchanted castle. The quest was complete!",
-            "he": "לבסוף, מצא הפרש האמיץ את הטירה המכושפת. המסע הושלם!",
-            "ar": "في النهاية، وجد الفارس الشجاع القلعة المسحورة. اكتملت الرحلة!"
+            "en": "At last, the brave knight and the dragon became friends!",
+            "he": "לבסוף, הפרש האמיץ והדרקון נעשו חברים!",
+            "ar": "في النهاية، أصبح الفارس الشجاع والتنين أصدقاء!"
           }
         }
       ]
@@ -40,36 +40,36 @@
     {
       "id": "story2",
       "titles": {
-        "en": "The Dragon's Lair",
-        "he": "מחילת הדרקון",
-        "ar": "وكر التنين"
+        "en": "Story 2",
+        "he": "סיפור 2",
+        "ar": "قصة 2"
       },
-      "companion_asset": "assets/characters/the_dragon.png",
+      "companion_asset": "assets/characters/the_knight.png",
       "preview_asset": "assets/story_cards/story1.png",
       "drawing_ids": ["story2_ch1", "story2_ch2", "story2_ch3"],
       "chapters": [
         {
           "chapter": 1,
           "narrations": {
-            "en": "A young knight heard tales of a dragon who hoarded the kingdom's gold...",
-            "he": "פרש צעיר שמע סיפורים על דרקון שצבר את זהב הממלכה...",
-            "ar": "سمع فارس شاب حكايات عن تنين يكتنز ذهب المملكة..."
+            "en": "Chapter 1...",
+            "he": "פרק 1...",
+            "ar": "الفصل 1..."
           }
         },
         {
           "chapter": 2,
           "narrations": {
-            "en": "The knight climbed the great mountain and finally saw the dragon's lair...",
-            "he": "הפרש טיפס על ההר הגדול וסוף סוף ראה את מחילת הדרקון...",
-            "ar": "تسلق الفارس الجبل العظيم ورأى أخيراً وكر التنين..."
+            "en": "Chapter 2...",
+            "he": "פרק 2...",
+            "ar": "الفصل 2..."
           }
         },
         {
           "chapter": 3,
           "narrations": {
-            "en": "With courage and kindness, the knight made friends with the dragon. Together they flew home!",
-            "he": "באומץ ובנדיבות, הפרש התיידד עם הדרקון. יחד הם עפו הביתה!",
-            "ar": "بالشجاعة واللطف، صادق الفارس التنين. معاً طارا للوطن!"
+            "en": "Chapter 3...",
+            "he": "פרק 3...",
+            "ar": "الفصل 3..."
           }
         }
       ]
@@ -77,9 +77,9 @@
     {
       "id": "story3",
       "titles": {
-        "en": "Brave and Bold",
-        "he": "אמיץ ונועז",
-        "ar": "شجاع وجريء"
+        "en": "Story 3",
+        "he": "סיפור 3",
+        "ar": "قصة 3"
       },
       "companion_asset": "assets/characters/the_knight.png",
       "preview_asset": "assets/story_cards/story1.png",
@@ -88,25 +88,25 @@
         {
           "chapter": 1,
           "narrations": {
-            "en": "In the land of adventure, the bravest knight was called upon for a special mission...",
-            "he": "בארץ ההרפתקאות, הפרש האמיץ ביותר נקרא למשימה מיוחדת...",
-            "ar": "في أرض المغامرة، نودي أشجع الفرسان لمهمة خاصة..."
+            "en": "Chapter 1...",
+            "he": "פרק 1...",
+            "ar": "الفصل 1..."
           }
         },
         {
           "chapter": 2,
           "narrations": {
-            "en": "The bold knight faced the ancient dragon and did not back down...",
-            "he": "הפרש הנועז עמד מול הדרקון העתיק ולא נסוג...",
-            "ar": "واجه الفارس الجريء التنين القديم ولم يتراجع..."
+            "en": "Chapter 2...",
+            "he": "פרק 2...",
+            "ar": "الفصل 2..."
           }
         },
         {
           "chapter": 3,
           "narrations": {
-            "en": "The knight and dragon became the greatest team the kingdom had ever seen!",
-            "he": "הפרש והדרקון הפכו לצוות הגדול ביותר שהממלכה ראתה אי פעם!",
-            "ar": "أصبح الفارس والتنين أعظم فريق رأته المملكة على الإطلاق!"
+            "en": "Chapter 3...",
+            "he": "פרק 3...",
+            "ar": "الفصل 3..."
           }
         }
       ]
@@ -114,73 +114,52 @@
     {
       "id": "story4",
       "titles": {
-        "en": "The Ancient Castle",
-        "he": "הטירה העתיקה",
-        "ar": "القلعة القديمة"
-      },
-      "companion_asset": "assets/characters/the_dragon.png",
-      "preview_asset": "assets/story_cards/story1.png",
-      "drawing_ids": ["story4_ch1", "story4_ch2", "story4_ch3"],
-      "chapters": [
-        {
-          "chapter": 1,
-          "narrations": {
-            "en": "The ancient castle had been empty for one hundred years — until a knight arrived...",
-            "he": "הטירה העתיקה הייתה ריקה מאה שנים — עד שהגיע פרש...",
-            "ar": "ظلت القلعة القديمة خاليةً مئة عام، حتى وصل فارس..."
-          }
-        },
-        {
-          "chapter": 2,
-          "narrations": {
-            "en": "Inside the castle a dragon slept, guarding a long-forgotten treasure...",
-            "he": "בתוך הטירה ישן דרקון, שמר על אוצר שנשכח זמן רב...",
-            "ar": "داخل القلعة نام تنين يحرس كنزاً طال نسيانه..."
-          }
-        },
-        {
-          "chapter": 3,
-          "narrations": {
-            "en": "The treasure was friendship — and the castle came alive once more with laughter and joy!",
-            "he": "האוצר היה חברות — והטירה חזרה לחיים עם צחוק ושמחה!",
-            "ar": "كان الكنز هو الصداقة — وعادت القلعة للحياة بالضحك والفرح!"
-          }
-        }
-      ]
-    },
-    {
-      "id": "story5",
-      "titles": {
-        "en": "Heroes United",
-        "he": "גיבורים מאוחדים",
-        "ar": "أبطال متحدون"
+        "en": "Story 4",
+        "he": "סיפור 4",
+        "ar": "قصة 4"
       },
       "companion_asset": "assets/characters/the_knight.png",
       "preview_asset": "assets/story_cards/story1.png",
-      "drawing_ids": ["story5_ch1", "story5_ch2", "story5_ch3"],
+      "drawing_ids": ["story4_ch1", "story4_ch2", "story4_ch3", "story4_ch4", "story4_ch5"],
       "chapters": [
         {
           "chapter": 1,
           "narrations": {
-            "en": "Two heroes — one with a sword, one with wings — were destined to meet...",
-            "he": "שני גיבורים — אחד עם חרב ואחד עם כנפיים — היו גורלם להיפגש...",
-            "ar": "بطلان — أحدهما بسيف والآخر بأجنحة — كان مقدراً لهما اللقاء..."
+            "en": "Chapter 1...",
+            "he": "פרק 1...",
+            "ar": "الفصل 1..."
           }
         },
         {
           "chapter": 2,
           "narrations": {
-            "en": "When the hero knight met the hero dragon, the whole world held its breath...",
-            "he": "כשהפרש הגיבור פגש את הדרקון הגיבור, כל העולם עצר את נשימתו...",
-            "ar": "حين التقى الفارس البطل بالتنين البطل، احتبس أنفاس العالم كله..."
+            "en": "Chapter 2...",
+            "he": "פרק 2...",
+            "ar": "الفصل 2..."
           }
         },
         {
           "chapter": 3,
           "narrations": {
-            "en": "United, the two heroes protected the kingdom and lived happily ever after!",
-            "he": "מאוחדים, שני הגיבורים שמרו על הממלכה וחיו באושר לעד!",
-            "ar": "متحدَين، حمى البطلان المملكة وعاشا في سعادة دائمة!"
+            "en": "Chapter 3...",
+            "he": "פרק 3...",
+            "ar": "الفصل 3..."
+          }
+        },
+        {
+          "chapter": 4,
+          "narrations": {
+            "en": "Chapter 4...",
+            "he": "פרק 4...",
+            "ar": "الفصل 4..."
+          }
+        },
+        {
+          "chapter": 5,
+          "narrations": {
+            "en": "Chapter 5...",
+            "he": "פרק 5...",
+            "ar": "الفصل 5..."
           }
         }
       ]
