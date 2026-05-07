@@ -38,7 +38,7 @@ final _router = GoRouter(
       path: '/drawing/:drawingId',
       builder: (context, state) {
         final drawingId = state.pathParameters['drawingId']!;
-        return DrawingScreen(drawingId: drawingId);
+        return DrawingScreen(key: ValueKey(drawingId), drawingId: drawingId);
       },
     ),
     GoRoute(

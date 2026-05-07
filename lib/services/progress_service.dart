@@ -12,6 +12,20 @@ const _kOnboarding = 'onboarding_complete';
 const _kMusic = 'music_enabled';
 const _kSfx = 'sfx_enabled';
 const _kPurchase = 'purchase_unlocked';
+const _kDifficulty = 'difficulty';
+
+DifficultyMode _parseDifficulty(String? s) {
+  switch (s) {
+    case 'easy':
+      return DifficultyMode.easy;
+    case 'hard':
+      return DifficultyMode.hard;
+    case 'superHard':
+      return DifficultyMode.superHard;
+    default:
+      return DifficultyMode.normal;
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Service
@@ -35,6 +49,7 @@ class ProgressService {
       musicEnabled: prefs.getBool(_kMusic) ?? true,
       sfxEnabled: prefs.getBool(_kSfx) ?? true,
       purchaseUnlocked: prefs.getBool(_kPurchase) ?? false,
+      difficulty: _parseDifficulty(prefs.getString(_kDifficulty)),
     );
   }
 
@@ -48,6 +63,7 @@ class ProgressService {
     await prefs.setBool(_kMusic, model.musicEnabled);
     await prefs.setBool(_kSfx, model.sfxEnabled);
     await prefs.setBool(_kPurchase, model.purchaseUnlocked);
+    await prefs.setString(_kDifficulty, model.difficulty.name);
   }
 
   Future<void> markDrawingComplete(String drawingId) async {
@@ -73,6 +89,9 @@ class ProgressService {
 
   Future<void> setPurchaseUnlocked(bool value) async =>
       _prefs?.setBool(_kPurchase, value);
+
+  Future<void> setDifficulty(DifficultyMode mode) async =>
+      _prefs?.setString(_kDifficulty, mode.name);
 }
 
 // ---------------------------------------------------------------------------
@@ -120,6 +139,11 @@ class ProgressNotifier extends StateNotifier<ProgressModel> {
   Future<void> setPurchaseUnlocked(bool value) async {
     await _service.setPurchaseUnlocked(value);
     state = state.copyWith(purchaseUnlocked: value);
+  }
+
+  Future<void> setDifficulty(DifficultyMode mode) async {
+    await _service.setDifficulty(mode);
+    state = state.copyWith(difficulty: mode);
   }
 }
 

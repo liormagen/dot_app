@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../../models/progress_model.dart';
 import '../../services/asset_service.dart';
 import '../../services/progress_service.dart';
 import '../../widgets/parental_gate.dart';
@@ -56,6 +57,9 @@ class StorySelectionScreen extends ConsumerWidget {
                 child: _BoldHeader(
                   onGalleryTap: () => context.go('/gallery'),
                   onSettingsTap: () => _openSettings(context),
+                  difficulty: progress.difficulty,
+                  onDifficultyChanged: (mode) =>
+                      ref.read(progressProvider.notifier).setDifficulty(mode),
                 ),
               ),
               storiesAsync.when(
@@ -343,17 +347,21 @@ class _BoldHeader extends StatelessWidget {
   const _BoldHeader({
     required this.onGalleryTap,
     required this.onSettingsTap,
+    required this.difficulty,
+    required this.onDifficultyChanged,
   });
 
   final VoidCallback onGalleryTap;
   final VoidCallback onSettingsTap;
+  final DifficultyMode difficulty;
+  final void Function(DifficultyMode) onDifficultyChanged;
 
   @override
   Widget build(BuildContext context) {
     final top = MediaQuery.of(context).padding.top;
 
     return SizedBox(
-      height: top + 148,
+      height: top + 200,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -441,7 +449,7 @@ class _BoldHeader extends StatelessWidget {
 
           // Subtitle pill — centered below sticker
           Positioned(
-            bottom: 0,
+            bottom: 56,
             left: 0,
             right: 0,
             child: Center(
@@ -471,6 +479,51 @@ class _BoldHeader extends StatelessWidget {
                     ),
                   ),
                 ),
+              ),
+            ),
+          ),
+
+          // Difficulty toggle — 4 modes
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _DifficultyPill(
+                    label: 'Easy',
+                    icon: Icons.sentiment_satisfied_rounded,
+                    selected: difficulty == DifficultyMode.easy,
+                    color: _kGreen,
+                    onTap: () => onDifficultyChanged(DifficultyMode.easy),
+                  ),
+                  const SizedBox(width: 8),
+                  _DifficultyPill(
+                    label: 'Normal',
+                    icon: Icons.sentiment_neutral_rounded,
+                    selected: difficulty == DifficultyMode.normal,
+                    color: _kBlue,
+                    onTap: () => onDifficultyChanged(DifficultyMode.normal),
+                  ),
+                  const SizedBox(width: 8),
+                  _DifficultyPill(
+                    label: 'Hard',
+                    icon: Icons.timer_rounded,
+                    selected: difficulty == DifficultyMode.hard,
+                    color: _kRed,
+                    onTap: () => onDifficultyChanged(DifficultyMode.hard),
+                  ),
+                  const SizedBox(width: 8),
+                  _DifficultyPill(
+                    label: 'Super Hard',
+                    icon: Icons.whatshot_rounded,
+                    selected: difficulty == DifficultyMode.superHard,
+                    color: _kInk,
+                    onTap: () => onDifficultyChanged(DifficultyMode.superHard),
+                  ),
+                ],
               ),
             ),
           ),
@@ -561,6 +614,69 @@ class _InkIconButtonState extends State<_InkIconButton> {
                 ],
         ),
         child: Icon(widget.icon, color: Colors.white, size: 26),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Difficulty toggle pill
+// ---------------------------------------------------------------------------
+class _DifficultyPill extends StatelessWidget {
+  const _DifficultyPill({
+    required this.label,
+    required this.icon,
+    required this.selected,
+    required this.color,
+    required this.onTap,
+  });
+
+  final String label;
+  final IconData icon;
+  final bool selected;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 7),
+        decoration: BoxDecoration(
+          color: selected ? color : Colors.white,
+          borderRadius: BorderRadius.circular(99),
+          border: Border.all(color: _kInk, width: 3),
+          boxShadow: selected
+              ? [
+                  const BoxShadow(
+                      color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
+                ]
+              : [],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: selected ? Colors.white : _kInk,
+              size: 18,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: GoogleFonts.boogaloo(
+                color: selected ? Colors.white : _kInk,
+                fontSize: 18,
+                height: 1.0,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

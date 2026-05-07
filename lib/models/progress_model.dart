@@ -1,3 +1,5 @@
+enum DifficultyMode { easy, normal, hard, superHard }
+
 class ProgressModel {
   const ProgressModel({
     required this.completedDrawingIds,
@@ -6,6 +8,7 @@ class ProgressModel {
     required this.musicEnabled,
     required this.sfxEnabled,
     required this.purchaseUnlocked,
+    this.difficulty = DifficultyMode.normal,
   });
 
   final Set<String> completedDrawingIds;
@@ -14,6 +17,7 @@ class ProgressModel {
   final bool musicEnabled;
   final bool sfxEnabled;
   final bool purchaseUnlocked;
+  final DifficultyMode difficulty;
 
   static const ProgressModel initial = ProgressModel(
     completedDrawingIds: {},
@@ -22,6 +26,7 @@ class ProgressModel {
     musicEnabled: true,
     sfxEnabled: true,
     purchaseUnlocked: false,
+    difficulty: DifficultyMode.normal,
   );
 
   ProgressModel copyWith({
@@ -31,15 +36,16 @@ class ProgressModel {
     bool? musicEnabled,
     bool? sfxEnabled,
     bool? purchaseUnlocked,
+    DifficultyMode? difficulty,
   }) {
     return ProgressModel(
-      completedDrawingIds:
-          completedDrawingIds ?? this.completedDrawingIds,
+      completedDrawingIds: completedDrawingIds ?? this.completedDrawingIds,
       selectedLanguage: selectedLanguage ?? this.selectedLanguage,
       onboardingComplete: onboardingComplete ?? this.onboardingComplete,
       musicEnabled: musicEnabled ?? this.musicEnabled,
       sfxEnabled: sfxEnabled ?? this.sfxEnabled,
       purchaseUnlocked: purchaseUnlocked ?? this.purchaseUnlocked,
+      difficulty: difficulty ?? this.difficulty,
     );
   }
 }

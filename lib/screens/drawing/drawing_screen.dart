@@ -11,11 +11,14 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/dot_model.dart';
 import '../../models/drawing_model.dart';
+import '../../models/progress_model.dart';
 import '../../services/asset_service.dart';
 import '../../services/audio_service.dart';
 import '../../services/progress_service.dart';
 import '../../widgets/confetti_overlay.dart';
+import 'connection_builder.dart';
 import 'dot_canvas.dart';
+import 'dot_limiter.dart';
 import 'drawing_types.dart';
 import 'hint_controller.dart';
 
@@ -51,6 +54,15 @@ class DrawingSessionNotifier extends StateNotifier<DrawingSessionState> {
 
   void setHintingDot(int? dotId) =>
       state = state.copyWith(hintingDotId: dotId, clearHint: dotId == null);
+
+  void connectAll(List<Connection> allConnections, int lastDotId) {
+    state = state.copyWith(
+      connections: allConnections,
+      nextExpectedDotId: lastDotId,
+      isComplete: true,
+      clearHint: true,
+    );
+  }
 }
 
 final drawingSessionProvider = StateNotifierProvider.autoDispose<
@@ -70,7 +82,7 @@ const _kLineColors = [
   Color(0xFF4FC3F7), // sky blue
 ];
 
-enum _OverlayPhase { none, celebration, narration }
+enum _OverlayPhase { none, celebration, narration, timeout }
 
 LineStyle _styleForIndex(int i) {
   switch (i % 3) {
@@ -121,17 +133,27 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
 
   // Completion overlay
   _OverlayPhase _overlayPhase = _OverlayPhase.none;
-  late AnimationController _overlayEnterCtrl;  // celebration badge scale+fade
-  late AnimationController _panelCtrl;          // narration panel entrance
-  late AnimationController _celebCtrl;          // floating particles loop
+  late AnimationController _overlayEnterCtrl;
+  late AnimationController _panelCtrl;
+  late AnimationController _celebCtrl;
 
-  // Story/narration data loaded alongside the drawing
+  // Story/narration data
   String _narrationText = '';
   int _chapterNumber = 1;
   String _storyId = '';
   String? _nextDrawingId;
   bool _narrationPlaying = false;
   StreamSubscription<void>? _narrationSub;
+
+  // Difficulty & countdown
+  DifficultyMode _difficulty = DifficultyMode.normal;
+  int _remainingSeconds = 0;
+  int _totalSeconds = 0;
+  Timer? _countdownTimer;
+  bool _timerStarted = false;
+
+  // Progressive reveal (Hard / Super Hard)
+  int _visibleDotCount = 0; // 0 = all visible (Easy/Normal)
 
   Connection? _animatingConnection;
   final GlobalKey<ConfettiOverlayState> _confettiKey = GlobalKey();
@@ -169,13 +191,11 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
       })
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
-          // Short pause so the child sees the fully-revealed image, then celebrate
           Future.delayed(const Duration(milliseconds: 400), () {
             if (!mounted) return;
             setState(() => _overlayPhase = _OverlayPhase.celebration);
             _overlayEnterCtrl.forward();
             _celebCtrl.repeat();
-            // Auto-advance to narration after 2.2 s (or child taps first)
             Future.delayed(const Duration(milliseconds: 2200), () {
               if (mounted && _overlayPhase == _OverlayPhase.celebration) {
                 _showNarration();
@@ -222,7 +242,6 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
       final drawing = await assetSvc.loadDrawing(widget.drawingId);
       final colored = await _loadUiImage(drawing.imageColored);
 
-      // Load narration/story context for the completion overlay
       final stories = await assetSvc.loadStories();
       final story = stories.firstWhere(
         (s) => s.id == drawing.storyId,
@@ -236,8 +255,19 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
       final lang = ref.read(progressProvider).selectedLanguage;
 
       if (!mounted) return;
+      final difficulty = ref.read(progressProvider).difficulty;
+      final effectiveDots = _applyDotLimit(drawing.dots, difficulty, drawing);
+      final effectiveDrawing = drawing.copyWith(dots: effectiveDots);
+      final isTimedMode = difficulty == DifficultyMode.hard ||
+          difficulty == DifficultyMode.superHard;
+      final timerSecs = difficulty == DifficultyMode.hard
+          ? effectiveDots.length
+          : difficulty == DifficultyMode.superHard
+              ? (effectiveDots.length / 2).ceil()
+              : 0;
+
       setState(() {
-        _drawing = drawing;
+        _drawing = effectiveDrawing;
         _coloredImage = colored;
         _narrationText = chapter?.getNarration(lang) ?? '';
         _chapterNumber = chapter?.chapter ?? (chapterIdx + 1);
@@ -246,13 +276,19 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
             ? story.drawingIds[chapterIdx + 1]
             : null;
         _loading = false;
+        _difficulty = difficulty;
+        _totalSeconds = timerSecs;
+        _remainingSeconds = timerSecs;
+        _visibleDotCount =
+            isTimedMode ? min(5, effectiveDots.length) : 0;
       });
+      // Timer starts on first dot tap (A2) — not here
 
-      final sortedDots = List<DotModel>.from(drawing.dots)
+      final sortedDots = List<DotModel>.from(effectiveDots)
         ..sort((a, b) => a.id.compareTo(b.id));
       final firstId = sortedDots.isNotEmpty ? sortedDots.first.id : 1;
       ref.read(drawingSessionProvider.notifier).init(firstId);
-      _setupHintController(drawing, firstId);
+      _setupHintController(effectiveDrawing, firstId);
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -261,6 +297,10 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
       });
     }
   }
+
+  List<DotModel> _applyDotLimit(
+          List<DotModel> dots, DifficultyMode mode, DrawingModel drawing) =>
+      applyDotLimit(dots, mode, drawing.canvasWidth.toDouble(), drawing.canvasHeight.toDouble());
 
   Future<ui.Image?> _loadUiImage(String assetPath) async {
     try {
@@ -287,6 +327,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
 
   @override
   void dispose() {
+    _countdownTimer?.cancel();
     _lineAnimController.dispose();
     _hintPulseController.dispose();
     _revealController.dispose();
@@ -325,6 +366,8 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
     );
 
     if ((tapPosition - dotScreenPos).distance <= 22.0) {
+      // Progressive reveal: block tap on dots not yet visible
+      if (_visibleDotCount > 0 && targetDot.id > _visibleDotCount) return;
       _onCorrectTap(targetDot, drawing, tapPosition);
     } else {
       _onWrongTap();
@@ -346,6 +389,14 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
   void _onCorrectTap(
       DotModel tappedDot, DrawingModel drawing, Offset tapPos) {
     final session = ref.read(drawingSessionProvider);
+
+    // Start timer on first correct tap (A2)
+    final isTimedMode = _difficulty == DifficultyMode.hard ||
+        _difficulty == DifficultyMode.superHard;
+    if (isTimedMode && !_timerStarted && _totalSeconds > 0) {
+      _timerStarted = true;
+      _startCountdownTimer();
+    }
 
     _firstWrongTapTime = null;
     if (_spinHintActive) {
@@ -383,6 +434,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
       ref
           .read(drawingSessionProvider.notifier)
           .addConnection(newConn, nextDotId, isLast);
+      _updateVisibleCount();
     } else {
       ref.read(drawingSessionProvider.notifier).init(
             isLast ? tappedDot.id : nextDotId,
@@ -401,8 +453,6 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
 
     if (isLast) {
       final firstDot = sortedDots.first;
-      // Wait for the last-dot animation (300 ms) then draw the closing line
-      // connecting last dot back to first dot, then begin the image reveal.
       Future.delayed(const Duration(milliseconds: 310), () {
         if (!mounted) return;
         final sess = ref.read(drawingSessionProvider);
@@ -419,14 +469,27 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
               .read(drawingSessionProvider.notifier)
               .addConnection(closingConn, tappedDot.id, true);
           setState(() => _animatingConnection = null);
-          // Short pause to admire the closed shape, then reveal the image
           Future.delayed(const Duration(milliseconds: 200), () {
             if (!mounted) return;
+            _countdownTimer?.cancel();
             setState(() => _isRevealing = true);
             _revealController.forward();
           });
         });
       });
+    }
+  }
+
+  void _updateVisibleCount() {
+    final drawing = _drawing;
+    if (drawing == null) return;
+    if (_difficulty != DifficultyMode.hard &&
+        _difficulty != DifficultyMode.superHard) return;
+    final session = ref.read(drawingSessionProvider);
+    final newVisible =
+        min(5 + session.connections.length * 3, drawing.dots.length);
+    if (newVisible != _visibleDotCount) {
+      setState(() => _visibleDotCount = newVisible);
     }
   }
 
@@ -461,19 +524,115 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
     if (mounted) setState(() => _narrationPlaying = false);
   }
 
-  Future<void> _finishAndNavigate() async {
+  // QA helper: auto-connect all dots and trigger the normal completion flow.
+  void _skipToReveal() {
+    final drawing = _drawing;
+    if (drawing == null || _isRevealing || _overlayPhase != _OverlayPhase.none) {
+      return;
+    }
+
+    _countdownTimer?.cancel();
+    _hintController?.cancel();
+    _hintPulseController.stop();
+    _hintPulseController.reset();
+    _spinController.stop();
+    _spinController.reset();
+
+    if (drawing.dots.isEmpty) return;
+    final connections = buildAllConnections(drawing.dots);
+    final lastId = (List<DotModel>.from(drawing.dots)
+          ..sort((a, b) => a.id.compareTo(b.id)))
+        .last
+        .id;
+
+    ref
+        .read(drawingSessionProvider.notifier)
+        .connectAll(connections, lastId);
+
+    _lineAnimController.reset();
+    _revealController.reset();
+    setState(() {
+      _isRevealing = true;
+      _animatingConnection = null;
+      _spinHintActive = false;
+      _firstWrongTapTime = null;
+      _visibleDotCount = 0; // show all dots instantly
+    });
+    _revealController.forward();
+  }
+
+  void _finishAndNavigate() {
     _stopNarration();
+    _countdownTimer?.cancel();
     if (!mounted) return;
-    await ref
-        .read(progressProvider.notifier)
-        .markDrawingComplete(widget.drawingId);
-    if (!mounted) return;
+    ref.read(progressProvider.notifier).markDrawingComplete(widget.drawingId);
     final nextId = _nextDrawingId;
     if (nextId != null) {
       context.go('/drawing/$nextId');
-    } else {
+    } else if (_storyId.isNotEmpty) {
       context.go('/story-complete/$_storyId');
+    } else {
+      context.go('/stories');
     }
+  }
+
+  void _startCountdownTimer() {
+    _countdownTimer?.cancel();
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) {
+        _countdownTimer?.cancel();
+        return;
+      }
+      if (_remainingSeconds <= 1) {
+        _countdownTimer?.cancel();
+        setState(() => _remainingSeconds = 0);
+        _onTimerExpired();
+      } else {
+        setState(() => _remainingSeconds--);
+      }
+    });
+  }
+
+  void _onTimerExpired() {
+    if (!mounted) return;
+    HapticFeedback.heavyImpact();
+    final drawing = _drawing;
+    if (drawing == null) return;
+
+    _hintController?.cancel();
+    _hintPulseController.stop();
+    _hintPulseController.reset();
+    _spinController.stop();
+    _spinController.reset();
+
+    final sortedDots = List<DotModel>.from(drawing.dots)
+      ..sort((a, b) => a.id.compareTo(b.id));
+    final firstId = sortedDots.isNotEmpty ? sortedDots.first.id : 1;
+    ref.read(drawingSessionProvider.notifier).init(firstId);
+    _lineAnimController.reset();
+
+    setState(() {
+      _overlayPhase = _OverlayPhase.timeout;
+      _isRevealing = false;
+      _animatingConnection = null;
+      _spinHintActive = false;
+      _firstWrongTapTime = null;
+      _visibleDotCount = min(5, drawing.dots.length);
+    });
+  }
+
+  void _resetAfterTimeout() {
+    final drawing = _drawing;
+    if (drawing == null) return;
+    _timerStarted = false;
+    final sortedDots = List<DotModel>.from(drawing.dots)
+      ..sort((a, b) => a.id.compareTo(b.id));
+    final firstId = sortedDots.isNotEmpty ? sortedDots.first.id : 1;
+    setState(() {
+      _overlayPhase = _OverlayPhase.none;
+      _remainingSeconds = _totalSeconds;
+    });
+    _setupHintController(drawing, firstId);
   }
 
   // ---------------------------------------------------------------------------
@@ -578,6 +737,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                     revealProgress: _revealController.value,
                     spinHintProgress: _spinController.value,
                     spinHintActive: _spinHintActive,
+                    visibleDotCount: _visibleDotCount,
                   ),
                 ),
               );
@@ -587,40 +747,9 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
         Positioned.fill(
           child: ConfettiOverlay(key: _confettiKey),
         ),
-        // Completion overlay — appears after image is fully revealed
+        // Completion / timeout overlay
         if (overlayActive)
           Positioned.fill(child: _buildCompletionOverlay()),
-        // ── DEBUG SKIP BUTTON — remove before release ──────────────────────
-        if (!overlayActive)
-          Positioned(
-            right: 20,
-            bottom: 28,
-            child: GestureDetector(
-              onTap: _finishAndNavigate,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                decoration: BoxDecoration(
-                  color: _kRed,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: _kInk, width: 3),
-                  boxShadow: const [
-                    BoxShadow(
-                        color: _kInk, blurRadius: 0, offset: Offset(4, 4)),
-                  ],
-                ),
-                child: Text(
-                  'Next ▶',
-                  style: GoogleFonts.boogaloo(
-                    color: Colors.white,
-                    fontSize: 22,
-                    height: 1.0,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        // ── END DEBUG ──────────────────────────────────────────────────────
       ],
     );
   }
@@ -629,7 +758,58 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
 
   Widget _buildCompletionOverlay() {
     if (_overlayPhase == _OverlayPhase.narration) return _buildNarrationPanel();
+    if (_overlayPhase == _OverlayPhase.timeout) return _buildTimeoutOverlay();
     return _buildCelebrationLayer();
+  }
+
+  Widget _buildTimeoutOverlay() {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        color: Colors.black.withValues(alpha: 0.62),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 22),
+                decoration: BoxDecoration(
+                  color: _kRed,
+                  borderRadius: BorderRadius.circular(99),
+                  border: Border.all(color: _kInk, width: 4),
+                  boxShadow: const [
+                    BoxShadow(
+                        color: _kInk, blurRadius: 0, offset: Offset(6, 6)),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.timer_off_rounded,
+                        color: Colors.white, size: 48),
+                    const SizedBox(width: 16),
+                    Text(
+                      "Time's Up!",
+                      style: GoogleFonts.boogaloo(
+                        color: Colors.white,
+                        fontSize: 56,
+                        height: 1.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 40),
+              _DrawingNextButton(
+                label: "Let's Go!  →",
+                onTap: _resetAfterTimeout,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildCelebrationLayer() {
@@ -644,12 +824,10 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // Floating celebration particles
           CustomPaint(
             painter: _CompletionParticlesPainter(
                 progress: _celebCtrl.value),
           ),
-          // Name badge + stars — centered, pops in with elastic scale
           Center(
             child: Transform.scale(
               scale: (0.6 + 0.4 * t).clamp(0.0, 1.15),
@@ -733,14 +911,12 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
     return Stack(
       fit: StackFit.expand,
       children: [
-        // Light scrim — absorbs taps, dims the canvas above
         Positioned.fill(
           child: Container(
             color: Colors.black.withValues(
                 alpha: (0.22 * _panelCtrl.value).clamp(0.0, 0.22)),
           ),
         ),
-        // Narration panel — slides/scales up from bottom
         Align(
           alignment: Alignment.bottomCenter,
           child: Transform.scale(
@@ -823,16 +999,17 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
   }
 
   Widget _buildProgressBar(int connected, int total) {
-    // Fix: show "1/N" at start (which dot you're connecting TO), not "0/N"
     final displayed = connected + 1;
     final fraction = total > 0 ? displayed / total : 0.0;
 
-    // Fill color shifts from red → blue → green as progress grows
     final Color fillColor = fraction < 0.35
         ? _kRed
         : fraction < 0.68
             ? _kBlue
             : _kGreen;
+
+    final isTimedMode = _difficulty == DifficultyMode.hard ||
+        _difficulty == DifficultyMode.superHard;
 
     return Container(
       height: 72,
@@ -848,7 +1025,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
-          // Home button — round red with hard shadow
+          // Home button
           GestureDetector(
             onTap: () => context.go('/stories'),
             child: Container(
@@ -862,11 +1039,12 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                   BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
                 ],
               ),
-              child: const Icon(Icons.home_rounded, color: Colors.white, size: 24),
+              child: const Icon(Icons.home_rounded,
+                  color: Colors.white, size: 24),
             ),
           ),
           const SizedBox(width: 12),
-          // Counter badge — ink pill with star + "X / Y"
+          // Counter badge
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
             decoration: BoxDecoration(
@@ -893,7 +1071,15 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
             ),
           ),
           const SizedBox(width: 12),
-          // Progress track — chunky Toca Boca bar
+          // Timer badge (timed modes only)
+          if (isTimedMode) ...[
+            _TimerBadge(
+              remaining: _remainingSeconds,
+              total: _totalSeconds,
+            ),
+            const SizedBox(width: 12),
+          ],
+          // Progress track
           Expanded(
             child: Container(
               height: 26,
@@ -918,6 +1104,10 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
               ),
             ),
           ),
+          const SizedBox(width: 10),
+          // ── DEBUG skip button — remove before release ──────────────────
+          SkipButton(onTap: _skipToReveal),
+          // ── END DEBUG ──────────────────────────────────────────────────
         ],
       ),
     );
@@ -945,8 +1135,7 @@ class _CompletionParticlesPainter extends CustomPainter {
       final r = 3.5 + rand.nextDouble() * 5.5;
       final phase = rand.nextDouble() * pi * 2;
       final alpha =
-          (0.5 + 0.5 * sin(progress * pi * 3 + phase))
-              .clamp(0.0, 1.0);
+          (0.5 + 0.5 * sin(progress * pi * 3 + phase)).clamp(0.0, 1.0);
       paint.color =
           colors[i % colors.length].withValues(alpha: alpha * 0.88);
       canvas.drawCircle(
@@ -1033,6 +1222,159 @@ class _DrawingVoiceButton extends StatelessWidget {
   }
 }
 
+// ── Hard-mode countdown badge — bigger + panic pulse on last 5s ───────────────
+
+class _TimerBadge extends StatefulWidget {
+  const _TimerBadge({required this.remaining, required this.total});
+  final int remaining;
+  final int total;
+
+  @override
+  State<_TimerBadge> createState() => _TimerBadgeState();
+}
+
+class _TimerBadgeState extends State<_TimerBadge>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _panicCtrl;
+  late Animation<double> _panicScale;
+
+  @override
+  void initState() {
+    super.initState();
+    _panicCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 380),
+    );
+    _panicScale = Tween<double>(begin: 1.0, end: 1.3)
+        .chain(CurveTween(curve: Curves.elasticOut))
+        .animate(_panicCtrl);
+    _maybePanic();
+  }
+
+  @override
+  void didUpdateWidget(_TimerBadge oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.remaining != widget.remaining) _maybePanic();
+  }
+
+  void _maybePanic() {
+    if (widget.remaining <= 5 && widget.remaining > 0) {
+      _panicCtrl.forward(from: 0).then((_) {
+        if (mounted) _panicCtrl.reverse();
+      });
+    } else if (widget.remaining > 5) {
+      _panicCtrl.stop();
+      _panicCtrl.reset();
+    }
+  }
+
+  @override
+  void dispose() {
+    _panicCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final fraction =
+        widget.total > 0 ? widget.remaining / widget.total : 0.0;
+    final isPanic = widget.remaining <= 5 && widget.remaining > 0;
+    final Color badgeColor = isPanic
+        ? _kRed
+        : fraction > 0.5
+            ? _kGreen
+            : fraction > 0.25
+                ? _kYellow
+                : _kRed;
+
+    return AnimatedBuilder(
+      animation: _panicCtrl,
+      builder: (_, child) =>
+          Transform.scale(scale: _panicScale.value, child: child),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+        decoration: BoxDecoration(
+          color: badgeColor,
+          borderRadius: BorderRadius.circular(99),
+          border: Border.all(color: _kInk, width: 3),
+          boxShadow: const [
+            BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.schedule_rounded, color: Colors.white, size: 32),
+            const SizedBox(width: 8),
+            Text(
+              '${widget.remaining}',
+              style: GoogleFonts.boogaloo(
+                color: Colors.white,
+                fontSize: 30,
+                height: 1.0,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── DEBUG: Skip button ────────────────────────────────────────────────────────
+
+class SkipButton extends StatefulWidget {
+  const SkipButton({required this.onTap});
+  final VoidCallback onTap;
+
+  @override
+  State<SkipButton> createState() => SkipButtonState();
+}
+
+class SkipButtonState extends State<SkipButton> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTapDown: (_) => setState(() => _pressed = true),
+      onTapUp: (_) {
+        setState(() => _pressed = false);
+        widget.onTap();
+      },
+      onTapCancel: () => setState(() => _pressed = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 80),
+        transform:
+            _pressed ? Matrix4.translationValues(3, 3, 0) : Matrix4.identity(),
+        padding:
+            const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+        decoration: BoxDecoration(
+          color: _kRed,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: _kInk, width: 3),
+          boxShadow: _pressed
+              ? []
+              : const [
+                  BoxShadow(
+                      color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
+                ],
+        ),
+        child: Text(
+          'Skip ▶',
+          style: GoogleFonts.boogaloo(
+            color: Colors.white,
+            fontSize: 18,
+            height: 1.0,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 // ── Next / continue button ────────────────────────────────────────────────────
 
 class _DrawingNextButton extends StatefulWidget {
@@ -1050,6 +1392,7 @@ class _DrawingNextButtonState extends State<_DrawingNextButton> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTapDown: (_) => setState(() => _pressed = true),
       onTapUp: (_) {
         setState(() => _pressed = false);

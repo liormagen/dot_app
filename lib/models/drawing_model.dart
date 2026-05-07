@@ -43,6 +43,23 @@ class DrawingModel {
 
   String getName(String lang) => names[lang] ?? names['en'] ?? id;
 
+  DrawingModel copyWith({List<DotModel>? dots}) {
+    return DrawingModel(
+      id: id,
+      names: names,
+      storyId: storyId,
+      chapter: chapter,
+      difficulty: difficulty,
+      canvasWidth: canvasWidth,
+      canvasHeight: canvasHeight,
+      imageOutline: imageOutline,
+      imageColored: imageColored,
+      tutorialSteps: tutorialSteps,
+      dots: dots ?? this.dots,
+      audioPath: audioPath,
+    );
+  }
+
   factory DrawingModel.fromJson(Map<String, dynamic> json) {
     final namesRaw = json['names'] as Map<String, dynamic>? ?? {};
     final tutorialRaw = json['tutorial_steps'] as List<dynamic>? ?? [];

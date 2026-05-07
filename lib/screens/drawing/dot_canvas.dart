@@ -20,6 +20,7 @@ class DotCanvasPainter extends CustomPainter {
     this.revealProgress = 0.0,
     this.spinHintProgress = 0.0,
     this.spinHintActive = false,
+    this.visibleDotCount = 0,
   });
 
   final DrawingModel drawing;
@@ -35,6 +36,7 @@ class DotCanvasPainter extends CustomPainter {
 
   final double spinHintProgress;
   final bool spinHintActive;
+  final int visibleDotCount; // 0 = all visible; >0 = max visible dot id
 
   Offset _toCanvas(DotModel dot) => Offset(
         dot.x * scale + offset.dx,
@@ -74,8 +76,11 @@ class DotCanvasPainter extends CustomPainter {
       canvas.restore();
     }
 
-    // 5. Dots (always on top)
-    for (final dot in drawing.dots) {
+    // 5. Dots (always on top) — filtered by visibleDotCount in progressive reveal
+    final dotsToRender = visibleDotCount > 0
+        ? drawing.dots.where((d) => d.id <= visibleDotCount).toList()
+        : drawing.dots;
+    for (final dot in dotsToRender) {
       _drawDot(canvas, dot);
     }
   }
