@@ -14,18 +14,6 @@ const _kSfx = 'sfx_enabled';
 const _kPurchase = 'purchase_unlocked';
 const _kDifficulty = 'difficulty';
 
-DifficultyMode _parseDifficulty(String? s) {
-  switch (s) {
-    case 'easy':
-      return DifficultyMode.easy;
-    case 'hard':
-      return DifficultyMode.hard;
-    case 'superHard':
-      return DifficultyMode.superHard;
-    default:
-      return DifficultyMode.normal;
-  }
-}
 
 // ---------------------------------------------------------------------------
 // Service
@@ -49,7 +37,7 @@ class ProgressService {
       musicEnabled: prefs.getBool(_kMusic) ?? true,
       sfxEnabled: prefs.getBool(_kSfx) ?? true,
       purchaseUnlocked: prefs.getBool(_kPurchase) ?? false,
-      difficulty: _parseDifficulty(prefs.getString(_kDifficulty)),
+      difficulty: parseDifficultyMode(prefs.getString(_kDifficulty)),
     );
   }
 

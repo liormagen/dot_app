@@ -21,6 +21,7 @@ import 'dot_canvas.dart';
 import 'dot_limiter.dart';
 import 'drawing_types.dart';
 import 'hint_controller.dart';
+import 'zoom_math.dart';
 
 export 'drawing_types.dart';
 
@@ -155,12 +156,30 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
   // Progressive reveal (Hard / Super Hard)
   int _visibleDotCount = 0; // 0 = all visible (Easy/Normal)
 
+  // Zoom / pan (Hard / SuperHard only)
+  late TransformationController _transformController;
+  double _zoomScale = 1.0;
+  Size? _canvasSize;
+  bool _showZoomHint = false;
+
+  bool get _isZoomMode =>
+      _difficulty == DifficultyMode.hard ||
+      _difficulty == DifficultyMode.superHard;
+
   Connection? _animatingConnection;
   final GlobalKey<ConfettiOverlayState> _confettiKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
+
+    _transformController = TransformationController();
+    _transformController.addListener(() {
+      final s = _transformController.value.getMaxScaleOnAxis();
+      if (s != _zoomScale) {
+        setState(() => _zoomScale = s);
+      }
+    });
 
     _lineAnimController = AnimationController(
       vsync: this,
@@ -284,6 +303,15 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
       });
       // Timer starts on first dot tap (A2) — not here
 
+      // Show zoom hint briefly for Hard/SuperHard
+      if (difficulty == DifficultyMode.hard ||
+          difficulty == DifficultyMode.superHard) {
+        setState(() => _showZoomHint = true);
+        Future.delayed(const Duration(seconds: 4), () {
+          if (mounted) setState(() => _showZoomHint = false);
+        });
+      }
+
       final sortedDots = List<DotModel>.from(effectiveDots)
         ..sort((a, b) => a.id.compareTo(b.id));
       final firstId = sortedDots.isNotEmpty ? sortedDots.first.id : 1;
@@ -337,6 +365,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
     _celebCtrl.dispose();
     _hintController?.dispose();
     _narrationSub?.cancel();
+    _transformController.dispose();
     super.dispose();
   }
 
@@ -648,6 +677,108 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
     return (scale, Offset(dx, dy));
   }
 
+  // ---------------------------------------------------------------------------
+  // Zoom helpers
+  // ---------------------------------------------------------------------------
+
+  void _applyZoom(double newScale) {
+    final size = _canvasSize;
+    if (size == null) return;
+    _transformController.value =
+        zoomMatrixCenteredOn(newScale, size.width / 2, size.height / 2);
+  }
+
+  void _zoomIn() {
+    final next = (_zoomScale + 0.5).clamp(1.0, 5.0);
+    _applyZoom(next);
+  }
+
+  void _zoomOut() {
+    final next = (_zoomScale - 0.5).clamp(1.0, 5.0);
+    _applyZoom(next);
+  }
+
+  void _snapToNextDot(DrawingModel drawing, DrawingSessionState session) {
+    final size = _canvasSize;
+    if (size == null) return;
+    final so = _computeScaleOffset(drawing, size);
+    final dotEntry = drawing.dots
+        .where((d) => d.id == session.nextExpectedDotId)
+        .firstOrNull;
+    if (dotEntry == null) return;
+    final dx = dotEntry.x * so.$1 + so.$2.dx;
+    final dy = dotEntry.y * so.$1 + so.$2.dy;
+    _transformController.value =
+        snapToDotMatrix(_zoomScale, dx, dy, size.width, size.height);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Minimap widget
+  // ---------------------------------------------------------------------------
+
+  Widget _buildMinimap(DrawingModel drawing, DrawingSessionState session) {
+    final size = _canvasSize!;
+    final so = _computeScaleOffset(drawing, size);
+    return Container(
+      width: 160,
+      height: 120,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: _kInk, width: 2),
+        boxShadow: const [
+          BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: CustomPaint(
+        painter: _MinimapPainter(
+          drawing: drawing,
+          session: session,
+          fitScale: so.$1,
+          fitOffset: so.$2,
+          zoomMatrix: _transformController.value,
+          viewportSize: size,
+        ),
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Zoom hint widget
+  // ---------------------------------------------------------------------------
+
+  Widget _buildZoomHint() {
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        decoration: BoxDecoration(
+          color: _kYellow,
+          borderRadius: BorderRadius.circular(99),
+          border: Border.all(color: _kInk, width: 3),
+          boxShadow: const [
+            BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(4, 4)),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.pinch_rounded, color: _kInk, size: 28),
+            const SizedBox(width: 10),
+            Text(
+              'Pinch to zoom!',
+              style: GoogleFonts.boogaloo(
+                color: _kInk,
+                fontSize: 22,
+                height: 1.0,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final session = ref.watch(drawingSessionProvider);
@@ -716,34 +847,68 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
             builder: (context, constraints) {
               final widgetSize =
                   Size(constraints.maxWidth, constraints.maxHeight);
+              // Store canvas size for zoom controls / minimap
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (_canvasSize != widgetSize) {
+                  if (mounted) setState(() => _canvasSize = widgetSize);
+                }
+              });
               final so = _computeScaleOffset(drawing, widgetSize);
 
-              return GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTapDown: (_isRevealing || overlayActive)
-                    ? null
-                    : (d) => _handleTap(d.localPosition, widgetSize),
-                child: CustomPaint(
-                  size: widgetSize,
-                  painter: DotCanvasPainter(
-                    drawing: drawing,
-                    session: session,
-                    lineAnimProgress: _lineAnimController.value,
-                    hintPulse: _hintPulseController.value,
-                    animatingConnection: _animatingConnection,
-                    scale: so.$1,
-                    offset: so.$2,
-                    revealImage: _coloredImage,
-                    revealProgress: _revealController.value,
-                    spinHintProgress: _spinController.value,
-                    spinHintActive: _spinHintActive,
-                    visibleDotCount: _visibleDotCount,
-                  ),
+              final canvasPainter = CustomPaint(
+                size: widgetSize,
+                painter: DotCanvasPainter(
+                  drawing: drawing,
+                  session: session,
+                  lineAnimProgress: _lineAnimController.value,
+                  hintPulse: _hintPulseController.value,
+                  animatingConnection: _animatingConnection,
+                  scale: so.$1,
+                  offset: so.$2,
+                  revealImage: _coloredImage,
+                  revealProgress: _revealController.value,
+                  spinHintProgress: _spinController.value,
+                  spinHintActive: _spinHintActive,
+                  visibleDotCount: _visibleDotCount,
+                ),
+              );
+
+              return InteractiveViewer(
+                transformationController: _transformController,
+                scaleEnabled: _isZoomMode,
+                panEnabled: _isZoomMode,
+                minScale: 1.0,
+                maxScale: 5.0,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTapUp: (_isRevealing || overlayActive)
+                      ? null
+                      : (d) => _handleTap(d.localPosition, widgetSize),
+                  child: canvasPainter,
                 ),
               );
             },
           ),
         ),
+        // Minimap (Hard/SuperHard, shown only when zoomed in)
+        if (_isZoomMode && _zoomScale > 1.05 && _canvasSize != null)
+          Positioned(
+            bottom: 80,
+            right: 16,
+            child: _buildMinimap(drawing, session),
+          ),
+        // First-time zoom hint
+        if (_showZoomHint && _isZoomMode)
+          Positioned(
+            bottom: 100,
+            left: 0,
+            right: 0,
+            child: AnimatedOpacity(
+              opacity: _showZoomHint ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 400),
+              child: _buildZoomHint(),
+            ),
+          ),
         Positioned.fill(
           child: ConfettiOverlay(key: _confettiKey),
         ),
@@ -1078,6 +1243,38 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
               total: _totalSeconds,
             ),
             const SizedBox(width: 12),
+          ],
+          // Zoom controls (Hard/SuperHard only)
+          if (isTimedMode) ...[
+            _ZoomControlButton(
+              icon: Icons.remove_rounded,
+              onTap: _zoomOut,
+            ),
+            const SizedBox(width: 4),
+            if (_zoomScale > 1.05)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Text(
+                  '${_zoomScale.toStringAsFixed(1)}×',
+                  style: GoogleFonts.boogaloo(
+                    color: _kInk,
+                    fontSize: 18,
+                    height: 1.0,
+                  ),
+                ),
+              ),
+            _ZoomControlButton(
+              icon: Icons.add_rounded,
+              onTap: _zoomIn,
+            ),
+            const SizedBox(width: 6),
+            _FindDotButton(onTap: () {
+              final d = _drawing;
+              if (d != null) {
+                _snapToNextDot(d, ref.read(drawingSessionProvider));
+              }
+            }),
+            const SizedBox(width: 8),
           ],
           // Progress track
           Expanded(
@@ -1425,6 +1622,209 @@ class _DrawingNextButtonState extends State<_DrawingNextButton> {
             fontSize: 26,
             height: 1.0,
           ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Minimap painter ───────────────────────────────────────────────────────────
+
+class _MinimapPainter extends CustomPainter {
+  const _MinimapPainter({
+    required this.drawing,
+    required this.session,
+    required this.fitScale,
+    required this.fitOffset,
+    required this.zoomMatrix,
+    required this.viewportSize,
+  });
+
+  final DrawingModel drawing;
+  final DrawingSessionState session;
+  final double fitScale;
+  final Offset fitOffset;
+  final Matrix4 zoomMatrix;
+  final Size viewportSize;
+
+  static const double _w = 160;
+  static const double _h = 120;
+
+  Offset _toMinimap(Offset p) =>
+      Offset(p.dx * (_w / viewportSize.width), p.dy * (_h / viewportSize.height));
+
+  Offset _dotToWidget(DotModel d) =>
+      Offset(d.x * fitScale + fitOffset.dx, d.y * fitScale + fitOffset.dy);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // White background
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, _w, _h),
+      Paint()..color = Colors.white,
+    );
+
+    // Completed connections
+    final connPaint = Paint()
+      ..strokeWidth = 0.8
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+    for (final conn in session.connections) {
+      connPaint.color = conn.color;
+      final from = _toMinimap(_dotToWidget(conn.from));
+      final to = _toMinimap(_dotToWidget(conn.to));
+      canvas.drawLine(from, to, connPaint);
+    }
+
+    // All dots
+    final connectedIds = <int>{};
+    for (final c in session.connections) {
+      connectedIds.add(c.from.id);
+      connectedIds.add(c.to.id);
+    }
+    for (final dot in drawing.dots) {
+      final pos = _toMinimap(_dotToWidget(dot));
+      final isConnected = connectedIds.contains(dot.id);
+      canvas.drawCircle(
+        pos,
+        2.0,
+        Paint()
+          ..color = isConnected
+              ? _kGreen
+              : _kInk.withValues(alpha: 0.4)
+          ..style = PaintingStyle.fill,
+      );
+    }
+
+    // Viewport rectangle
+    final vpRect = viewportRectFromMatrix(zoomMatrix, viewportSize);
+    final rect = Rect.fromPoints(
+        _toMinimap(vpRect.topLeft), _toMinimap(vpRect.bottomRight));
+    canvas.drawRect(
+      rect,
+      Paint()
+        ..color = _kRed.withValues(alpha: 0.2)
+        ..style = PaintingStyle.fill,
+    );
+    canvas.drawRect(
+      rect,
+      Paint()
+        ..color = _kRed
+        ..strokeWidth = 1.5
+        ..style = PaintingStyle.stroke,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_MinimapPainter old) =>
+      old.session != session ||
+      old.zoomMatrix != zoomMatrix ||
+      old.fitScale != fitScale ||
+      old.fitOffset != fitOffset;
+}
+
+// ── Zoom control button (+ / −) ───────────────────────────────────────────────
+
+class _ZoomControlButton extends StatefulWidget {
+  const _ZoomControlButton({required this.icon, required this.onTap});
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  State<_ZoomControlButton> createState() => _ZoomControlButtonState();
+}
+
+class _ZoomControlButtonState extends State<_ZoomControlButton> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTapDown: (_) => setState(() => _pressed = true),
+      onTapUp: (_) {
+        setState(() => _pressed = false);
+        HapticFeedback.lightImpact();
+        widget.onTap();
+      },
+      onTapCancel: () => setState(() => _pressed = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 80),
+        transform: _pressed
+            ? Matrix4.translationValues(2, 2, 0)
+            : Matrix4.identity(),
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: _kBlue,
+          shape: BoxShape.circle,
+          border: Border.all(color: _kInk, width: 2),
+          boxShadow: _pressed
+              ? []
+              : const [
+                  BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(2, 2)),
+                ],
+        ),
+        child: Icon(widget.icon, color: Colors.white, size: 20),
+      ),
+    );
+  }
+}
+
+// ── Find next dot button ──────────────────────────────────────────────────────
+
+class _FindDotButton extends StatefulWidget {
+  const _FindDotButton({required this.onTap});
+  final VoidCallback onTap;
+
+  @override
+  State<_FindDotButton> createState() => _FindDotButtonState();
+}
+
+class _FindDotButtonState extends State<_FindDotButton> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTapDown: (_) => setState(() => _pressed = true),
+      onTapUp: (_) {
+        setState(() => _pressed = false);
+        HapticFeedback.lightImpact();
+        widget.onTap();
+      },
+      onTapCancel: () => setState(() => _pressed = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 80),
+        transform: _pressed
+            ? Matrix4.translationValues(2, 2, 0)
+            : Matrix4.identity(),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: _kGreen,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: _kInk, width: 2),
+          boxShadow: _pressed
+              ? []
+              : const [
+                  BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(2, 2)),
+                ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.adjust_rounded, color: Colors.white, size: 16),
+            const SizedBox(width: 4),
+            Text(
+              'Find ●',
+              style: GoogleFonts.boogaloo(
+                color: Colors.white,
+                fontSize: 14,
+                height: 1.0,
+              ),
+            ),
+          ],
         ),
       ),
     );

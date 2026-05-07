@@ -1,5 +1,18 @@
 enum DifficultyMode { easy, normal, hard, superHard }
 
+DifficultyMode parseDifficultyMode(String? s) {
+  switch (s) {
+    case 'easy':
+      return DifficultyMode.easy;
+    case 'hard':
+      return DifficultyMode.hard;
+    case 'superHard':
+      return DifficultyMode.superHard;
+    default:
+      return DifficultyMode.normal;
+  }
+}
+
 class ProgressModel {
   const ProgressModel({
     required this.completedDrawingIds,
