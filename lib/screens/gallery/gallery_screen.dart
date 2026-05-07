@@ -171,7 +171,7 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
               Expanded(
                 child: Text(
                   l10n.gallery,
-                  style: TextStyle(fontFamily: 'Fredoka',
+                  style: const TextStyle(fontFamily: 'Fredoka',
                     fontSize: 32,
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
@@ -207,7 +207,7 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
               Expanded(
                 child: Text(
                   story.getTitle(lang),
-                  style: TextStyle(fontFamily: 'Fredoka',
+                  style: const TextStyle(fontFamily: 'Fredoka',
                     fontSize: 26,
                     fontWeight: FontWeight.w700,
                     color: _kForeground,
@@ -464,7 +464,7 @@ class _DrawingCardState extends State<_DrawingCard>
               ),
             ),
             const SizedBox(height: 8),
-            Text(
+            const Text(
               '?',
               style: TextStyle(fontFamily: 'Fredoka',
                 fontSize: 32,
@@ -538,7 +538,7 @@ class _FullScreenDialog extends StatelessWidget {
                   ),
                   child: Text(
                     drawing.getName(lang),
-                    style: TextStyle(fontFamily: 'Fredoka',
+                    style: const TextStyle(fontFamily: 'Fredoka',
                       fontSize: 28,
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
@@ -586,12 +586,12 @@ class _FullScreenDialog extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.star_rounded,
+                      Icon(Icons.star_rounded,
                           size: 16, color: _kNight),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4),
                       Text(
                         'Done',
                         style: TextStyle(fontFamily: 'Fredoka',

@@ -346,7 +346,7 @@ class _TransitionScreenState extends ConsumerState<TransitionScreen>
                   const SizedBox(width: 8),
                   Text(
                     AppLocalizations.of(context)!.chapter(widget.chapterIndex + 1),
-                    style: TextStyle(fontFamily: 'Fredoka',
+                    style: const TextStyle(fontFamily: 'Fredoka',
                       color: Colors.white,
                       fontSize: 22,
                       fontWeight: FontWeight.w600,
@@ -373,7 +373,7 @@ class _TransitionScreenState extends ConsumerState<TransitionScreen>
                 padding: const EdgeInsets.fromLTRB(32, 28, 32, 24),
                 child: Text(
                   _chunks.isNotEmpty ? _chunks[_chunkIndex] : '',
-                  style: TextStyle(fontFamily: 'Nunito',
+                  style: const TextStyle(fontFamily: 'Nunito',
                     fontSize: 30,
                     height: 1.6,
                     color: _kForeground,
@@ -536,7 +536,7 @@ class _StardustButtonState extends State<_StardustButton> {
         ),
         child: Text(
           widget.label,
-          style: TextStyle(fontFamily: 'Fredoka',
+          style: const TextStyle(fontFamily: 'Fredoka',
             color: Colors.white,
             fontSize: 22,
             fontWeight: FontWeight.w700,

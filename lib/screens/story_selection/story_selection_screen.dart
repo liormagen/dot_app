@@ -70,7 +70,7 @@ class StorySelectionScreen extends ConsumerWidget {
                     child: Text(
                       'Oops! $e',
                       style:
-                          TextStyle(fontFamily: 'Boogaloo',color: _kInk, fontSize: 22),
+                          const TextStyle(fontFamily: 'Boogaloo',color: _kInk, fontSize: 22),
                     ),
                   ),
                 ),

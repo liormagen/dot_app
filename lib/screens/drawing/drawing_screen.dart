@@ -513,7 +513,9 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
     final drawing = _drawing;
     if (drawing == null) return;
     if (_difficulty != DifficultyMode.hard &&
-        _difficulty != DifficultyMode.superHard) return;
+        _difficulty != DifficultyMode.superHard) {
+      return;
+    }
     final session = ref.read(drawingSessionProvider);
     final newVisible =
         min(5 + session.connections.length * 3, drawing.dots.length);
@@ -760,11 +762,11 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
             BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(4, 4)),
           ],
         ),
-        child: Row(
+        child: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.pinch_rounded, color: _kInk, size: 28),
-            const SizedBox(width: 10),
+            Icon(Icons.pinch_rounded, color: _kInk, size: 28),
+            SizedBox(width: 10),
             Text(
               'Pinch to zoom!',
               style: TextStyle(fontFamily: 'Boogaloo',
@@ -800,20 +802,20 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                   ? Center(
                       child: Text(
                         'Error: $_error',
-                        style: TextStyle(fontFamily: 'Nunito',
+                        style: const TextStyle(fontFamily: 'Nunito',
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFF7C6FA0),
+                          color: Color(0xFF7C6FA0),
                           fontSize: 16,
                         ),
                       ),
                     )
                   : drawing == null
-                      ? Center(
+                      ? const Center(
                           child: Text(
                             'Drawing not found',
                             style: TextStyle(fontFamily: 'Nunito',
                               fontWeight: FontWeight.w600,
-                              color: const Color(0xFF7C6FA0),
+                              color: Color(0xFF7C6FA0),
                               fontSize: 16,
                             ),
                           ),
@@ -950,12 +952,12 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                         color: _kInk, blurRadius: 0, offset: Offset(6, 6)),
                   ],
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.timer_off_rounded,
+                    Icon(Icons.timer_off_rounded,
                         color: Colors.white, size: 48),
-                    const SizedBox(width: 16),
+                    SizedBox(width: 16),
                     Text(
                       "Time's Up!",
                       style: TextStyle(fontFamily: 'Boogaloo',
@@ -1003,9 +1005,9 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Row(
+                    const Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: const [
+                      children: [
                         Icon(Icons.star_rounded, color: _kYellow, size: 40),
                         SizedBox(width: 10),
                         Icon(Icons.star_rounded, color: _kRed, size: 30),
@@ -1030,7 +1032,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                       ),
                       child: Text(
                         drawing.getName(lang),
-                        style: TextStyle(fontFamily: 'Boogaloo',
+                        style: const TextStyle(fontFamily: 'Boogaloo',
                           color: _kInk,
                           fontSize: 48,
                           height: 1.0,
@@ -1053,7 +1055,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                       ),
                       child: Text(
                         AppLocalizations.of(context)!.tapToContinue,
-                        style: TextStyle(fontFamily: 'Boogaloo',
+                        style: const TextStyle(fontFamily: 'Boogaloo',
                           color: Colors.white,
                           fontSize: 20,
                           height: 1.0,
@@ -1095,16 +1097,16 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                 heightFactor: 0.46,
                 child: Container(
                   width: double.infinity,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: _kPaper,
                     borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(28)),
-                    border: const Border(
+                        BorderRadius.vertical(top: Radius.circular(28)),
+                    border: Border(
                       top: BorderSide(color: _kInk, width: 4),
                       left: BorderSide(color: _kInk, width: 4),
                       right: BorderSide(color: _kInk, width: 4),
                     ),
-                    boxShadow: const [
+                    boxShadow: [
                       BoxShadow(
                           color: _kInk,
                           blurRadius: 0,
@@ -1125,7 +1127,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                             _narrationText.isNotEmpty
                                 ? _narrationText
                                 : '…',
-                            style: TextStyle(fontFamily: 'Boogaloo',
+                            style: const TextStyle(fontFamily: 'Boogaloo',
                               fontSize: 22,
                               height: 1.65,
                               color: _kInk,
@@ -1228,7 +1230,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                 const SizedBox(width: 6),
                 Text(
                   '$displayed / $total',
-                  style: TextStyle(fontFamily: 'Boogaloo',
+                  style: const TextStyle(fontFamily: 'Boogaloo',
                     color: Colors.white,
                     fontSize: 22,
                     height: 1.0,
@@ -1258,7 +1260,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: Text(
                   '${_zoomScale.toStringAsFixed(1)}×',
-                  style: TextStyle(fontFamily: 'Boogaloo',
+                  style: const TextStyle(fontFamily: 'Boogaloo',
                     color: _kInk,
                     fontSize: 18,
                     height: 1.0,
@@ -1374,7 +1376,7 @@ class _DrawingChapterBadge extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             l10n.chapter(chapter),
-            style: TextStyle(fontFamily: 'Boogaloo',
+            style: const TextStyle(fontFamily: 'Boogaloo',
               color: Colors.white,
               fontSize: 20,
               height: 1.0,
@@ -1508,7 +1510,7 @@ class _TimerBadgeState extends State<_TimerBadge>
             const SizedBox(width: 8),
             Text(
               '${widget.remaining}',
-              style: TextStyle(fontFamily: 'Boogaloo',
+              style: const TextStyle(fontFamily: 'Boogaloo',
                 color: Colors.white,
                 fontSize: 30,
                 height: 1.0,
@@ -1524,7 +1526,7 @@ class _TimerBadgeState extends State<_TimerBadge>
 // ── DEBUG: Skip button ────────────────────────────────────────────────────────
 
 class SkipButton extends StatefulWidget {
-  const SkipButton({required this.onTap});
+  const SkipButton({super.key, required this.onTap});
   final VoidCallback onTap;
 
   @override
@@ -1561,7 +1563,7 @@ class SkipButtonState extends State<SkipButton> {
                       color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
                 ],
         ),
-        child: Text(
+        child: const Text(
           'Skip ▶',
           style: TextStyle(fontFamily: 'Boogaloo',
             color: Colors.white,
@@ -1619,7 +1621,7 @@ class _DrawingNextButtonState extends State<_DrawingNextButton> {
         ),
         child: Text(
           widget.label,
-          style: TextStyle(fontFamily: 'Boogaloo',
+          style: const TextStyle(fontFamily: 'Boogaloo',
             color: Colors.white,
             fontSize: 26,
             height: 1.0,
@@ -1718,11 +1720,11 @@ class _FindDotButtonState extends State<_FindDotButton> {
                   BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(2, 2)),
                 ],
         ),
-        child: Row(
+        child: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.adjust_rounded, color: Colors.white, size: 16),
-            const SizedBox(width: 4),
+            Icon(Icons.adjust_rounded, color: Colors.white, size: 16),
+            SizedBox(width: 4),
             Text(
               'Find ●',
               style: TextStyle(fontFamily: 'Boogaloo',

@@ -289,7 +289,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
       ),
       child: Text(
         text,
-        style: TextStyle(fontFamily: 'Fredoka',
+        style: const TextStyle(fontFamily: 'Fredoka',
           color: Colors.white,
           fontSize: 24,
           fontWeight: FontWeight.w700,
@@ -343,7 +343,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                   const SizedBox(height: 24),
                   Text(
                     AppLocalizations.of(context)!.youreReady,
-                    style: TextStyle(fontFamily: 'Fredoka',
+                    style: const TextStyle(fontFamily: 'Fredoka',
                       color: Colors.white,
                       fontSize: 40,
                       fontWeight: FontWeight.w700,

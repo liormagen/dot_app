@@ -124,7 +124,7 @@ class _ConfettiPainter extends CustomPainter {
       p.update(progress * 1.5);
       if (p.opacity <= 0) continue;
 
-      paint.color = p.color.withOpacity(p.opacity);
+      paint.color = p.color.withValues(alpha: p.opacity);
 
       if (p.shape == 0) {
         canvas.save();

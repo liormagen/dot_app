@@ -38,7 +38,7 @@ class MinimapPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
+      const Rect.fromLTWH(0, 0, w, h),
       Paint()..color = Colors.white,
     );
 

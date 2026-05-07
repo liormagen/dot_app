@@ -281,7 +281,7 @@ class _StoryCompletionScreenState
                 const SizedBox(width: 6),
                 Text(
                   l10n.storyComplete,
-                  style: TextStyle(fontFamily: 'Fredoka',
+                  style: const TextStyle(fontFamily: 'Fredoka',
                     color: _kForeground,
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
@@ -297,7 +297,7 @@ class _StoryCompletionScreenState
           // Story title
           Text(
             story.getTitle(lang),
-            style: TextStyle(fontFamily: 'Fredoka',
+            style: const TextStyle(fontFamily: 'Fredoka',
               color: Colors.white,
               fontSize: 40,
               fontWeight: FontWeight.w700,
@@ -337,7 +337,7 @@ class _StoryCompletionScreenState
                   const SizedBox(width: 8),
                   Text(
                     l10n.replay,
-                    style: TextStyle(fontFamily: 'Fredoka',
+                    style: const TextStyle(fontFamily: 'Fredoka',
                       color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -426,7 +426,7 @@ class _StoryCompletionScreenState
                     const SizedBox(width: 8),
                     Text(
                       l10n.chapter(chapter.chapter),
-                      style: TextStyle(fontFamily: 'Fredoka',
+                      style: const TextStyle(fontFamily: 'Fredoka',
                         color: Colors.white,
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
@@ -443,7 +443,7 @@ class _StoryCompletionScreenState
                       ),
                       child: Text(
                         drawing.getName(lang),
-                        style: TextStyle(fontFamily: 'Nunito',
+                        style: const TextStyle(fontFamily: 'Nunito',
                           color: Colors.white,
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
@@ -462,7 +462,7 @@ class _StoryCompletionScreenState
                     Expanded(
                       child: Text(
                         narration.isNotEmpty ? narration : '…',
-                        style: TextStyle(fontFamily: 'Nunito',
+                        style: const TextStyle(fontFamily: 'Nunito',
                           fontSize: 18,
                           height: 1.65,
                           color: _kForeground,
@@ -650,7 +650,7 @@ class _StoryButtonState extends State<_StoryButton> {
             const SizedBox(width: 10),
             Text(
               widget.label,
-              style: TextStyle(fontFamily: 'Fredoka',
+              style: const TextStyle(fontFamily: 'Fredoka',
                 color: Colors.white,
                 fontSize: 22,
                 fontWeight: FontWeight.w700,

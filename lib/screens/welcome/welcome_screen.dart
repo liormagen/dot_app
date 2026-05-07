@@ -214,7 +214,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen>
                             ),
                           ),
                           const SizedBox(height: 10),
-                          Text(
+                          const Text(
                             'Connect the Dots · Reveal the Magic',
                             style: TextStyle(fontFamily: 'Boogaloo',
                               fontSize: 24,

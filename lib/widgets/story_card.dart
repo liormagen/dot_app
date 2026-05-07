@@ -167,7 +167,7 @@ class _StoryCardState extends State<StoryCard>
                     children: [
                       Text(
                         widget.story.getTitle(widget.language),
-                        style: TextStyle(fontFamily: 'Fredoka',
+                        style: const TextStyle(fontFamily: 'Fredoka',
                           fontSize: 22,
                           fontWeight: FontWeight.w700,
                           color: _kForeground,
@@ -282,7 +282,7 @@ class _ProgressRow extends StatelessWidget {
           const SizedBox(width: 2),
           Text(
             '+${total - 8}',
-            style: TextStyle(fontFamily: 'Nunito',
+            style: const TextStyle(fontFamily: 'Nunito',
               fontSize: 11,
               fontWeight: FontWeight.w600,
               color: _kMuted,
@@ -331,7 +331,7 @@ class _StarBadge extends StatelessWidget {
           const SizedBox(width: 3),
           Text(
             AppLocalizations.of(context)!.doneBadge,
-            style: TextStyle(fontFamily: 'Fredoka',
+            style: const TextStyle(fontFamily: 'Fredoka',
               color: Colors.white,
               fontSize: 13,
               fontWeight: FontWeight.w600,

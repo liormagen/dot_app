@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
@@ -50,7 +49,9 @@ Uint8List _floodFillIsolate(Map<String, dynamic> args) {
     // Only fill pixels similar to target
     if ((r - targetR).abs() > 60 ||
         (g - targetG).abs() > 60 ||
-        (b - targetB).abs() > 60) return;
+        (b - targetB).abs() > 60) {
+      return;
+    }
     result[i] = fillR;
     result[i + 1] = fillG;
     result[i + 2] = fillB;
@@ -157,9 +158,9 @@ class _ColorFillCanvasState extends State<ColorFillCanvas> {
         'height': img.height,
         'x': x,
         'y': y,
-        'r': color.red,
-        'g': color.green,
-        'b': color.blue,
+        'r': (color.r * 255.0).round().clamp(0, 255),
+        'g': (color.g * 255.0).round().clamp(0, 255),
+        'b': (color.b * 255.0).round().clamp(0, 255),
       });
 
       final newImageCompleter = Completer<ui.Image>();
@@ -252,7 +253,7 @@ class _ColorFillCanvasState extends State<ColorFillCanvas> {
                                 ? [
                                     BoxShadow(
                                       color:
-                                          _palette[i].withOpacity(0.6),
+                                          _palette[i].withValues(alpha: 0.6),
                                       blurRadius: 8,
                                       spreadRadius: 2,
                                     )

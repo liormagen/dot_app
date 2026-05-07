@@ -277,9 +277,9 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
   @override
   Widget build(BuildContext context) {
     if (_loading || _drawing == null) {
-      return Scaffold(
+      return const Scaffold(
         backgroundColor: _kPaper,
-        body: const Center(
+        body: Center(
           child: CircularProgressIndicator(
             color: _kBlue,
             strokeWidth: 3,
@@ -387,7 +387,7 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
                     children: [
                       Text(
                         drawing.getName(lang),
-                        style: TextStyle(fontFamily: 'Boogaloo',
+                        style: const TextStyle(fontFamily: 'Boogaloo',
                           color: _kInk,
                           fontSize: 52,
                           height: 1.0,
@@ -403,7 +403,7 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
                           const SizedBox(width: 8),
                           Text(
                             AppLocalizations.of(context)!.youDrewIt,
-                            style: TextStyle(fontFamily: 'Boogaloo',
+                            style: const TextStyle(fontFamily: 'Boogaloo',
                               color: _kRed,
                               fontSize: 28,
                               height: 1.0,
@@ -481,7 +481,7 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
                         padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
                         child: Text(
                           _narrationText.isNotEmpty ? _narrationText : '…',
-                          style: TextStyle(fontFamily: 'Boogaloo',
+                          style: const TextStyle(fontFamily: 'Boogaloo',
                             fontSize: 22,
                             height: 1.6,
                             color: _kInk,
@@ -583,7 +583,7 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
                   const SizedBox(height: 32),
                   Text(
                     l10n.amazing,
-                    style: TextStyle(fontFamily: 'Fredoka',
+                    style: const TextStyle(fontFamily: 'Fredoka',
                       color: Colors.white,
                       fontSize: 56,
                       fontWeight: FontWeight.w700,
@@ -654,7 +654,7 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
                 ),
                 child: Text(
                   '${_tutorialStepIndex + 1} / ${drawing.tutorialSteps.length}  ·  ${l10n.tapToContinue}',
-                  style: TextStyle(fontFamily: 'Fredoka',
+                  style: const TextStyle(fontFamily: 'Fredoka',
                       color: Colors.white,
                       fontSize: 17,
                       fontWeight: FontWeight.w600),
@@ -708,7 +708,7 @@ class _ChapterBadge extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             chapterLabel,
-            style: TextStyle(fontFamily: 'Fredoka',
+            style: const TextStyle(fontFamily: 'Fredoka',
               color: Colors.white,
               fontSize: 20,
               fontWeight: FontWeight.w600,
@@ -898,7 +898,7 @@ class _TocaNameBadge extends StatelessWidget {
       ),
       child: Text(
         name,
-        style: TextStyle(fontFamily: 'Boogaloo',
+        style: const TextStyle(fontFamily: 'Boogaloo',
           color: _kInk,
           fontSize: 26,
           height: 1.0,
@@ -935,7 +935,7 @@ class _TocaChapterBadge extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             l10n.chapter(chapter),
-            style: TextStyle(fontFamily: 'Boogaloo',
+            style: const TextStyle(fontFamily: 'Boogaloo',
               color: Colors.white,
               fontSize: 20,
               height: 1.0,
@@ -1080,7 +1080,7 @@ class _CelebButtonState extends State<_CelebButton> {
         ),
         child: Text(
           widget.label,
-          style: TextStyle(fontFamily: 'Fredoka',
+          style: const TextStyle(fontFamily: 'Fredoka',
             color: Colors.white,
             fontSize: 24,
             fontWeight: FontWeight.w700,

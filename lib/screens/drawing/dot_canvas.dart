@@ -195,12 +195,12 @@ class DotCanvasPainter extends CustomPainter {
     // Dot fill
     if (isConnected || isAnimating) {
       // Mint gradient fill for connected dots
-      final gradient = RadialGradient(
-        center: const Alignment(-0.3, -0.4),
+      const gradient = RadialGradient(
+        center: Alignment(-0.3, -0.4),
         radius: 0.9,
         colors: [
-          const Color(0xFF8DE88B),
-          const Color(0xFF6BCB77),
+          Color(0xFF8DE88B),
+          Color(0xFF6BCB77),
         ],
       );
       final rect = Rect.fromCircle(center: pos, radius: radius);
