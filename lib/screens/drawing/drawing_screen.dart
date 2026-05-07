@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../models/dot_model.dart';
@@ -768,7 +767,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
             const SizedBox(width: 10),
             Text(
               'Pinch to zoom!',
-              style: GoogleFonts.boogaloo(
+              style: TextStyle(fontFamily: 'Boogaloo',
                 color: _kInk,
                 fontSize: 22,
                 height: 1.0,
@@ -801,7 +800,8 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                   ? Center(
                       child: Text(
                         'Error: $_error',
-                        style: GoogleFonts.nunito(
+                        style: TextStyle(fontFamily: 'Nunito',
+                          fontWeight: FontWeight.w600,
                           color: const Color(0xFF7C6FA0),
                           fontSize: 16,
                         ),
@@ -811,7 +811,8 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                       ? Center(
                           child: Text(
                             'Drawing not found',
-                            style: GoogleFonts.nunito(
+                            style: TextStyle(fontFamily: 'Nunito',
+                              fontWeight: FontWeight.w600,
                               color: const Color(0xFF7C6FA0),
                               fontSize: 16,
                             ),
@@ -957,7 +958,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                     const SizedBox(width: 16),
                     Text(
                       "Time's Up!",
-                      style: GoogleFonts.boogaloo(
+                      style: TextStyle(fontFamily: 'Boogaloo',
                         color: Colors.white,
                         fontSize: 56,
                         height: 1.0,
@@ -1029,7 +1030,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                       ),
                       child: Text(
                         drawing.getName(lang),
-                        style: GoogleFonts.boogaloo(
+                        style: TextStyle(fontFamily: 'Boogaloo',
                           color: _kInk,
                           fontSize: 48,
                           height: 1.0,
@@ -1052,7 +1053,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                       ),
                       child: Text(
                         AppLocalizations.of(context)!.tapToContinue,
-                        style: GoogleFonts.boogaloo(
+                        style: TextStyle(fontFamily: 'Boogaloo',
                           color: Colors.white,
                           fontSize: 20,
                           height: 1.0,
@@ -1124,7 +1125,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                             _narrationText.isNotEmpty
                                 ? _narrationText
                                 : '…',
-                            style: GoogleFonts.boogaloo(
+                            style: TextStyle(fontFamily: 'Boogaloo',
                               fontSize: 22,
                               height: 1.65,
                               color: _kInk,
@@ -1227,7 +1228,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                 const SizedBox(width: 6),
                 Text(
                   '$displayed / $total',
-                  style: GoogleFonts.boogaloo(
+                  style: TextStyle(fontFamily: 'Boogaloo',
                     color: Colors.white,
                     fontSize: 22,
                     height: 1.0,
@@ -1257,7 +1258,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: Text(
                   '${_zoomScale.toStringAsFixed(1)}×',
-                  style: GoogleFonts.boogaloo(
+                  style: TextStyle(fontFamily: 'Boogaloo',
                     color: _kInk,
                     fontSize: 18,
                     height: 1.0,
@@ -1373,7 +1374,7 @@ class _DrawingChapterBadge extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             l10n.chapter(chapter),
-            style: GoogleFonts.boogaloo(
+            style: TextStyle(fontFamily: 'Boogaloo',
               color: Colors.white,
               fontSize: 20,
               height: 1.0,
@@ -1507,7 +1508,7 @@ class _TimerBadgeState extends State<_TimerBadge>
             const SizedBox(width: 8),
             Text(
               '${widget.remaining}',
-              style: GoogleFonts.boogaloo(
+              style: TextStyle(fontFamily: 'Boogaloo',
                 color: Colors.white,
                 fontSize: 30,
                 height: 1.0,
@@ -1562,7 +1563,7 @@ class SkipButtonState extends State<SkipButton> {
         ),
         child: Text(
           'Skip ▶',
-          style: GoogleFonts.boogaloo(
+          style: TextStyle(fontFamily: 'Boogaloo',
             color: Colors.white,
             fontSize: 18,
             height: 1.0,
@@ -1618,7 +1619,7 @@ class _DrawingNextButtonState extends State<_DrawingNextButton> {
         ),
         child: Text(
           widget.label,
-          style: GoogleFonts.boogaloo(
+          style: TextStyle(fontFamily: 'Boogaloo',
             color: Colors.white,
             fontSize: 26,
             height: 1.0,
@@ -1724,7 +1725,7 @@ class _FindDotButtonState extends State<_FindDotButton> {
             const SizedBox(width: 4),
             Text(
               'Find ●',
-              style: GoogleFonts.boogaloo(
+              style: TextStyle(fontFamily: 'Boogaloo',
                 color: Colors.white,
                 fontSize: 14,
                 height: 1.0,

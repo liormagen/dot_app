@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../services/progress_service.dart';
@@ -290,7 +289,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
       ),
       child: Text(
         text,
-        style: GoogleFonts.fredoka(
+        style: TextStyle(fontFamily: 'Fredoka',
           color: Colors.white,
           fontSize: 24,
           fontWeight: FontWeight.w700,
@@ -344,7 +343,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                   const SizedBox(height: 24),
                   Text(
                     AppLocalizations.of(context)!.youreReady,
-                    style: GoogleFonts.fredoka(
+                    style: TextStyle(fontFamily: 'Fredoka',
                       color: Colors.white,
                       fontSize: 40,
                       fontWeight: FontWeight.w700,

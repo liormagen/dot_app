@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../l10n/app_localizations.dart';
 import '../models/story_model.dart';
@@ -168,7 +167,7 @@ class _StoryCardState extends State<StoryCard>
                     children: [
                       Text(
                         widget.story.getTitle(widget.language),
-                        style: GoogleFonts.fredoka(
+                        style: TextStyle(fontFamily: 'Fredoka',
                           fontSize: 22,
                           fontWeight: FontWeight.w700,
                           color: _kForeground,
@@ -283,8 +282,9 @@ class _ProgressRow extends StatelessWidget {
           const SizedBox(width: 2),
           Text(
             '+${total - 8}',
-            style: GoogleFonts.nunito(
+            style: TextStyle(fontFamily: 'Nunito',
               fontSize: 11,
+              fontWeight: FontWeight.w600,
               color: _kMuted,
             ),
           ),
@@ -292,7 +292,7 @@ class _ProgressRow extends StatelessWidget {
         const Spacer(),
         Text(
           '$completed/$total',
-          style: GoogleFonts.fredoka(
+          style: TextStyle(fontFamily: 'Fredoka',
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: completed == total ? _kMint : _kPrimary,
@@ -331,7 +331,7 @@ class _StarBadge extends StatelessWidget {
           const SizedBox(width: 3),
           Text(
             AppLocalizations.of(context)!.doneBadge,
-            style: GoogleFonts.fredoka(
+            style: TextStyle(fontFamily: 'Fredoka',
               color: Colors.white,
               fontSize: 13,
               fontWeight: FontWeight.w600,

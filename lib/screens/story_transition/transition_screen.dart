@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../services/asset_service.dart';
@@ -347,7 +346,7 @@ class _TransitionScreenState extends ConsumerState<TransitionScreen>
                   const SizedBox(width: 8),
                   Text(
                     AppLocalizations.of(context)!.chapter(widget.chapterIndex + 1),
-                    style: GoogleFonts.fredoka(
+                    style: TextStyle(fontFamily: 'Fredoka',
                       color: Colors.white,
                       fontSize: 22,
                       fontWeight: FontWeight.w600,
@@ -357,7 +356,7 @@ class _TransitionScreenState extends ConsumerState<TransitionScreen>
                   if (_chunks.length > 1)
                     Text(
                       '${_chunkIndex + 1} / ${_chunks.length}',
-                      style: GoogleFonts.nunito(
+                      style: TextStyle(fontFamily: 'Nunito',
                         color: Colors.white.withValues(alpha: 0.85),
                         fontSize: 17,
                         fontWeight: FontWeight.w600,
@@ -374,7 +373,7 @@ class _TransitionScreenState extends ConsumerState<TransitionScreen>
                 padding: const EdgeInsets.fromLTRB(32, 28, 32, 24),
                 child: Text(
                   _chunks.isNotEmpty ? _chunks[_chunkIndex] : '',
-                  style: GoogleFonts.nunito(
+                  style: TextStyle(fontFamily: 'Nunito',
                     fontSize: 30,
                     height: 1.6,
                     color: _kForeground,
@@ -537,7 +536,7 @@ class _StardustButtonState extends State<_StardustButton> {
         ),
         child: Text(
           widget.label,
-          style: GoogleFonts.fredoka(
+          style: TextStyle(fontFamily: 'Fredoka',
             color: Colors.white,
             fontSize: 22,
             fontWeight: FontWeight.w700,

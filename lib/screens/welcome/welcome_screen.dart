@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../services/progress_service.dart';
@@ -206,7 +205,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen>
                           // Title with ink outline
                           Text(
                             'Dot Story',
-                            style: GoogleFonts.boogaloo(
+                            style: TextStyle(fontFamily: 'Boogaloo',
                               fontSize: 100,
                               fontWeight: FontWeight.w400,
                               color: _kYellow,
@@ -217,7 +216,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen>
                           const SizedBox(height: 10),
                           Text(
                             'Connect the Dots · Reveal the Magic',
-                            style: GoogleFonts.boogaloo(
+                            style: TextStyle(fontFamily: 'Boogaloo',
                               fontSize: 24,
                               color: _kInk,
                               height: 1.2,
@@ -377,7 +376,7 @@ class _PlayButtonState extends State<_PlayButton> {
         ),
         child: Text(
           widget.label,
-          style: GoogleFonts.boogaloo(
+          style: TextStyle(fontFamily: 'Boogaloo',
             color: Colors.white,
             fontSize: 46,
             shadows: _inkOutline(2.5),
@@ -418,7 +417,7 @@ class _ProgressBadge extends StatelessWidget {
             Text(
               AppLocalizations.of(context)!
                   .welcomeDrawingsCompleted(completedCount),
-              style: GoogleFonts.boogaloo(
+              style: TextStyle(fontFamily: 'Boogaloo',
                 color: Colors.white,
                 fontSize: 20,
                 shadows: _inkOutline(1.5),

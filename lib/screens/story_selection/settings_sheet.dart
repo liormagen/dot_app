@@ -125,6 +125,15 @@ class SettingsSheet extends ConsumerWidget {
                         context.go('/onboarding');
                       },
                     ),
+                    // Unlock Full Access (hidden once purchased)
+                    if (!progress.purchaseUnlocked)
+                      ListTile(
+                        leading: const Icon(Icons.lock_open),
+                        title: Text(AppLocalizations.of(context)!.unlockFullAccess),
+                        onTap: () {
+                          ref.read(purchaseServiceProvider).buyFullAccess();
+                        },
+                      ),
                     // Restore Purchases
                     ListTile(
                       leading: const Icon(Icons.restore),

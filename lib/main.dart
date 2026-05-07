@@ -10,7 +10,6 @@ import 'services/purchase_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Allow all orientations on iPad
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -18,7 +17,6 @@ void main() async {
     DeviceOrientation.landscapeRight,
   ]);
 
-  // Initialize services
   final progressService = ProgressService();
   await progressService.init();
 
@@ -26,15 +24,24 @@ void main() async {
   await audioService.init();
 
   final purchaseService = PurchaseService();
+
+  final container = ProviderContainer(
+    overrides: [
+      progressServiceProvider.overrideWithValue(progressService),
+      audioServiceProvider.overrideWithValue(audioService),
+      purchaseServiceProvider.overrideWithValue(purchaseService),
+    ],
+  );
+
+  purchaseService.onPurchaseSuccess = () {
+    container.read(progressProvider.notifier).setPurchaseUnlocked(true);
+  };
+
   await purchaseService.init();
 
   runApp(
-    ProviderScope(
-      overrides: [
-        progressServiceProvider.overrideWithValue(progressService),
-        audioServiceProvider.overrideWithValue(audioService),
-        purchaseServiceProvider.overrideWithValue(purchaseService),
-      ],
+    UncontrolledProviderScope(
+      container: container,
       child: const DotStoryApp(),
     ),
   );

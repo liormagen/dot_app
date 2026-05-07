@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../models/drawing_model.dart';
@@ -172,7 +171,7 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
               Expanded(
                 child: Text(
                   l10n.gallery,
-                  style: GoogleFonts.fredoka(
+                  style: TextStyle(fontFamily: 'Fredoka',
                     fontSize: 32,
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
@@ -208,7 +207,7 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
               Expanded(
                 child: Text(
                   story.getTitle(lang),
-                  style: GoogleFonts.fredoka(
+                  style: TextStyle(fontFamily: 'Fredoka',
                     fontSize: 26,
                     fontWeight: FontWeight.w700,
                     color: _kForeground,
@@ -226,7 +225,7 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
                 ),
                 child: Text(
                   '$completedCount / $total',
-                  style: GoogleFonts.fredoka(
+                  style: TextStyle(fontFamily: 'Fredoka',
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     color: completedCount == total ? Colors.white : _kPrimary,
@@ -411,7 +410,7 @@ class _DrawingCardState extends State<_DrawingCard>
                     widget.isCompleted
                         ? widget.drawing.getName(widget.lang)
                         : '???',
-                    style: GoogleFonts.fredoka(
+                    style: TextStyle(fontFamily: 'Fredoka',
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                       color:
@@ -467,7 +466,7 @@ class _DrawingCardState extends State<_DrawingCard>
             const SizedBox(height: 8),
             Text(
               '?',
-              style: GoogleFonts.fredoka(
+              style: TextStyle(fontFamily: 'Fredoka',
                 fontSize: 32,
                 fontWeight: FontWeight.w700,
                 color: _kMuted,
@@ -539,7 +538,7 @@ class _FullScreenDialog extends StatelessWidget {
                   ),
                   child: Text(
                     drawing.getName(lang),
-                    style: GoogleFonts.fredoka(
+                    style: TextStyle(fontFamily: 'Fredoka',
                       fontSize: 28,
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
@@ -595,7 +594,7 @@ class _FullScreenDialog extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         'Done',
-                        style: GoogleFonts.fredoka(
+                        style: TextStyle(fontFamily: 'Fredoka',
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
                           color: _kNight,

@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../models/drawing_model.dart';
@@ -282,7 +281,7 @@ class _StoryCompletionScreenState
                 const SizedBox(width: 6),
                 Text(
                   l10n.storyComplete,
-                  style: GoogleFonts.fredoka(
+                  style: TextStyle(fontFamily: 'Fredoka',
                     color: _kForeground,
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
@@ -298,7 +297,7 @@ class _StoryCompletionScreenState
           // Story title
           Text(
             story.getTitle(lang),
-            style: GoogleFonts.fredoka(
+            style: TextStyle(fontFamily: 'Fredoka',
               color: Colors.white,
               fontSize: 40,
               fontWeight: FontWeight.w700,
@@ -309,7 +308,7 @@ class _StoryCompletionScreenState
           const SizedBox(height: 6),
           Text(
             l10n.ourStory,
-            style: GoogleFonts.nunito(
+            style: TextStyle(fontFamily: 'Nunito',
               color: Colors.white.withValues(alpha: 0.75),
               fontSize: 17,
               fontWeight: FontWeight.w600,
@@ -338,7 +337,7 @@ class _StoryCompletionScreenState
                   const SizedBox(width: 8),
                   Text(
                     l10n.replay,
-                    style: GoogleFonts.fredoka(
+                    style: TextStyle(fontFamily: 'Fredoka',
                       color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -427,7 +426,7 @@ class _StoryCompletionScreenState
                     const SizedBox(width: 8),
                     Text(
                       l10n.chapter(chapter.chapter),
-                      style: GoogleFonts.fredoka(
+                      style: TextStyle(fontFamily: 'Fredoka',
                         color: Colors.white,
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
@@ -444,7 +443,7 @@ class _StoryCompletionScreenState
                       ),
                       child: Text(
                         drawing.getName(lang),
-                        style: GoogleFonts.nunito(
+                        style: TextStyle(fontFamily: 'Nunito',
                           color: Colors.white,
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
@@ -463,7 +462,7 @@ class _StoryCompletionScreenState
                     Expanded(
                       child: Text(
                         narration.isNotEmpty ? narration : '…',
-                        style: GoogleFonts.nunito(
+                        style: TextStyle(fontFamily: 'Nunito',
                           fontSize: 18,
                           height: 1.65,
                           color: _kForeground,
@@ -651,7 +650,7 @@ class _StoryButtonState extends State<_StoryButton> {
             const SizedBox(width: 10),
             Text(
               widget.label,
-              style: GoogleFonts.fredoka(
+              style: TextStyle(fontFamily: 'Fredoka',
                 color: Colors.white,
                 fontSize: 22,
                 fontWeight: FontWeight.w700,

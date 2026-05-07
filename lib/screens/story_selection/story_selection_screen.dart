@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../models/progress_model.dart';
@@ -71,7 +70,7 @@ class StorySelectionScreen extends ConsumerWidget {
                     child: Text(
                       'Oops! $e',
                       style:
-                          GoogleFonts.boogaloo(color: _kInk, fontSize: 22),
+                          TextStyle(fontFamily: 'Boogaloo',color: _kInk, fontSize: 22),
                     ),
                   ),
                 ),
@@ -426,7 +425,7 @@ class _BoldHeader extends StatelessWidget {
                       // "Dot Story" — same style as welcome screen
                       Text(
                         'Dot Story',
-                        style: GoogleFonts.boogaloo(
+                        style: TextStyle(fontFamily: 'Boogaloo',
                           fontSize: 58,
                           color: _kYellow,
                           height: 1.0,
@@ -471,7 +470,7 @@ class _BoldHeader extends StatelessWidget {
                   ),
                   child: Text(
                     AppLocalizations.of(context)!.pickAStory,
-                    style: GoogleFonts.boogaloo(
+                    style: TextStyle(fontFamily: 'Boogaloo',
                       fontSize: 20,
                       color: Colors.white,
                       height: 1.1,
@@ -669,7 +668,7 @@ class _DifficultyPill extends StatelessWidget {
             const SizedBox(width: 6),
             Text(
               label,
-              style: GoogleFonts.boogaloo(
+              style: TextStyle(fontFamily: 'Boogaloo',
                 color: selected ? Colors.white : _kInk,
                 fontSize: 18,
                 height: 1.0,
@@ -935,7 +934,7 @@ class _InkLoaderState extends State<_InkLoader>
         const SizedBox(height: 20),
         Text(
           AppLocalizations.of(context)!.loadingStories,
-          style: GoogleFonts.boogaloo(
+          style: TextStyle(fontFamily: 'Boogaloo',
             color: _kInk,
             fontSize: 24,
             shadows: _inkOutline(1.5),
@@ -978,7 +977,7 @@ class _EmptyState extends StatelessWidget {
         const SizedBox(height: 24),
         Text(
           AppLocalizations.of(context)!.noStoriesYet,
-          style: GoogleFonts.boogaloo(
+          style: TextStyle(fontFamily: 'Boogaloo',
             fontSize: 32,
             color: _kInk,
             shadows: _inkOutline(2),
@@ -987,7 +986,7 @@ class _EmptyState extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           AppLocalizations.of(context)!.addStoriesToStart,
-          style: GoogleFonts.boogaloo(
+          style: TextStyle(fontFamily: 'Boogaloo',
               fontSize: 18, color: _kInk.withValues(alpha: 0.6)),
         ),
       ],

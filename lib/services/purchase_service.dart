@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
@@ -11,6 +12,8 @@ class PurchaseService {
   bool _available = false;
   bool _isPurchased = false;
   ProductDetails? _product;
+
+  VoidCallback? onPurchaseSuccess;
 
   bool get isPurchased => _isPurchased;
   bool get available => _available;
@@ -43,6 +46,7 @@ class PurchaseService {
         if (purchase.status == PurchaseStatus.purchased ||
             purchase.status == PurchaseStatus.restored) {
           _isPurchased = true;
+          onPurchaseSuccess?.call();
           if (purchase.pendingCompletePurchase) {
             _iap.completePurchase(purchase).catchError((_) {});
           }
