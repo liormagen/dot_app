@@ -21,6 +21,7 @@ import 'dot_canvas.dart';
 import 'dot_limiter.dart';
 import 'drawing_types.dart';
 import 'hint_controller.dart';
+import 'minimap_painter.dart';
 import 'zoom_math.dart';
 
 export 'drawing_types.dart';
@@ -732,7 +733,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
       ),
       clipBehavior: Clip.antiAlias,
       child: CustomPaint(
-        painter: _MinimapPainter(
+        painter: MinimapPainter(
           drawing: drawing,
           session: session,
           fitScale: so.$1,
@@ -1626,101 +1627,6 @@ class _DrawingNextButtonState extends State<_DrawingNextButton> {
       ),
     );
   }
-}
-
-// ── Minimap painter ───────────────────────────────────────────────────────────
-
-class _MinimapPainter extends CustomPainter {
-  const _MinimapPainter({
-    required this.drawing,
-    required this.session,
-    required this.fitScale,
-    required this.fitOffset,
-    required this.zoomMatrix,
-    required this.viewportSize,
-  });
-
-  final DrawingModel drawing;
-  final DrawingSessionState session;
-  final double fitScale;
-  final Offset fitOffset;
-  final Matrix4 zoomMatrix;
-  final Size viewportSize;
-
-  static const double _w = 160;
-  static const double _h = 120;
-
-  Offset _toMinimap(Offset p) =>
-      Offset(p.dx * (_w / viewportSize.width), p.dy * (_h / viewportSize.height));
-
-  Offset _dotToWidget(DotModel d) =>
-      Offset(d.x * fitScale + fitOffset.dx, d.y * fitScale + fitOffset.dy);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    // White background
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, _w, _h),
-      Paint()..color = Colors.white,
-    );
-
-    // Completed connections
-    final connPaint = Paint()
-      ..strokeWidth = 0.8
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-    for (final conn in session.connections) {
-      connPaint.color = conn.color;
-      final from = _toMinimap(_dotToWidget(conn.from));
-      final to = _toMinimap(_dotToWidget(conn.to));
-      canvas.drawLine(from, to, connPaint);
-    }
-
-    // All dots
-    final connectedIds = <int>{};
-    for (final c in session.connections) {
-      connectedIds.add(c.from.id);
-      connectedIds.add(c.to.id);
-    }
-    for (final dot in drawing.dots) {
-      final pos = _toMinimap(_dotToWidget(dot));
-      final isConnected = connectedIds.contains(dot.id);
-      canvas.drawCircle(
-        pos,
-        2.0,
-        Paint()
-          ..color = isConnected
-              ? _kGreen
-              : _kInk.withValues(alpha: 0.4)
-          ..style = PaintingStyle.fill,
-      );
-    }
-
-    // Viewport rectangle
-    final vpRect = viewportRectFromMatrix(zoomMatrix, viewportSize);
-    final rect = Rect.fromPoints(
-        _toMinimap(vpRect.topLeft), _toMinimap(vpRect.bottomRight));
-    canvas.drawRect(
-      rect,
-      Paint()
-        ..color = _kRed.withValues(alpha: 0.2)
-        ..style = PaintingStyle.fill,
-    );
-    canvas.drawRect(
-      rect,
-      Paint()
-        ..color = _kRed
-        ..strokeWidth = 1.5
-        ..style = PaintingStyle.stroke,
-    );
-  }
-
-  @override
-  bool shouldRepaint(_MinimapPainter old) =>
-      old.session != session ||
-      old.zoomMatrix != zoomMatrix ||
-      old.fitScale != fitScale ||
-      old.fitOffset != fitOffset;
 }
 
 // ── Zoom control button (+ / −) ───────────────────────────────────────────────
