@@ -104,6 +104,13 @@ class AudioService {
     } catch (_) {}
   }
 
+  Future<void> playRevealSwell() async {
+    if (!_sfxEnabled) return;
+    try {
+      await _sfxPlayer.play(AssetSource('audio/sfx/reveal_swell.mp3'));
+    } catch (_) {}
+  }
+
   Future<void> playConfetti() async {
     if (!_sfxEnabled) return;
     try {

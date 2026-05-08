@@ -46,6 +46,25 @@ flutter:
     - assets/stories/story4/ch3/
     - assets/stories/story4/ch4/
     - assets/stories/story4/ch5/
+    - assets/stories/story5/ch1/
+    - assets/stories/story5/ch2/
+    - assets/stories/story5/ch3/
+    - assets/stories/story6/ch1/
+    - assets/stories/story6/ch2/
+    - assets/stories/story6/ch3/
+    - assets/stories/story8/ch1/
+    - assets/stories/story8/ch2/
+    - assets/stories/story8/ch3/
+    - assets/stories/story8/ch4/
+    - assets/stories/story8/ch5/
+    - assets/stories/story9/ch1/
+    - assets/stories/story9/ch2/
+    - assets/stories/story9/ch3/
+    - assets/stories/story10/ch1/
+    - assets/stories/story10/ch2/
+    - assets/stories/story10/ch3/
+    - assets/stories/story10/ch4/
+    - assets/stories/story10/ch5/
     - assets/audio/
     - assets/audio/en/
     - assets/audio/en/numbers/
@@ -55,6 +74,7 @@ flutter:
     - assets/audio/ar/numbers/
     - assets/audio/encouragement/
     - assets/audio/sfx/
+    - assets/audio/music/
     - assets/fonts/
 
   fonts:

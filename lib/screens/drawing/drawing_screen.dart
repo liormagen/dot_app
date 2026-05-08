@@ -127,10 +127,25 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
   late AnimationController _revealController;
   bool _isRevealing = false;
 
+  // Dots fade-out after reveal completes
+  late AnimationController _dotsHideCtrl;
+
   // Wrong-tap spinning hint
   late AnimationController _spinController;
   DateTime? _firstWrongTapTime;
   bool _spinHintActive = false;
+
+  // Dot squeeze/squish on correct tap
+  late AnimationController _squeezeCtrl;
+  int _squeezedDotId = -1;
+
+  // Super-hard blink urgency (last 10 seconds)
+  late AnimationController _blinkCtrl;
+  bool _blinkActive = false;
+
+  // Fade-in for newly revealed dots (Hard / SuperHard progressive reveal)
+  late AnimationController _dotRevealCtrl;
+  int _fadingInDotId = -1;
 
   // Completion overlay
   _OverlayPhase _overlayPhase = _OverlayPhase.none;
@@ -144,6 +159,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
   String _storyId = '';
   String? _nextDrawingId;
   bool _narrationPlaying = false;
+  bool _transitioning = false;
   StreamSubscription<void>? _narrationSub;
 
   // Difficulty & countdown
@@ -152,6 +168,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
   int _totalSeconds = 0;
   Timer? _countdownTimer;
   bool _timerStarted = false;
+  bool _encouragementPlayed = false;
 
   // Progressive reveal (Hard / Super Hard)
   int _visibleDotCount = 0; // 0 = all visible (Easy/Normal)
@@ -161,6 +178,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
   double _zoomScale = 1.0;
   Size? _canvasSize;
   bool _showZoomHint = false;
+  Offset? _fingerPosition;
 
   bool get _isZoomMode =>
       _difficulty == DifficultyMode.hard ||
@@ -201,20 +219,31 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
         }
       });
 
+    _dotsHideCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    )..addListener(() {
+        if (mounted) setState(() {});
+      });
+
     _revealController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 750),
     )
       ..addListener(() {
         if (mounted) setState(() {});
       })
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
+          Future.delayed(const Duration(milliseconds: 500), () {
+            if (mounted) _dotsHideCtrl.forward();
+          });
           Future.delayed(const Duration(milliseconds: 400), () {
             if (!mounted) return;
             setState(() => _overlayPhase = _OverlayPhase.celebration);
             _overlayEnterCtrl.forward();
             _celebCtrl.repeat();
+            ref.read(audioServiceProvider).playConfetti();
             Future.delayed(const Duration(milliseconds: 2200), () {
               if (mounted && _overlayPhase == _OverlayPhase.celebration) {
                 _showNarration();
@@ -227,6 +256,30 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
     _spinController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 900),
+    )..addListener(() {
+        if (mounted) setState(() {});
+      });
+
+    // Cute squish: 450ms, linear controller — painter computes spring curve
+    _squeezeCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 450),
+    )..addListener(() {
+        if (mounted) setState(() {});
+      });
+
+    // Super-hard urgency blink (last 10 s): triangle-wave oscillates 0→1→0
+    _blinkCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 380),
+    )..addListener(() {
+        if (mounted) setState(() {});
+      });
+
+    // Smooth fade-in for newly revealed dots in Hard/SuperHard
+    _dotRevealCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
     )..addListener(() {
         if (mounted) setState(() {});
       });
@@ -298,9 +351,11 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
         _difficulty = difficulty;
         _totalSeconds = timerSecs;
         _remainingSeconds = timerSecs;
-        _visibleDotCount =
-            isTimedMode ? min(5, effectiveDots.length) : 0;
+        _visibleDotCount = isTimedMode
+            ? (difficulty == DifficultyMode.superHard ? 1 : min(5, effectiveDots.length))
+            : 0;
       });
+      ref.read(audioServiceProvider).playMusic('audio/music/drawing_theme.mp3');
       // Timer starts on first dot tap (A2) — not here
 
       // Show zoom hint briefly for Hard/SuperHard
@@ -344,7 +399,8 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
 
   void _setupHintController(DrawingModel drawing, int targetDotId) {
     _hintController?.dispose();
-    _hintController = HintController(delaySeconds: drawing.hintDelaySeconds);
+    final delay = _difficulty == DifficultyMode.easy ? 0 : drawing.hintDelaySeconds;
+    _hintController = HintController(delaySeconds: delay);
     _hintController!.onHintActivate = (dotId) {
       if (!mounted) return;
       ref.read(drawingSessionProvider.notifier).setHintingDot(dotId);
@@ -358,14 +414,21 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
     _countdownTimer?.cancel();
     _lineAnimController.dispose();
     _hintPulseController.dispose();
+    _dotsHideCtrl.dispose();
     _revealController.dispose();
     _spinController.dispose();
+    _squeezeCtrl.dispose();
+    _blinkCtrl.dispose();
+    _dotRevealCtrl.dispose();
     _overlayEnterCtrl.dispose();
     _panelCtrl.dispose();
     _celebCtrl.dispose();
     _hintController?.dispose();
     _narrationSub?.cancel();
     _transformController.dispose();
+    try {
+      ref.read(audioServiceProvider).stopMusic();
+    } catch (_) {}
     super.dispose();
   }
 
@@ -394,7 +457,9 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
       targetDot.y * scale + off.dy,
     );
 
-    if ((tapPosition - dotScreenPos).distance <= 22.0) {
+    // Easy mode uses a larger hit zone — young kids' fingers are imprecise
+    final hitRadius = _difficulty == DifficultyMode.easy ? 44.0 : 22.0;
+    if ((tapPosition - dotScreenPos).distance <= hitRadius) {
       // Progressive reveal: block tap on dots not yet visible
       if (_visibleDotCount > 0 && targetDot.id > _visibleDotCount) return;
       _onCorrectTap(targetDot, drawing, tapPosition);
@@ -464,6 +529,19 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
           .read(drawingSessionProvider.notifier)
           .addConnection(newConn, nextDotId, isLast);
       _updateVisibleCount();
+
+      // Encourage once when ~60% of dots are connected
+      final totalDots = drawing.dots.length;
+      final connectedNow = ref.read(drawingSessionProvider).connections.length;
+      if (!_encouragementPlayed &&
+          totalDots > 0 &&
+          connectedNow >= (totalDots * 0.6).floor()) {
+        _encouragementPlayed = true;
+        final eLang = ref.read(progressProvider).selectedLanguage;
+        Future.delayed(const Duration(milliseconds: 700), () {
+          if (mounted) ref.read(audioServiceProvider).playEncouragement(eLang);
+        });
+      }
     } else {
       ref.read(drawingSessionProvider.notifier).init(
             isLast ? tappedDot.id : nextDotId,
@@ -476,11 +554,16 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
     _confettiKey.currentState?.triggerBurst(tapPos);
     HapticFeedback.lightImpact();
 
+    // Cute squish on every correct tap
+    setState(() => _squeezedDotId = tappedDot.id);
+    _squeezeCtrl.forward(from: 0);
+
     if (!isLast) {
       _hintController?.startHintTimer(nextDotId);
     }
 
     if (isLast) {
+      _stopBlink();
       final firstDot = sortedDots.first;
       Future.delayed(const Duration(milliseconds: 310), () {
         if (!mounted) return;
@@ -502,6 +585,9 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
             if (!mounted) return;
             _countdownTimer?.cancel();
             setState(() => _isRevealing = true);
+            ref.read(audioServiceProvider).stopMusic();
+            ref.read(audioServiceProvider).playRevealSwell();
+            ref.read(audioServiceProvider).playDrawingComplete();
             _revealController.forward();
           });
         });
@@ -517,18 +603,33 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
       return;
     }
     final session = ref.read(drawingSessionProvider);
+    // 1 new dot revealed every 2 connections; SuperHard starts at 1, Hard at 5
+    final startCount = _difficulty == DifficultyMode.superHard ? 1 : 5;
     final newVisible =
-        min(5 + session.connections.length * 3, drawing.dots.length);
-    if (newVisible != _visibleDotCount) {
-      setState(() => _visibleDotCount = newVisible);
+        min(startCount + session.connections.length ~/ 2, drawing.dots.length);
+    if (newVisible > _visibleDotCount) {
+      setState(() {
+        _fadingInDotId = newVisible;
+        _visibleDotCount = newVisible;
+      });
+      _dotRevealCtrl.forward(from: 0);
     }
   }
 
   void _showNarration() {
+    if (_transitioning) return;
+    _transitioning = true;
     _celebCtrl.stop();
-    setState(() => _overlayPhase = _OverlayPhase.narration);
-    _panelCtrl.forward();
-    if (_narrationText.isNotEmpty) _playNarration();
+    // Fade out the celebration badge/scrim before narration panel slides in
+    _overlayEnterCtrl.reverse().then((_) {
+      if (!mounted) return;
+      setState(() {
+        _overlayPhase = _OverlayPhase.narration;
+        _transitioning = false;
+      });
+      _panelCtrl.forward();
+      if (_narrationText.isNotEmpty) _playNarration();
+    });
   }
 
   void _playNarration() {
@@ -582,6 +683,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
 
     _lineAnimController.reset();
     _revealController.reset();
+    _dotsHideCtrl.reset();
     setState(() {
       _isRevealing = true;
       _animatingConnection = null;
@@ -617,11 +719,27 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
       if (_remainingSeconds <= 1) {
         _countdownTimer?.cancel();
         setState(() => _remainingSeconds = 0);
+        _stopBlink();
         _onTimerExpired();
       } else {
         setState(() => _remainingSeconds--);
+        // At 10 s remaining in Super Hard: start the urgency blink
+        if (_difficulty == DifficultyMode.superHard &&
+            _remainingSeconds <= 10 &&
+            !_blinkActive) {
+          _blinkActive = true;
+          _blinkCtrl.repeat(reverse: true);
+        }
       }
     });
+  }
+
+  void _stopBlink() {
+    if (_blinkActive) {
+      _blinkCtrl.stop();
+      _blinkCtrl.reset();
+      _blinkActive = false;
+    }
   }
 
   void _onTimerExpired() {
@@ -635,6 +753,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
     _hintPulseController.reset();
     _spinController.stop();
     _spinController.reset();
+    _stopBlink();
 
     final sortedDots = List<DotModel>.from(drawing.dots)
       ..sort((a, b) => a.id.compareTo(b.id));
@@ -648,8 +767,12 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
       _animatingConnection = null;
       _spinHintActive = false;
       _firstWrongTapTime = null;
-      _visibleDotCount = min(5, drawing.dots.length);
+      _fadingInDotId = -1;
+      _visibleDotCount = _difficulty == DifficultyMode.superHard
+          ? 1
+          : min(5, drawing.dots.length);
     });
+    _dotRevealCtrl.reset();
   }
 
   void _resetAfterTimeout() {
@@ -659,10 +782,20 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
     final sortedDots = List<DotModel>.from(drawing.dots)
       ..sort((a, b) => a.id.compareTo(b.id));
     final firstId = sortedDots.isNotEmpty ? sortedDots.first.id : 1;
+    final isTimedMode = _difficulty == DifficultyMode.hard ||
+        _difficulty == DifficultyMode.superHard;
     setState(() {
       _overlayPhase = _OverlayPhase.none;
       _remainingSeconds = _totalSeconds;
+      _fadingInDotId = -1;
+      _encouragementPlayed = false;
+      if (isTimedMode) {
+        _visibleDotCount = _difficulty == DifficultyMode.superHard
+            ? 1
+            : min(5, drawing.dots.length);
+      }
     });
+    _dotRevealCtrl.reset();
     _setupHintController(drawing, firstId);
   }
 
@@ -874,6 +1007,15 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                   spinHintProgress: _spinController.value,
                   spinHintActive: _spinHintActive,
                   visibleDotCount: _visibleDotCount,
+                  dotsOpacity: 1.0 - _dotsHideCtrl.value,
+                  isEasyMode: _difficulty == DifficultyMode.easy,
+                  squeezedDotId: _squeezedDotId,
+                  squeezeProgress: _squeezeCtrl.value,
+                  blinkOpacity: _blinkActive
+                      ? (0.30 + 0.70 * _blinkCtrl.value)
+                      : 1.0,
+                  fadingInDotId: _fadingInDotId,
+                  fadingInProgress: _dotRevealCtrl.value,
                 ),
               );
 
@@ -984,8 +1126,18 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
   Widget _buildCelebrationLayer() {
     final drawing = _drawing!;
     final lang = ref.read(progressProvider).selectedLanguage;
-    final t = Curves.elasticOut
-        .transform(_overlayEnterCtrl.value.clamp(0.0, 1.0));
+    final raw = _overlayEnterCtrl.value.clamp(0.0, 1.0);
+    final badgeT = Curves.elasticOut.transform(raw);
+
+    // Stagger each star: star N starts at delay N*0.12 into the animation
+    Widget makeStar(double delay, Color color, double size, double tiltRad) {
+      final v = ((raw - delay) / (1.0 - delay)).clamp(0.0, 1.0);
+      final st = Curves.elasticOut.transform(v);
+      return Transform.rotate(
+        angle: tiltRad,
+        child: Transform.scale(scale: st, child: Icon(Icons.star_rounded, color: color, size: size)),
+      );
+    }
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -993,71 +1145,48 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
       child: Stack(
         fit: StackFit.expand,
         children: [
+          // Scrim — dark overlay so badge dominates; completed drawing peeks through
+          Container(color: _kInk.withValues(alpha: 0.48 * raw)),
+          // Confetti particles on top of scrim
           CustomPaint(
-            painter: _CompletionParticlesPainter(
-                progress: _celebCtrl.value),
+            painter: _CompletionParticlesPainter(progress: _celebCtrl.value),
           ),
           Center(
             child: Transform.scale(
-              scale: (0.6 + 0.4 * t).clamp(0.0, 1.15),
+              scale: (0.6 + 0.4 * badgeT).clamp(0.0, 1.15),
               child: Opacity(
-                opacity: _overlayEnterCtrl.value.clamp(0.0, 1.0),
+                opacity: raw,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Row(
+                    Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.star_rounded, color: _kYellow, size: 40),
-                        SizedBox(width: 10),
-                        Icon(Icons.star_rounded, color: _kRed, size: 30),
-                        SizedBox(width: 10),
-                        Icon(Icons.star_rounded, color: _kYellow, size: 40),
+                        makeStar(0.0, _kYellow, 52, -0.22),
+                        const SizedBox(width: 14),
+                        makeStar(0.12, _kRed, 38, 0.0),
+                        const SizedBox(width: 14),
+                        makeStar(0.24, _kBlue, 52, 0.18),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 18),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 36, vertical: 16),
+                          horizontal: 40, vertical: 18),
                       decoration: BoxDecoration(
                         color: _kYellow,
                         borderRadius: BorderRadius.circular(99),
                         border: Border.all(color: _kInk, width: 4),
                         boxShadow: const [
-                          BoxShadow(
-                              color: _kInk,
-                              blurRadius: 0,
-                              offset: Offset(6, 6)),
+                          BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(7, 7)),
                         ],
                       ),
                       child: Text(
                         drawing.getName(lang),
-                        style: const TextStyle(fontFamily: 'Boogaloo',
+                        style: const TextStyle(
+                          fontFamily: 'Boogaloo',
                           color: _kInk,
-                          fontSize: 48,
-                          height: 1.0,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: _kInk,
-                        borderRadius: BorderRadius.circular(99),
-                        boxShadow: const [
-                          BoxShadow(
-                              color: _kInk,
-                              blurRadius: 0,
-                              offset: Offset(3, 3)),
-                        ],
-                      ),
-                      child: Text(
-                        AppLocalizations.of(context)!.tapToContinue,
-                        style: const TextStyle(fontFamily: 'Boogaloo',
-                          color: Colors.white,
-                          fontSize: 20,
+                          fontSize: 56,
                           height: 1.0,
                         ),
                       ),
@@ -1074,90 +1203,106 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
 
   Widget _buildNarrationPanel() {
     final l10n = AppLocalizations.of(context)!;
-    final curved =
-        Curves.easeOutBack.transform(_panelCtrl.value.clamp(0.0, 1.0));
+    final drawing = _drawing!;
+    final lang = ref.read(progressProvider).selectedLanguage;
+    final t = Curves.easeOutCubic.transform(_panelCtrl.value.clamp(0.0, 1.0));
+    // Slide up from off-screen bottom — 380px gives a readable arrival motion
+    final slideY = (1.0 - t) * 380.0;
 
     return Stack(
       fit: StackFit.expand,
       children: [
-        Positioned.fill(
-          child: Container(
-            color: Colors.black.withValues(
-                alpha: (0.22 * _panelCtrl.value).clamp(0.0, 0.22)),
-          ),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Transform.scale(
-            scale: (0.85 + 0.15 * curved).clamp(0.0, 1.02),
-            alignment: Alignment.bottomCenter,
-            child: Opacity(
-              opacity: _panelCtrl.value.clamp(0.0, 1.0),
-              child: FractionallySizedBox(
-                heightFactor: 0.46,
-                child: Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: _kPaper,
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(28)),
-                    border: Border(
-                      top: BorderSide(color: _kInk, width: 4),
-                      left: BorderSide(color: _kInk, width: 4),
-                      right: BorderSide(color: _kInk, width: 4),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                          color: _kInk,
-                          blurRadius: 0,
-                          offset: Offset(0, -6)),
-                    ],
+        // Bottom sheet — covers ~54% of the screen, drawing peeks above
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: Opacity(
+            opacity: t,
+            child: Transform.translate(
+              offset: Offset(0, slideY),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: _kPaper,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(28),
                   ),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 18),
-                      _DrawingChapterBadge(
-                          chapter: _chapterNumber, l10n: l10n),
-                      const SizedBox(height: 14),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          padding:
-                              const EdgeInsets.symmetric(horizontal: 32),
+                  border: Border.all(color: _kInk, width: 4),
+                  boxShadow: const [
+                    BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(0, -6)),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(height: 20),
+                    // Header: chapter badge + drawing name together
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _DrawingChapterBadge(chapter: _chapterNumber, l10n: l10n),
+                        const SizedBox(width: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 18, vertical: 7),
+                          decoration: BoxDecoration(
+                            color: _kYellow,
+                            borderRadius: BorderRadius.circular(99),
+                            border: Border.all(color: _kInk, width: 3),
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
+                            ],
+                          ),
                           child: Text(
-                            _narrationText.isNotEmpty
-                                ? _narrationText
-                                : '…',
-                            style: const TextStyle(fontFamily: 'Boogaloo',
-                              fontSize: 22,
-                              height: 1.65,
+                            drawing.getName(lang),
+                            style: const TextStyle(
+                              fontFamily: 'Boogaloo',
                               color: _kInk,
+                              fontSize: 20,
+                              height: 1.0,
                             ),
-                            textAlign: TextAlign.center,
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 14),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(32, 0, 32, 28),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _DrawingVoiceButton(
-                              playing: _narrationPlaying,
-                              onTap: _playNarration,
-                            ),
-                            const SizedBox(width: 16),
-                            _DrawingNextButton(
-                              label: _nextDrawingId != null
-                                  ? l10n.letsDraw
-                                  : l10n.keepGoing,
-                              onTap: _finishAndNavigate,
-                            ),
-                          ],
+                      ],
+                    ),
+                    const SizedBox(height: 18),
+                    // Narration text — 28px, generous line height
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                      child: Text(
+                        _narrationText.isNotEmpty ? _narrationText : '…',
+                        style: const TextStyle(
+                          fontFamily: 'Boogaloo',
+                          fontSize: 28,
+                          height: 1.6,
+                          color: _kInk,
                         ),
+                        textAlign: TextAlign.center,
+                        maxLines: 6,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 22),
+                    // Voice replay — small, secondary action
+                    DrawingVoiceButton(
+                      playing: _narrationPlaying,
+                      onTap: _narrationPlaying ? _stopNarration : _playNarration,
+                    ),
+                    const SizedBox(height: 18),
+                    // Next button — dominant, full-width
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 28),
+                      child: _DrawingNextButton(
+                        label: _nextDrawingId != null
+                            ? l10n.letsDraw
+                            : l10n.keepGoing,
+                        onTap: _finishAndNavigate,
+                        fullWidth: true,
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                  ],
                 ),
               ),
             ),
@@ -1195,21 +1340,25 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
       child: Row(
         children: [
           // Home button
-          GestureDetector(
-            onTap: () => context.go('/stories'),
-            child: Container(
-              width: 46,
-              height: 46,
-              decoration: BoxDecoration(
-                color: _kRed,
-                shape: BoxShape.circle,
-                border: Border.all(color: _kInk, width: 3),
-                boxShadow: const [
-                  BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
-                ],
+          Semantics(
+            label: 'Go to stories',
+            button: true,
+            child: GestureDetector(
+              onTap: () => context.go('/stories'),
+              child: Container(
+                width: 46,
+                height: 46,
+                decoration: BoxDecoration(
+                  color: _kRed,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: _kInk, width: 3),
+                  boxShadow: const [
+                    BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
+                  ],
+                ),
+                child: const Icon(Icons.home_rounded,
+                    color: Colors.white, size: 24),
               ),
-              child: const Icon(Icons.home_rounded,
-                  color: Colors.white, size: 24),
             ),
           ),
           const SizedBox(width: 12),
@@ -1250,8 +1399,9 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
           ],
           // Zoom controls (Hard/SuperHard only)
           if (isTimedMode) ...[
-            _ZoomControlButton(
+            ZoomControlButton(
               icon: Icons.remove_rounded,
+              semanticLabel: 'Zoom out',
               onTap: _zoomOut,
             ),
             const SizedBox(width: 4),
@@ -1267,8 +1417,9 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                   ),
                 ),
               ),
-            _ZoomControlButton(
+            ZoomControlButton(
               icon: Icons.add_rounded,
+              semanticLabel: 'Zoom in',
               onTap: _zoomIn,
             ),
             const SizedBox(width: 6),
@@ -1321,27 +1472,72 @@ class _CompletionParticlesPainter extends CustomPainter {
   const _CompletionParticlesPainter({required this.progress});
   final double progress;
 
+  static const _colors = [_kYellow, _kRed, _kGreen, _kBlue, Colors.white];
+
   @override
   void paint(Canvas canvas, Size size) {
     final rand = Random(42);
     final paint = Paint()..style = PaintingStyle.fill;
-    const colors = [
-      _kYellow, _kRed, _kGreen, _kBlue, Colors.white,
-    ];
-    for (int i = 0; i < 55; i++) {
-      final x = rand.nextDouble() * size.width;
+
+    for (int i = 0; i < 68; i++) {
+      final baseX = rand.nextDouble() * size.width;
       final baseY = rand.nextDouble() * size.height;
-      final speed = 0.35 + rand.nextDouble() * 0.65;
-      final y = (baseY - progress * size.height * speed) % size.height;
-      final r = 3.5 + rand.nextDouble() * 5.5;
+      final speed = 0.30 + rand.nextDouble() * 0.70;
       final phase = rand.nextDouble() * pi * 2;
-      final alpha =
-          (0.5 + 0.5 * sin(progress * pi * 3 + phase)).clamp(0.0, 1.0);
-      paint.color =
-          colors[i % colors.length].withValues(alpha: alpha * 0.88);
-      canvas.drawCircle(
-          Offset(x, y < 0 ? y + size.height : y), r, paint);
+      final drift = sin(progress * pi * 4 + phase) * 28; // horizontal sine
+
+      final rawY = baseY - progress * size.height * speed;
+      final y = rawY < 0 ? rawY + size.height : rawY;
+      final x = (baseX + drift).clamp(0.0, size.width);
+
+      final alpha = (0.55 + 0.45 * sin(progress * pi * 2 + phase)).clamp(0.0, 1.0);
+      paint.color = _colors[i % _colors.length].withValues(alpha: alpha * 0.9);
+
+      final rotation = progress * pi * 3 + phase;
+      final shapeType = i % 3; // 0 = circle, 1 = star, 2 = confetti strip
+
+      switch (shapeType) {
+        case 0:
+          final r = 5.0 + rand.nextDouble() * 8.0;
+          canvas.drawCircle(Offset(x, y), r, paint);
+          break;
+        case 1:
+          final r = 6.0 + rand.nextDouble() * 9.0;
+          _drawStar(canvas, Offset(x, y), r, rotation, paint);
+          break;
+        case 2:
+          final w = 5.0 + rand.nextDouble() * 5.0;
+          final h = 12.0 + rand.nextDouble() * 10.0;
+          canvas.save();
+          canvas.translate(x, y);
+          canvas.rotate(rotation);
+          canvas.drawRRect(
+            RRect.fromRectAndRadius(
+              Rect.fromCenter(center: Offset.zero, width: w, height: h),
+              const Radius.circular(2),
+            ),
+            paint,
+          );
+          canvas.restore();
+          break;
+      }
     }
+  }
+
+  void _drawStar(Canvas canvas, Offset center, double radius, double angle, Paint paint) {
+    final path = Path();
+    for (int i = 0; i < 8; i++) {
+      final r = i.isEven ? radius : radius * 0.42;
+      final a = angle + i * pi / 4;
+      final pt = Offset(center.dx + cos(a) * r, center.dy + sin(a) * r);
+      if (i == 0) {
+        path.moveTo(pt.dx, pt.dy);
+      } else {
+        path.lineTo(pt.dx, pt.dy);
+      }
+    }
+    path.close();
+    canvas.drawPath(path, paint);
   }
 
   @override
@@ -1390,33 +1586,37 @@ class _DrawingChapterBadge extends StatelessWidget {
 
 // ── Voice replay button ───────────────────────────────────────────────────────
 
-class _DrawingVoiceButton extends StatelessWidget {
-  const _DrawingVoiceButton({required this.playing, required this.onTap});
+class DrawingVoiceButton extends StatelessWidget {
+  const DrawingVoiceButton({required this.playing, required this.onTap});
   final bool playing;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.lightImpact();
-        onTap();
-      },
-      child: Container(
-        width: 62,
-        height: 62,
-        decoration: BoxDecoration(
-          color: playing ? _kBlue : Colors.white,
-          shape: BoxShape.circle,
-          border: Border.all(color: _kInk, width: 3),
-          boxShadow: const [
-            BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
-          ],
-        ),
-        child: Icon(
-          playing ? Icons.volume_up_rounded : Icons.replay_rounded,
-          color: playing ? Colors.white : _kInk,
-          size: 26,
+    return Semantics(
+      label: playing ? 'Stop narration' : 'Play narration',
+      button: true,
+      child: GestureDetector(
+        onTap: () {
+          HapticFeedback.lightImpact();
+          onTap();
+        },
+        child: Container(
+          width: 62,
+          height: 62,
+          decoration: BoxDecoration(
+            color: playing ? _kBlue : Colors.white,
+            shape: BoxShape.circle,
+            border: Border.all(color: _kInk, width: 3),
+            boxShadow: const [
+              BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
+            ],
+          ),
+          child: Icon(
+            playing ? Icons.volume_up_rounded : Icons.replay_rounded,
+            color: playing ? Colors.white : _kInk,
+            size: 26,
+          ),
         ),
       ),
     );
@@ -1579,9 +1779,10 @@ class SkipButtonState extends State<SkipButton> {
 // ── Next / continue button ────────────────────────────────────────────────────
 
 class _DrawingNextButton extends StatefulWidget {
-  const _DrawingNextButton({required this.label, required this.onTap});
+  const _DrawingNextButton({required this.label, required this.onTap, this.fullWidth = false});
   final String label;
   final VoidCallback onTap;
+  final bool fullWidth;
 
   @override
   State<_DrawingNextButton> createState() => _DrawingNextButtonState();
@@ -1603,6 +1804,8 @@ class _DrawingNextButtonState extends State<_DrawingNextButton> {
       onTapCancel: () => setState(() => _pressed = false),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 100),
+        width: widget.fullWidth ? double.infinity : null,
+        alignment: widget.fullWidth ? Alignment.center : null,
         transform: _pressed
             ? Matrix4.translationValues(5, 5, 0)
             : Matrix4.identity(),
@@ -1634,47 +1837,56 @@ class _DrawingNextButtonState extends State<_DrawingNextButton> {
 
 // ── Zoom control button (+ / −) ───────────────────────────────────────────────
 
-class _ZoomControlButton extends StatefulWidget {
-  const _ZoomControlButton({required this.icon, required this.onTap});
+class ZoomControlButton extends StatefulWidget {
+  const ZoomControlButton({
+    required this.icon,
+    required this.semanticLabel,
+    required this.onTap,
+  });
   final IconData icon;
+  final String semanticLabel;
   final VoidCallback onTap;
 
   @override
-  State<_ZoomControlButton> createState() => _ZoomControlButtonState();
+  State<ZoomControlButton> createState() => _ZoomControlButtonState();
 }
 
-class _ZoomControlButtonState extends State<_ZoomControlButton> {
+class _ZoomControlButtonState extends State<ZoomControlButton> {
   bool _pressed = false;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTapDown: (_) => setState(() => _pressed = true),
-      onTapUp: (_) {
-        setState(() => _pressed = false);
-        HapticFeedback.lightImpact();
-        widget.onTap();
-      },
-      onTapCancel: () => setState(() => _pressed = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 80),
-        transform: _pressed
-            ? Matrix4.translationValues(2, 2, 0)
-            : Matrix4.identity(),
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          color: _kBlue,
-          shape: BoxShape.circle,
-          border: Border.all(color: _kInk, width: 2),
-          boxShadow: _pressed
-              ? []
-              : const [
-                  BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(2, 2)),
-                ],
+    return Semantics(
+      label: widget.semanticLabel,
+      button: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTapDown: (_) => setState(() => _pressed = true),
+        onTapUp: (_) {
+          setState(() => _pressed = false);
+          HapticFeedback.lightImpact();
+          widget.onTap();
+        },
+        onTapCancel: () => setState(() => _pressed = false),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 80),
+          transform: _pressed
+              ? Matrix4.translationValues(2, 2, 0)
+              : Matrix4.identity(),
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: _kBlue,
+            shape: BoxShape.circle,
+            border: Border.all(color: _kInk, width: 2),
+            boxShadow: _pressed
+                ? []
+                : const [
+                    BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(2, 2)),
+                  ],
+          ),
+          child: Icon(widget.icon, color: Colors.white, size: 20),
         ),
-        child: Icon(widget.icon, color: Colors.white, size: 20),
       ),
     );
   }
