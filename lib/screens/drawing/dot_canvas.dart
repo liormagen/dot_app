@@ -21,6 +21,14 @@ class DotCanvasPainter extends CustomPainter {
     this.spinHintProgress = 0.0,
     this.spinHintActive = false,
     this.visibleDotCount = 0,
+    this.dotsOpacity = 1.0,
+    this.isEasyMode = false,
+    this.squeezedDotId = -1,
+    this.squeezeProgress = 0.0,
+    this.blinkOpacity = 1.0,
+    this.fadingInDotId = -1,
+    this.fadingInProgress = 1.0,
+    this.fingerPosition,
   });
 
   final DrawingModel drawing;
@@ -37,6 +45,16 @@ class DotCanvasPainter extends CustomPainter {
   final double spinHintProgress;
   final bool spinHintActive;
   final int visibleDotCount; // 0 = all visible; >0 = max visible dot id
+  final double dotsOpacity;
+
+  // Difficulty-driven extras
+  final bool isEasyMode;
+  final int squeezedDotId;   // dot id currently squishing; -1 = none
+  final double squeezeProgress; // 0→1 linear
+  final double blinkOpacity; // 1.0 = normal; < 1.0 = blinking (super-hard urgency)
+  final int fadingInDotId;      // dot id fading in after reveal; -1 = none
+  final double fadingInProgress; // 0→1 while dot fades in
+  final Offset? fingerPosition;  // current touch position for proximity wiggle
 
   Offset _toCanvas(DotModel dot) => Offset(
         dot.x * scale + offset.dx,
@@ -49,7 +67,7 @@ class DotCanvasPainter extends CustomPainter {
     canvas.drawRect(
       Rect.fromLTWH(offset.dx, offset.dy, drawing.canvasWidth * scale,
           drawing.canvasHeight * scale),
-      Paint()..color = const Color(0xFFFFF9F0),
+      Paint()..color = const Color(0xFFFFF8E7), // matches _kPaper token
     );
 
     // 2. Completed connections
@@ -77,11 +95,24 @@ class DotCanvasPainter extends CustomPainter {
     }
 
     // 5. Dots (always on top) — filtered by visibleDotCount in progressive reveal
-    final dotsToRender = visibleDotCount > 0
-        ? drawing.dots.where((d) => d.id <= visibleDotCount).toList()
-        : drawing.dots;
-    for (final dot in dotsToRender) {
-      _drawDot(canvas, dot);
+    if (dotsOpacity > 0) {
+      final dotsToRender = visibleDotCount > 0
+          ? drawing.dots.where((d) => d.id <= visibleDotCount).toList()
+          : drawing.dots;
+      if (dotsOpacity < 1.0) {
+        canvas.saveLayer(
+          Rect.fromLTWH(0, 0, size.width, size.height),
+          Paint()..color = Colors.white.withValues(alpha: dotsOpacity),
+        );
+        for (final dot in dotsToRender) {
+          _drawDot(canvas, dot);
+        }
+        canvas.restore();
+      } else {
+        for (final dot in dotsToRender) {
+          _drawDot(canvas, dot);
+        }
+      }
     }
   }
 
@@ -146,15 +177,40 @@ class DotCanvasPainter extends CustomPainter {
     final isNext = dot.id == session.nextExpectedDotId;
     final isHinting = dot.id == session.hintingDotId;
 
-    final radius = 15.0 * scale.clamp(0.5, 1.5);
+    // Easy mode dots are 47% larger for small fingers
+    // Proximity scale: unconnected dots grow up to 18% when finger is within 80px
+    double proxScale = 1.0;
+    if (fingerPosition != null && !isConnected && !isAnimating) {
+      final dist = (fingerPosition! - pos).distance;
+      if (dist < 80.0) {
+        proxScale = 1.0 + (1.0 - dist / 80.0) * 0.18;
+      }
+    }
+    final radius = (isEasyMode ? 22.0 : 15.0) * scale.clamp(0.5, 1.5) * proxScale;
 
-    // Idle-hint pulse ring (gold)
-    if (isHinting) {
-      final pulsePaint = Paint()
-        ..color = const Color(0xFFFFD93D).withValues(alpha: 0.55 * hintPulse)
-        ..style = PaintingStyle.fill;
+    // Fade-in when dot first becomes visible (progressive reveal)
+    // Blink urgency for super-hard last 10s — skip during fade-in
+    final dotAlpha = (dot.id == fadingInDotId && fadingInProgress < 1.0)
+        ? fadingInProgress
+        : (!isConnected && !isAnimating && blinkOpacity < 1.0)
+            ? blinkOpacity
+            : 1.0;
+
+    // ── Halos (drawn outside squeeze transform) ──────────────────────────────
+
+    if (isEasyMode && isNext && !isConnected) {
+      // Large warm multi-ring halo — guides very young kids to the next dot
+      _drawEasyHalo(canvas, pos, radius, dotAlpha);
+    } else if (isHinting) {
+      // Normal idle-hint gold pulse
       canvas.drawCircle(
-          pos, radius * 2.4 * (0.8 + hintPulse * 0.4), pulsePaint);
+        pos,
+        radius * 2.4 * (0.8 + hintPulse * 0.4),
+        Paint()
+          ..color = const Color(0xFFFFD93D)
+              .withValues(alpha: 0.55 * hintPulse * dotAlpha)
+          ..style = PaintingStyle.fill,
+      );
     }
 
     // Wrong-tap spinning comet orbit
@@ -162,25 +218,48 @@ class DotCanvasPainter extends CustomPainter {
       _drawSpinningComet(canvas, pos, radius);
     }
 
-    // Next dot highlight ring
-    if (isNext && !isConnected) {
-      // Outer soft glow
+    // Next dot highlight rings (non-easy mode only — easy uses the halo above)
+    if (!isEasyMode && isNext && !isConnected) {
       canvas.drawCircle(
         pos,
         radius * 1.85,
         Paint()
-          ..color = const Color(0xFF6C48FF).withValues(alpha: 0.18)
+          ..color = const Color(0xFF1FA3E8).withValues(alpha: 0.18 * dotAlpha)
           ..style = PaintingStyle.fill
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
       );
-      // Inner highlight ring
       canvas.drawCircle(
         pos,
         radius * 1.55,
         Paint()
-          ..color = const Color(0xFF6C48FF).withValues(alpha: 0.22)
+          ..color = const Color(0xFF1FA3E8).withValues(alpha: 0.22 * dotAlpha)
           ..style = PaintingStyle.fill,
       );
+    }
+
+    // ── Squeeze / squish transform (dot core only) ────────────────────────────
+    double squishX = 1.0, squishY = 1.0;
+    if (squeezedDotId == dot.id && squeezeProgress > 0 && squeezeProgress < 1.0) {
+      final t = squeezeProgress;
+      if (t < 0.28) {
+        // Quick squish inward: x widens, y squashes
+        final p = t / 0.28;
+        squishX = 1.0 + p * 0.24;
+        squishY = 1.0 - p * 0.30;
+      } else {
+        // Spring back with damped oscillation
+        final p = (t - 0.28) / 0.72;
+        final damped = exp(-p * 5.5) * cos(p * pi * 3.2);
+        squishX = 1.0 + damped * 0.24;
+        squishY = 1.0 - damped * 0.30;
+      }
+    }
+    final doTransform = (squishX - 1.0).abs() > 0.001 || (squishY - 1.0).abs() > 0.001;
+    if (doTransform) {
+      canvas.save();
+      canvas.translate(pos.dx, pos.dy);
+      canvas.scale(squishX, squishY);
+      canvas.translate(-pos.dx, -pos.dy);
     }
 
     // Drop shadow for depth
@@ -188,59 +267,94 @@ class DotCanvasPainter extends CustomPainter {
       pos + Offset(0, radius * 0.25),
       radius * 0.9,
       Paint()
-        ..color = Colors.black.withValues(alpha: 0.12)
+        ..color = Colors.black.withValues(alpha: 0.12 * dotAlpha)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
     );
 
     // Dot fill
     if (isConnected || isAnimating) {
-      // Mint gradient fill for connected dots
       const gradient = RadialGradient(
         center: Alignment(-0.3, -0.4),
         radius: 0.9,
-        colors: [
-          Color(0xFF8DE88B),
-          Color(0xFF6BCB77),
-        ],
+        colors: [Color(0xFF8DE88B), Color(0xFF6BCB77)],
       );
       final rect = Rect.fromCircle(center: pos, radius: radius);
-      canvas.drawCircle(
-        pos,
-        radius,
-        Paint()..shader = gradient.createShader(rect),
-      );
+      canvas.drawCircle(pos, radius, Paint()..shader = gradient.createShader(rect));
     } else {
-      // White fill with subtle warm tint
-      canvas.drawCircle(pos, radius, Paint()..color = Colors.white);
+      canvas.drawCircle(pos, radius, Paint()..color = Colors.white.withValues(alpha: dotAlpha));
     }
 
-    // Border
-    final borderColor = (isConnected || isAnimating)
-        ? const Color(0xFF4CAF50)
-        : const Color(0xFF6C48FF);
+    // Border — on-palette colors: green when done, blue when idle
+    final borderColor =
+        (isConnected || isAnimating) ? const Color(0xFF2DB84B) : const Color(0xFF1FA3E8);
     canvas.drawCircle(
       pos,
       radius,
       Paint()
-        ..color = borderColor
+        ..color = borderColor.withValues(alpha: dotAlpha)
         ..strokeWidth = 2.8
         ..style = PaintingStyle.stroke,
     );
 
-    // White highlight on top-left of dot
+    // White highlight (top-left glint)
     canvas.drawCircle(
       pos + Offset(-radius * 0.28, -radius * 0.32),
       radius * 0.28,
-      Paint()..color = Colors.white.withValues(alpha: 0.7),
+      Paint()..color = Colors.white.withValues(alpha: 0.7 * dotAlpha),
     );
 
     // Label
     if (isConnected || isAnimating) {
       _drawText(canvas, '✓', pos, Colors.white, radius * 1.1);
     } else {
-      _drawText(
-          canvas, '${dot.id}', pos, const Color(0xFF4B35CC), radius * 1.1);
+      _drawText(canvas, '${dot.id}', pos,
+          const Color(0xFF1A1A2E).withValues(alpha: dotAlpha), radius * 1.1);
     }
+
+    if (doTransform) canvas.restore();
+  }
+
+  /// Three warm concentric rings that pulse toward the dot — holds young
+  /// children's hands and guides their finger to the right spot.
+  void _drawEasyHalo(Canvas canvas, Offset pos, double radius, double alpha) {
+    // Outer soft glow
+    canvas.drawCircle(
+      pos,
+      radius * 4.5 * (0.85 + hintPulse * 0.15),
+      Paint()
+        ..color = const Color(0xFFFFB347)
+            .withValues(alpha: 0.20 * hintPulse * alpha)
+        ..style = PaintingStyle.fill
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20),
+    );
+    // Mid ring
+    canvas.drawCircle(
+      pos,
+      radius * 3.2 * (0.85 + hintPulse * 0.20),
+      Paint()
+        ..color = const Color(0xFFFFD93D)
+            .withValues(alpha: 0.38 * hintPulse * alpha)
+        ..style = PaintingStyle.fill,
+    );
+    // Inner ring
+    canvas.drawCircle(
+      pos,
+      radius * 2.2 * (0.88 + hintPulse * 0.18),
+      Paint()
+        ..color = const Color(0xFFFFD93D)
+            .withValues(alpha: 0.58 * hintPulse * alpha)
+        ..style = PaintingStyle.fill,
+    );
+    // Crisp stroke ring — gives the halo a clean visible edge
+    canvas.drawCircle(
+      pos,
+      radius * 2.0,
+      Paint()
+        ..color = const Color(0xFFFFB347)
+            .withValues(alpha: 0.75 * hintPulse * alpha)
+        ..strokeWidth = 3.5
+        ..style = PaintingStyle.stroke,
+    );
   }
 
   /// Draws an orange comet arc orbiting the dot — the wrong-tap hint.

@@ -1016,6 +1016,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                       : 1.0,
                   fadingInDotId: _fadingInDotId,
                   fadingInProgress: _dotRevealCtrl.value,
+                  fingerPosition: (_isRevealing || overlayActive) ? null : _fingerPosition,
                 ),
               );
 
@@ -1030,7 +1031,26 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                   onTapUp: (_isRevealing || overlayActive)
                       ? null
                       : (d) => _handleTap(d.localPosition, widgetSize),
-                  child: canvasPainter,
+                  child: Listener(
+                    onPointerMove: (_isRevealing || overlayActive)
+                        ? null
+                        : (e) {
+                            if (_fingerPosition != e.localPosition) {
+                              setState(() => _fingerPosition = e.localPosition);
+                            }
+                          },
+                    onPointerUp: (_) {
+                      if (_fingerPosition != null) {
+                        setState(() => _fingerPosition = null);
+                      }
+                    },
+                    onPointerCancel: (_) {
+                      if (_fingerPosition != null) {
+                        setState(() => _fingerPosition = null);
+                      }
+                    },
+                    child: canvasPainter,
+                  ),
                 ),
               );
             },
