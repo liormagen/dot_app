@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gal/gal.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../l10n/app_localizations.dart';
@@ -482,7 +483,7 @@ class _DrawingCardState extends State<_DrawingCard>
 // ---------------------------------------------------------------------------
 // Full-screen dialog
 // ---------------------------------------------------------------------------
-class _FullScreenDialog extends StatelessWidget {
+class _FullScreenDialog extends StatefulWidget {
   const _FullScreenDialog({
     required this.drawing,
     required this.image,
@@ -492,6 +493,56 @@ class _FullScreenDialog extends StatelessWidget {
   final DrawingModel drawing;
   final ui.Image image;
   final String lang;
+
+  @override
+  State<_FullScreenDialog> createState() => _FullScreenDialogState();
+}
+
+class _FullScreenDialogState extends State<_FullScreenDialog> {
+  final _repaintKey = GlobalKey();
+  bool _saving = false;
+
+  Future<void> _saveToPhotos() async {
+    setState(() => _saving = true);
+    try {
+      final hasAccess = await Gal.hasAccess(toAlbum: false);
+      if (!hasAccess) {
+        final granted = await Gal.requestAccess(toAlbum: false);
+        if (!granted) {
+          if (mounted) setState(() => _saving = false);
+          return;
+        }
+      }
+      final boundary =
+          _repaintKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+      if (boundary == null) {
+        if (mounted) setState(() => _saving = false);
+        return;
+      }
+      final img = await boundary.toImage(pixelRatio: 2.0);
+      final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+      if (byteData == null) {
+        if (mounted) setState(() => _saving = false);
+        return;
+      }
+      await Gal.putImageBytes(byteData.buffer.asUint8List());
+      if (mounted) {
+        setState(() => _saving = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Saved to Photos!',
+              style: TextStyle(fontFamily: 'Boogaloo', fontSize: 16),
+            ),
+            duration: Duration(seconds: 2),
+            backgroundColor: Color(0xFF2DB84B),
+          ),
+        );
+      }
+    } catch (_) {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -515,14 +566,17 @@ class _FullScreenDialog extends StatelessWidget {
           borderRadius: BorderRadius.circular(29),
           child: Stack(
             children: [
-              AspectRatio(
-                aspectRatio: 1.0,
-                child: CustomPaint(
-                  painter: _ImagePainter(image: image),
-                  size: Size.infinite,
+              RepaintBoundary(
+                key: _repaintKey,
+                child: AspectRatio(
+                  aspectRatio: 1.0,
+                  child: CustomPaint(
+                    painter: _ImagePainter(image: widget.image),
+                    size: Size.infinite,
+                  ),
                 ),
               ),
-              // Gradient footer
+              // Gradient footer with title + save button
               Positioned(
                 bottom: 0,
                 left: 0,
@@ -536,14 +590,73 @@ class _FullScreenDialog extends StatelessWidget {
                       colors: [Color(0xCC1A0E3F), Colors.transparent],
                     ),
                   ),
-                  child: Text(
-                    drawing.getName(lang),
-                    style: const TextStyle(fontFamily: 'Fredoka',
-                      fontSize: 28,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                    textAlign: TextAlign.center,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        widget.drawing.getName(widget.lang),
+                        style: const TextStyle(
+                          fontFamily: 'Fredoka',
+                          fontSize: 28,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 14),
+                      GestureDetector(
+                        onTap: _saving ? null : _saveToPhotos,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 120),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: _saving
+                                ? Colors.white38
+                                : const Color(0xFF2DB84B),
+                            borderRadius: BorderRadius.circular(99),
+                            border:
+                                Border.all(color: Colors.white, width: 2),
+                            boxShadow: _saving
+                                ? []
+                                : const [
+                                    BoxShadow(
+                                      color: Color(0xFF1A1A2E),
+                                      blurRadius: 0,
+                                      offset: Offset(3, 3),
+                                    ),
+                                  ],
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (_saving)
+                                const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2.5,
+                                  ),
+                                )
+                              else
+                                const Icon(Icons.download_rounded,
+                                    color: Colors.white, size: 18),
+                              const SizedBox(width: 8),
+                              Text(
+                                _saving ? 'Saving…' : 'Save to Photos',
+                                style: const TextStyle(
+                                  fontFamily: 'Boogaloo',
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  height: 1.0,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -568,7 +681,7 @@ class _FullScreenDialog extends StatelessWidget {
                   ),
                 ),
               ),
-              // Gold star badge (completed)
+              // Gold star badge
               Positioned(
                 top: 12,
                 left: 12,
@@ -589,12 +702,12 @@ class _FullScreenDialog extends StatelessWidget {
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.star_rounded,
-                          size: 16, color: _kNight),
+                      Icon(Icons.star_rounded, size: 16, color: _kNight),
                       SizedBox(width: 4),
                       Text(
                         'Done',
-                        style: TextStyle(fontFamily: 'Fredoka',
+                        style: TextStyle(
+                          fontFamily: 'Fredoka',
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
                           color: _kNight,
