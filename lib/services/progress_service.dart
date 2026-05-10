@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,6 +15,7 @@ const _kMusic = 'music_enabled';
 const _kSfx = 'sfx_enabled';
 const _kPurchase = 'purchase_unlocked';
 const _kDifficulty = 'difficulty';
+const _kBestTimes = 'best_times';
 
 
 // ---------------------------------------------------------------------------
@@ -30,6 +33,12 @@ class ProgressService {
     if (prefs == null) return ProgressModel.initial;
 
     final completedList = prefs.getStringList(_kCompletedDrawings) ?? [];
+    final bestTimesStr = prefs.getString(_kBestTimes);
+    final bestTimeMs = bestTimesStr != null
+        ? Map<String, int>.from(
+            (jsonDecode(bestTimesStr) as Map<String, dynamic>)
+                .map((k, v) => MapEntry(k, v as int)))
+        : <String, int>{};
     return ProgressModel(
       completedDrawingIds: completedList.toSet(),
       selectedLanguage: prefs.getString(_kLanguage) ?? 'en',
@@ -38,6 +47,7 @@ class ProgressService {
       sfxEnabled: prefs.getBool(_kSfx) ?? true,
       purchaseUnlocked: prefs.getBool(_kPurchase) ?? false,
       difficulty: parseDifficultyMode(prefs.getString(_kDifficulty)),
+      bestTimeMs: bestTimeMs,
     );
   }
 
@@ -132,6 +142,14 @@ class ProgressNotifier extends StateNotifier<ProgressModel> {
   Future<void> setDifficulty(DifficultyMode mode) async {
     await _service.setDifficulty(mode);
     state = state.copyWith(difficulty: mode);
+  }
+
+  Future<void> saveBestTime(String drawingId, int elapsedMs) async {
+    final updated = Map<String, int>.from(state.bestTimeMs);
+    updated[drawingId] = elapsedMs;
+    state = state.copyWith(bestTimeMs: updated);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_kBestTimes, jsonEncode(state.bestTimeMs));
   }
 }
 

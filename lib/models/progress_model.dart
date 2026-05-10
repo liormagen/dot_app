@@ -15,13 +15,14 @@ DifficultyMode parseDifficultyMode(String? s) {
 
 class ProgressModel {
   const ProgressModel({
-    required this.completedDrawingIds,
-    required this.selectedLanguage,
-    required this.onboardingComplete,
-    required this.musicEnabled,
-    required this.sfxEnabled,
-    required this.purchaseUnlocked,
+    this.completedDrawingIds = const {},
+    this.selectedLanguage = 'en',
+    this.onboardingComplete = false,
+    this.musicEnabled = true,
+    this.sfxEnabled = true,
+    this.purchaseUnlocked = false,
     this.difficulty = DifficultyMode.normal,
+    this.bestTimeMs = const {},
   });
 
   final Set<String> completedDrawingIds;
@@ -31,6 +32,7 @@ class ProgressModel {
   final bool sfxEnabled;
   final bool purchaseUnlocked;
   final DifficultyMode difficulty;
+  final Map<String, int> bestTimeMs;
 
   static const ProgressModel initial = ProgressModel(
     completedDrawingIds: {},
@@ -40,6 +42,7 @@ class ProgressModel {
     sfxEnabled: true,
     purchaseUnlocked: false,
     difficulty: DifficultyMode.normal,
+    bestTimeMs: {},
   );
 
   ProgressModel copyWith({
@@ -50,6 +53,7 @@ class ProgressModel {
     bool? sfxEnabled,
     bool? purchaseUnlocked,
     DifficultyMode? difficulty,
+    Map<String, int>? bestTimeMs,
   }) {
     return ProgressModel(
       completedDrawingIds: completedDrawingIds ?? this.completedDrawingIds,
@@ -59,6 +63,35 @@ class ProgressModel {
       sfxEnabled: sfxEnabled ?? this.sfxEnabled,
       purchaseUnlocked: purchaseUnlocked ?? this.purchaseUnlocked,
       difficulty: difficulty ?? this.difficulty,
+      bestTimeMs: bestTimeMs ?? this.bestTimeMs,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'completedDrawingIds': completedDrawingIds.toList(),
+        'selectedLanguage': selectedLanguage,
+        'onboardingComplete': onboardingComplete,
+        'musicEnabled': musicEnabled,
+        'sfxEnabled': sfxEnabled,
+        'purchaseUnlocked': purchaseUnlocked,
+        'difficulty': difficulty.name,
+        'bestTimeMs': bestTimeMs,
+      };
+
+  factory ProgressModel.fromJson(Map<String, dynamic> json) {
+    return ProgressModel(
+      completedDrawingIds: (json['completedDrawingIds'] as List<dynamic>? ?? [])
+          .map((e) => e as String)
+          .toSet(),
+      selectedLanguage: json['selectedLanguage'] as String? ?? 'en',
+      onboardingComplete: json['onboardingComplete'] as bool? ?? false,
+      musicEnabled: json['musicEnabled'] as bool? ?? true,
+      sfxEnabled: json['sfxEnabled'] as bool? ?? true,
+      purchaseUnlocked: json['purchaseUnlocked'] as bool? ?? false,
+      difficulty: parseDifficultyMode(json['difficulty'] as String?),
+      bestTimeMs: Map<String, int>.from(
+          (json['bestTimeMs'] as Map? ?? {}).map(
+              (k, v) => MapEntry(k as String, v as int))),
     );
   }
 }

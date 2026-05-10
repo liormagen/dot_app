@@ -53,4 +53,36 @@ void main() {
       ]));
     });
   });
+
+  group('ProgressModel.bestTimeMs', () {
+    test('defaults to empty map', () {
+      const model = ProgressModel();
+      expect(model.bestTimeMs, isEmpty);
+    });
+
+    test('copyWith preserves bestTimeMs', () {
+      const model = ProgressModel(bestTimeMs: {'abc': 5000});
+      final copy = model.copyWith(musicEnabled: false);
+      expect(copy.bestTimeMs, equals({'abc': 5000}));
+    });
+
+    test('copyWith can update bestTimeMs', () {
+      const model = ProgressModel(bestTimeMs: {'abc': 5000});
+      final updated = model.copyWith(bestTimeMs: {'abc': 4000, 'xyz': 3000});
+      expect(updated.bestTimeMs, equals({'abc': 4000, 'xyz': 3000}));
+    });
+
+    test('toJson/fromJson round-trips bestTimeMs', () {
+      const model = ProgressModel(bestTimeMs: {'drawing1': 12345, 'drawing2': 67890});
+      final json = model.toJson();
+      final restored = ProgressModel.fromJson(json);
+      expect(restored.bestTimeMs, equals({'drawing1': 12345, 'drawing2': 67890}));
+    });
+
+    test('fromJson with missing bestTimeMs defaults to empty', () {
+      final json = <String, dynamic>{};
+      final model = ProgressModel.fromJson(json);
+      expect(model.bestTimeMs, isEmpty);
+    });
+  });
 }
