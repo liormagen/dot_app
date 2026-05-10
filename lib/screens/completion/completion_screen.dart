@@ -430,6 +430,8 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
                         ],
                       ),
                       const SizedBox(height: 20),
+                      if (_isNewRecord && widget.elapsedMs != null)
+                        _PersonalBestBanner(elapsedMs: widget.elapsedMs!),
                       Text(
                         AppLocalizations.of(context)!.tapToContinue,
                         style: TextStyle(fontFamily: 'Boogaloo',
@@ -1010,6 +1012,112 @@ class _StarsPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_StarsPainter old) => old.t != t;
+}
+
+// ── Personal best banner ──────────────────────────────────────────────────────
+
+class _PersonalBestBanner extends StatefulWidget {
+  const _PersonalBestBanner({required this.elapsedMs});
+  final int elapsedMs;
+
+  @override
+  State<_PersonalBestBanner> createState() => _PersonalBestBannerState();
+}
+
+class _PersonalBestBannerState extends State<_PersonalBestBanner>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _scale;
+  late final Animation<double> _opacity;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+    _scale = Tween<double>(begin: 0.6, end: 1.0).animate(
+      CurvedAnimation(parent: _ctrl, curve: Curves.elasticOut),
+    );
+    _opacity = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _ctrl,
+        curve: const Interval(0.0, 0.4, curve: Curves.easeOut),
+      ),
+    );
+    _ctrl.forward();
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  String _formatTime(int ms) {
+    final seconds = (ms / 1000).toStringAsFixed(1);
+    return '${seconds}s';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const kInk = Color(0xFF1A1A2E);
+    const kYellow = Color(0xFFF5C800);
+    const kRed = Color(0xFFE82D2D);
+
+    return FadeTransition(
+      opacity: _opacity,
+      child: ScaleTransition(
+        scale: _scale,
+        child: Container(
+          margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          decoration: BoxDecoration(
+            color: kYellow,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: kInk, width: 3),
+            boxShadow: const [
+              BoxShadow(color: kInk, blurRadius: 0, offset: Offset(4, 4)),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('🏆', style: TextStyle(fontSize: 28)),
+              const SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'NEW RECORD!',
+                    style: TextStyle(
+                      fontFamily: 'Boogaloo',
+                      fontSize: 22,
+                      color: kInk,
+                      fontWeight: FontWeight.bold,
+                      shadows: [
+                        Shadow(color: kRed, offset: Offset(2, 2), blurRadius: 0),
+                      ],
+                    ),
+                  ),
+                  Text(
+                    _formatTime(widget.elapsedMs),
+                    style: const TextStyle(
+                      fontFamily: 'Boogaloo',
+                      fontSize: 16,
+                      color: kInk,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 // ── Celebration CTA button ────────────────────────────────────────────────────
