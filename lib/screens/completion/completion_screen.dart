@@ -144,11 +144,10 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
         _loading = false;
         if (widget.skipReveal) _phase = _CompletionPhase.nameReveal;
         // Personal best detection (Hard/SuperHard only, only when elapsedMs provided)
-        final currentDifficulty = ref.read(progressProvider).difficulty;
+        final progress = ref.read(progressProvider);
         if (widget.elapsedMs != null &&
-            (currentDifficulty == DifficultyMode.hard ||
-             currentDifficulty == DifficultyMode.superHard)) {
-          final progress = ref.read(progressProvider);
+            (progress.difficulty == DifficultyMode.hard ||
+             progress.difficulty == DifficultyMode.superHard)) {
           final previous = progress.bestTimeMs[widget.drawingId];
           _isNewRecord = previous == null || widget.elapsedMs! < previous;
         }
