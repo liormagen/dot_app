@@ -47,10 +47,15 @@ final _router = GoRouter(
         final drawingId = state.pathParameters['drawingId']!;
         final skipReveal =
             state.uri.queryParameters['skipReveal'] == 'true';
+        final elapsedMs = int.tryParse(
+          state.uri.queryParameters['elapsedMs'] ?? '',
+        );
         return CustomTransitionPage(
           key: state.pageKey,
           child: CompletionScreen(
-              drawingId: drawingId, skipReveal: skipReveal),
+              drawingId: drawingId,
+              skipReveal: skipReveal,
+              elapsedMs: elapsedMs),
           transitionsBuilder:
               (context, animation, secondaryAnimation, child) =>
                   FadeTransition(opacity: animation, child: child),

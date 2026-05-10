@@ -170,8 +170,28 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
   bool _timerStarted = false;
   bool _encouragementPlayed = false;
 
-  // Progressive reveal (Hard / Super Hard)
-  int _visibleDotCount = 0; // 0 = all visible (Easy/Normal)
+  // Progressive reveal (Hard / Super Hard / Easy)
+  int _visibleDotCount = 0; // 0 = all visible (Normal only)
+
+  // Easy-mode always-on pulse — drives halo + guide trail independently of
+  // the idle-hint system so the next dot is always visibly animated.
+  late AnimationController _easyPulseCtrl;
+
+  // Normal-mode engagement enhancements
+  late AnimationController _normalPulseCtrl; // 1.2 s — drives next-dot rings
+  late AnimationController _wiggleCtrl;      // 400 ms — wrong-tap shake
+  late AnimationController _milestoneCtrl;   // 600 ms — counter badge bounce
+  int _streakCount = 0;
+  bool _isStreaking = false;
+  DateTime? _lastCorrectTapTime;
+  bool _milestone33Hit = false;
+  bool _milestone66Hit = false;
+  int _elapsedSeconds = 0;
+  Timer? _elapsedTimer;
+  bool _elapsedTimerStarted = false;
+
+  // Elapsed time tracking — set in initState, used when navigating to completion
+  DateTime? _drawingStartTime;
 
   // Zoom / pan (Hard / SuperHard only)
   late TransformationController _transformController;
@@ -305,6 +325,35 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
         if (mounted) setState(() {});
       });
 
+    _easyPulseCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..addListener(() {
+        if (mounted) setState(() {});
+      })..repeat(reverse: true);
+
+    _normalPulseCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..addListener(() {
+        if (mounted) setState(() {});
+      })..repeat(reverse: true);
+
+    _wiggleCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    )..addListener(() {
+        if (mounted) setState(() {});
+      });
+
+    _milestoneCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    )..addListener(() {
+        if (mounted) setState(() {});
+      });
+
+    _drawingStartTime = DateTime.now();
     _loadDrawing();
   }
 
@@ -353,7 +402,16 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
         _remainingSeconds = timerSecs;
         _visibleDotCount = isTimedMode
             ? (difficulty == DifficultyMode.superHard ? 2 : min(5, effectiveDots.length))
-            : 0;
+            : difficulty == DifficultyMode.easy
+                ? min(3, effectiveDots.length)
+                : 0;
+        _streakCount = 0;
+        _isStreaking = false;
+        _lastCorrectTapTime = null;
+        _milestone33Hit = false;
+        _milestone66Hit = false;
+        _elapsedSeconds = 0;
+        _elapsedTimerStarted = false;
       });
       ref.read(audioServiceProvider).playMusic('audio/music/drawing_theme.mp3');
       // Timer starts on first dot tap (A2) — not here
@@ -399,6 +457,9 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
 
   void _setupHintController(DrawingModel drawing, int targetDotId) {
     _hintController?.dispose();
+    _hintController = null;
+    // Hard and SuperHard: no idle hint — finding the dot is the challenge
+    if (_difficulty == DifficultyMode.hard || _difficulty == DifficultyMode.superHard) return;
     final delay = _difficulty == DifficultyMode.easy ? 0 : drawing.hintDelaySeconds;
     _hintController = HintController(delaySeconds: delay);
     _hintController!.onHintActivate = (dotId) {
@@ -424,6 +485,11 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
     _panelCtrl.dispose();
     _celebCtrl.dispose();
     _hintController?.dispose();
+    _easyPulseCtrl.dispose();
+    _normalPulseCtrl.dispose();
+    _wiggleCtrl.dispose();
+    _milestoneCtrl.dispose();
+    _elapsedTimer?.cancel();
     _narrationSub?.cancel();
     _transformController.dispose();
     try {
@@ -472,8 +538,16 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
     final now = DateTime.now();
     _firstWrongTapTime ??= now;
 
+    // Immediate "come here!" shake on the next dot
+    _wiggleCtrl.forward(from: 0);
+    HapticFeedback.lightImpact();
+
+    // Break streak on wrong tap
+    if (_streakCount > 0) setState(() { _streakCount = 0; _isStreaking = false; });
+
     final elapsed = now.difference(_firstWrongTapTime!);
-    if (elapsed.inMilliseconds >= 2000 && !_spinHintActive) {
+    final allowSpinHint = _difficulty != DifficultyMode.hard && _difficulty != DifficultyMode.superHard;
+    if (allowSpinHint && elapsed.inMilliseconds >= 2000 && !_spinHintActive) {
       setState(() => _spinHintActive = true);
       _spinController.repeat();
       HapticFeedback.mediumImpact();
@@ -497,6 +571,22 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
       _spinController.stop();
       _spinController.reset();
       setState(() => _spinHintActive = false);
+    }
+
+    // Stop wiggle (player found the dot)
+    if (_wiggleCtrl.isAnimating) { _wiggleCtrl.stop(); _wiggleCtrl.reset(); }
+
+    // Normal-mode: start elapsed clock on first correct tap
+    if (_difficulty == DifficultyMode.normal && !_elapsedTimerStarted) {
+      _elapsedTimerStarted = true;
+      _elapsedTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+        if (mounted) setState(() => _elapsedSeconds++);
+      });
+    }
+
+    // Track streak on Normal / Hard / SuperHard
+    if (_difficulty != DifficultyMode.easy) {
+      _updateStreak();
     }
 
     _hintController?.cancel();
@@ -529,6 +619,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
           .read(drawingSessionProvider.notifier)
           .addConnection(newConn, nextDotId, isLast);
       _updateVisibleCount();
+      _checkMilestones(drawing);
 
       // Encourage once when ~60% of dots are connected
       final totalDots = drawing.dots.length;
@@ -584,6 +675,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
           Future.delayed(const Duration(milliseconds: 200), () {
             if (!mounted) return;
             _countdownTimer?.cancel();
+            _elapsedTimer?.cancel();
             setState(() => _isRevealing = true);
             ref.read(audioServiceProvider).stopMusic();
             ref.read(audioServiceProvider).playRevealSwell();
@@ -598,22 +690,71 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
   void _updateVisibleCount() {
     final drawing = _drawing;
     if (drawing == null) return;
-    if (_difficulty != DifficultyMode.hard &&
-        _difficulty != DifficultyMode.superHard) {
-      return;
-    }
+    final isProgressive = _difficulty == DifficultyMode.hard ||
+        _difficulty == DifficultyMode.superHard ||
+        _difficulty == DifficultyMode.easy;
+    if (!isProgressive) return;
     final session = ref.read(drawingSessionProvider);
-    // Sliding window anchored to the next required dot so the player is never
-    // blocked: every correct tap immediately reveals the dot that follows.
-    // SuperHard lookahead=1 (next target + 1 peek), Hard lookahead=4 (5-dot window).
-    final int lookahead = _difficulty == DifficultyMode.superHard ? 1 : 4;
-    final newVisible = min(session.nextExpectedDotId + lookahead, drawing.dots.length);
+    // Sliding window: next required dot is always visible; lookahead varies.
+    // Easy=2 peek ahead (always findable without number literacy),
+    // Hard=4, SuperHard=1.
+    final int lookahead = _difficulty == DifficultyMode.superHard
+        ? 1
+        : _difficulty == DifficultyMode.hard
+            ? 4
+            : 2;
+    final newVisible =
+        min(session.nextExpectedDotId + lookahead, drawing.dots.length);
     if (newVisible > _visibleDotCount) {
-      setState(() {
-        _fadingInDotId = newVisible;
-        _visibleDotCount = newVisible;
-      });
-      _dotRevealCtrl.forward(from: 0);
+      if (_difficulty == DifficultyMode.easy) {
+        // Quiet reveal for Easy — no dramatic fade-in animation
+        setState(() => _visibleDotCount = newVisible);
+      } else {
+        setState(() {
+          _fadingInDotId = newVisible;
+          _visibleDotCount = newVisible;
+        });
+        _dotRevealCtrl.forward(from: 0);
+      }
+    }
+  }
+
+  // ── Normal-mode engagement helpers ─────────────────────────────────────────
+
+  void _updateStreak() {
+    final now = DateTime.now();
+    final last = _lastCorrectTapTime;
+    _lastCorrectTapTime = now;
+    if (last != null && now.difference(last).inMilliseconds < 2500) {
+      _streakCount++;
+    } else {
+      _streakCount = 1;
+    }
+    final wasStreaking = _isStreaking;
+    setState(() => _isStreaking = _streakCount >= 3);
+    if (_isStreaking && !wasStreaking) HapticFeedback.mediumImpact();
+  }
+
+  void _checkMilestones(DrawingModel drawing) {
+    if (_difficulty != DifficultyMode.normal) return;
+    final total = drawing.dots.length;
+    if (total == 0) return;
+    final connected = ref.read(drawingSessionProvider).connections.length;
+    final frac = connected / total;
+    if (!_milestone33Hit && frac >= 0.33) {
+      setState(() => _milestone33Hit = true);
+      _milestoneCtrl.forward(from: 0);
+      if (_canvasSize != null) {
+        _confettiKey.currentState?.triggerBurst(
+            Offset(_canvasSize!.width / 2, _canvasSize!.height * 0.15));
+      }
+    } else if (!_milestone66Hit && frac >= 0.66) {
+      setState(() => _milestone66Hit = true);
+      _milestoneCtrl.forward(from: 0);
+      if (_canvasSize != null) {
+        _confettiKey.currentState?.triggerBurst(
+            Offset(_canvasSize!.width / 2, _canvasSize!.height * 0.15));
+      }
     }
   }
 
@@ -700,13 +841,23 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
     _countdownTimer?.cancel();
     if (!mounted) return;
     ref.read(progressProvider.notifier).markDrawingComplete(widget.drawingId);
+
+    final elapsedMs = _drawingStartTime != null
+        ? DateTime.now().difference(_drawingStartTime!).inMilliseconds
+        : null;
+    final queryParts = <String, String>{};
+    if (elapsedMs != null) queryParts['elapsedMs'] = elapsedMs.toString();
+    final query = queryParts.isNotEmpty
+        ? '?${queryParts.entries.map((e) => '${e.key}=${e.value}').join('&')}'
+        : '';
+
     final nextId = _nextDrawingId;
     if (nextId != null) {
       context.go('/drawing/$nextId');
     } else if (_storyId.isNotEmpty) {
       context.go('/story-complete/$_storyId');
     } else {
-      context.go('/stories');
+      context.go('/completion/${widget.drawingId}$query');
     }
   }
 
@@ -1010,6 +1161,11 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                   visibleDotCount: _visibleDotCount,
                   dotsOpacity: 1.0 - _dotsHideCtrl.value,
                   isEasyMode: _difficulty == DifficultyMode.easy,
+                  showNextDotRing: _difficulty == DifficultyMode.normal,
+                  easyPulse: _easyPulseCtrl.value,
+                  normalPulse: _normalPulseCtrl.value,
+                  wiggleProgress: _wiggleCtrl.value,
+                  isStreaking: _isStreaking,
                   squeezedDotId: _squeezedDotId,
                   squeezeProgress: _squeezeCtrl.value,
                   blinkOpacity: _blinkActive
@@ -1211,6 +1367,10 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                         ),
                       ),
                     ),
+                    if (_difficulty == DifficultyMode.normal && _elapsedSeconds > 0) ...[
+                      const SizedBox(height: 14),
+                      _CompletionTimeBadge(seconds: _elapsedSeconds),
+                    ],
                   ],
                 ),
               ),
@@ -1352,32 +1512,45 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
             ),
           ),
           const SizedBox(width: 12),
-          // Counter badge
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
-            decoration: BoxDecoration(
-              color: _kInk,
-              borderRadius: BorderRadius.circular(99),
-              boxShadow: const [
-                BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.star_rounded, color: _kYellow, size: 20),
-                const SizedBox(width: 6),
-                Text(
-                  '$displayed / $total',
-                  style: const TextStyle(fontFamily: 'Boogaloo',
-                    color: Colors.white,
-                    fontSize: 22,
-                    height: 1.0,
+          // Counter badge — bounces on milestone hits
+          Transform.scale(
+            scale: 1.0 + sin(_milestoneCtrl.value * pi) * 0.35,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+              decoration: BoxDecoration(
+                color: _kInk,
+                borderRadius: BorderRadius.circular(99),
+                boxShadow: const [
+                  BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.star_rounded, color: _kYellow, size: 20),
+                  const SizedBox(width: 6),
+                  Text(
+                    '$displayed / $total',
+                    style: const TextStyle(fontFamily: 'Boogaloo',
+                      color: Colors.white,
+                      fontSize: 22,
+                      height: 1.0,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
+          // Streak badge (Normal mode)
+          if (_difficulty != DifficultyMode.easy && _isStreaking) ...[
+            const SizedBox(width: 8),
+            _StreakBadge(count: _streakCount),
+          ],
+          // Elapsed time (Normal mode, after first tap)
+          if (_difficulty == DifficultyMode.normal && _elapsedTimerStarted) ...[
+            const SizedBox(width: 8),
+            _ElapsedBadge(seconds: _elapsedSeconds),
+          ],
           const SizedBox(width: 12),
           // Timer badge (timed modes only)
           if (isTimedMode) ...[
@@ -1937,6 +2110,130 @@ class _FindDotButtonState extends State<_FindDotButton> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Progress-bar badge widgets
+// ---------------------------------------------------------------------------
+
+class _StreakBadge extends StatelessWidget {
+  const _StreakBadge({required this.count});
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: _kRed,
+        borderRadius: BorderRadius.circular(99),
+        border: Border.all(color: _kInk, width: 2),
+        boxShadow: const [
+          BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(2, 2)),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('🔥', style: TextStyle(fontSize: 14)),
+          const SizedBox(width: 4),
+          Text(
+            '×$count',
+            style: const TextStyle(
+              fontFamily: 'Boogaloo',
+              color: Colors.white,
+              fontSize: 16,
+              height: 1.0,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ElapsedBadge extends StatelessWidget {
+  const _ElapsedBadge({required this.seconds});
+  final int seconds;
+
+  String get _label {
+    final m = seconds ~/ 60;
+    final s = seconds % 60;
+    return m > 0 ? '${m}m ${s}s' : '${s}s';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: _kBlue,
+        borderRadius: BorderRadius.circular(99),
+        border: Border.all(color: _kInk, width: 2),
+        boxShadow: const [
+          BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(2, 2)),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.timer_rounded, color: Colors.white, size: 14),
+          const SizedBox(width: 4),
+          Text(
+            _label,
+            style: const TextStyle(
+              fontFamily: 'Boogaloo',
+              color: Colors.white,
+              fontSize: 16,
+              height: 1.0,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CompletionTimeBadge extends StatelessWidget {
+  const _CompletionTimeBadge({required this.seconds});
+  final int seconds;
+
+  String get _label {
+    final m = seconds ~/ 60;
+    final s = seconds % 60;
+    return m > 0 ? '${m}m ${s}s' : '${s}s';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
+      decoration: BoxDecoration(
+        color: _kBlue,
+        borderRadius: BorderRadius.circular(99),
+        border: Border.all(color: _kInk, width: 3),
+        boxShadow: const [
+          BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(4, 4)),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.timer_rounded, color: Colors.white, size: 24),
+          const SizedBox(width: 8),
+          Text(
+            _label,
+            style: const TextStyle(
+              fontFamily: 'Boogaloo',
+              color: Colors.white,
+              fontSize: 32,
+              height: 1.0,
+            ),
+          ),
+        ],
       ),
     );
   }

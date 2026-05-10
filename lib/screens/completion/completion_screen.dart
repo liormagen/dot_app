@@ -41,12 +41,16 @@ class CompletionScreen extends ConsumerStatefulWidget {
     super.key,
     required this.drawingId,
     this.skipReveal = false,
+    this.elapsedMs,
   });
 
   final String drawingId;
   // When true the colored image was already revealed on the drawing canvas —
   // skip the sweep animation and go straight to celebration.
   final bool skipReveal;
+  // Total elapsed time in milliseconds from when the drawing screen opened
+  // until the player finished connecting all dots.
+  final int? elapsedMs;
 
   @override
   ConsumerState<CompletionScreen> createState() => _CompletionScreenState();
