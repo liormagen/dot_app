@@ -353,7 +353,6 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
         if (mounted) setState(() {});
       });
 
-    _drawingStartTime = DateTime.now();
     _loadDrawing();
   }
 
@@ -396,6 +395,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
         _nextDrawingId = chapterIdx < story.drawingIds.length - 1
             ? story.drawingIds[chapterIdx + 1]
             : null;
+        _drawingStartTime = DateTime.now();
         _loading = false;
         _difficulty = difficulty;
         _totalSeconds = timerSecs;
@@ -847,10 +847,11 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
         : null;
     final queryParts = <String, String>{};
     if (elapsedMs != null) queryParts['elapsedMs'] = elapsedMs.toString();
-    final query = queryParts.isNotEmpty
-        ? '?${queryParts.entries.map((e) => '${e.key}=${e.value}').join('&')}'
-        : '';
-    context.go('/completion/${widget.drawingId}$query');
+    final uri = Uri(
+      path: '/completion/${widget.drawingId}',
+      queryParameters: queryParts.isNotEmpty ? queryParts : null,
+    );
+    context.go(uri.toString());
   }
 
   void _startCountdownTimer() {
