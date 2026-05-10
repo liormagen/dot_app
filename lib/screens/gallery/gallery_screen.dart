@@ -130,22 +130,13 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
 
   Widget _buildHeader(BuildContext context, AppLocalizations l10n) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [_kBlue, _kBlue],
+      decoration: const BoxDecoration(
+        color: _kPaper,
+        border: Border(
+          bottom: BorderSide(color: _kInk, width: 3),
         ),
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
         boxShadow: [
-          const BoxShadow(
-            color: _kBlue,
-            blurRadius: 0,
-            offset: Offset(0, 5),
-          ),
-          BoxShadow(
-            color: _kBlue.withValues(alpha: 0.267),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
+          BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(0, 3)),
         ],
       ),
       child: SafeArea(
@@ -159,14 +150,15 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
               Expanded(
                 child: Text(
                   l10n.gallery,
-                  style: const TextStyle(fontFamily: 'Boogaloo',
+                  style: TextStyle(
+                    fontFamily: 'Boogaloo',
                     fontSize: 32,
-                    color: Colors.white,
+                    color: _kInk,
                     height: 1.1,
+                    shadows: _inkOutline(1.5),
                   ),
                 ),
               ),
-              // Stars decoration
               const _StarRow(),
             ],
           ),
@@ -598,13 +590,9 @@ class _FullScreenDialogState extends State<_FullScreenDialog> {
         decoration: BoxDecoration(
           color: _kInk,
           borderRadius: BorderRadius.circular(32),
-          border: Border.all(color: _kInk.withValues(alpha: 0.25), width: 3),
-          boxShadow: [
-            BoxShadow(
-              color: _kInk.withValues(alpha: 0.40),
-              blurRadius: 40,
-              offset: const Offset(0, 16),
-            ),
+          border: Border.all(color: _kYellow, width: 3),
+          boxShadow: const [
+            BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(5, 5)),
           ],
         ),
         child: ClipRRect(
@@ -640,10 +628,11 @@ class _FullScreenDialogState extends State<_FullScreenDialog> {
                     children: [
                       Text(
                         AppLocalizations.of(context)!.chapter(widget.drawing.chapter),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'Boogaloo',
                           fontSize: 28,
                           color: Colors.white,
+                          shadows: _inkOutline(1.5),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -655,21 +644,12 @@ class _FullScreenDialogState extends State<_FullScreenDialog> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 24, vertical: 10),
                           decoration: BoxDecoration(
-                            color: _saving
-                                ? Colors.white38
-                                : _kGreen,
+                            color: _saving ? _kInk.withValues(alpha: 0.35) : _kGreen,
                             borderRadius: BorderRadius.circular(99),
-                            border:
-                                Border.all(color: Colors.white, width: 2),
-                            boxShadow: _saving
-                                ? []
-                                : [
-                                    const BoxShadow(
-                                      color: _kInk,
-                                      blurRadius: 0,
-                                      offset: Offset(3, 3),
-                                    ),
-                                  ],
+                            border: Border.all(color: _saving ? Colors.transparent : _kInk, width: 2.5),
+                            boxShadow: _saving ? [] : const [
+                              BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
+                            ],
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -714,14 +694,14 @@ class _FullScreenDialogState extends State<_FullScreenDialog> {
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                      color: _kInk.withValues(alpha: 0.7),
+                      color: _kYellow,
                       shape: BoxShape.circle,
-                      border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.3),
-                          width: 1.5),
+                      border: Border.all(color: _kInk, width: 2.5),
+                      boxShadow: const [
+                        BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(2, 2)),
+                      ],
                     ),
-                    child: const Icon(Icons.close_rounded,
-                        color: Colors.white, size: 22),
+                    child: const Icon(Icons.close_rounded, color: _kInk, size: 22),
                   ),
                 ),
               ),
@@ -735,12 +715,9 @@ class _FullScreenDialogState extends State<_FullScreenDialog> {
                   decoration: BoxDecoration(
                     color: _kYellow,
                     borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: _kInk, width: 2),
                     boxShadow: const [
-                      BoxShadow(
-                        color: Color(0xFF8B6914),
-                        blurRadius: 0,
-                        offset: Offset(0, 3),
-                      ),
+                      BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(2, 2)),
                     ],
                   ),
                   child: const Row(
@@ -816,13 +793,15 @@ class _BackButtonState extends State<_BackButton>
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.22),
+            color: _kYellow,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-                color: Colors.white.withValues(alpha: 0.4), width: 1.5),
+            border: Border.all(color: _kInk, width: 2.5),
+            boxShadow: const [
+              BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(2, 2)),
+            ],
           ),
           child: const Icon(Icons.arrow_back_ios_new_rounded,
-              color: Colors.white, size: 20),
+              color: _kInk, size: 20),
         ),
       ),
     );
@@ -839,14 +818,11 @@ class _StarRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(Icons.star_rounded,
-            color: _kYellow.withValues(alpha: 0.9), size: 22),
+        const Icon(Icons.star_rounded, color: _kYellow, size: 24),
         const SizedBox(width: 2),
-        Icon(Icons.star_rounded,
-            color: _kYellow.withValues(alpha: 0.6), size: 16),
+        Icon(Icons.star_rounded, color: _kYellow.withValues(alpha: 0.6), size: 17),
         const SizedBox(width: 2),
-        Icon(Icons.star_rounded,
-            color: _kYellow.withValues(alpha: 0.35), size: 12),
+        Icon(Icons.star_rounded, color: _kYellow.withValues(alpha: 0.3), size: 12),
       ],
     );
   }
