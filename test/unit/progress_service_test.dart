@@ -138,4 +138,35 @@ void main() {
       }
     });
   });
+
+  group('ProgressNotifier session tracking', () {
+    setUp(() {
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test('sessionCompletedCount starts at 0', () {
+      final notifier = ProgressNotifier(ProgressService());
+      expect(notifier.sessionCompletedCount, 0);
+    });
+
+    test('sessionCompletedCount increments on new drawing completion', () async {
+      final notifier = ProgressNotifier(ProgressService());
+      await notifier.markDrawingComplete('drawing1');
+      expect(notifier.sessionCompletedCount, 1);
+    });
+
+    test('sessionCompletedCount increments again on second new drawing', () async {
+      final notifier = ProgressNotifier(ProgressService());
+      await notifier.markDrawingComplete('drawing1');
+      await notifier.markDrawingComplete('drawing2');
+      expect(notifier.sessionCompletedCount, 2);
+    });
+
+    test('sessionCompletedCount does NOT increment on re-completion', () async {
+      final notifier = ProgressNotifier(ProgressService());
+      await notifier.markDrawingComplete('drawing1');
+      await notifier.markDrawingComplete('drawing1'); // re-completion
+      expect(notifier.sessionCompletedCount, 1); // still 1
+    });
+  });
 }

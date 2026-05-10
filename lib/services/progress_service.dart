@@ -116,11 +116,19 @@ class ProgressNotifier extends StateNotifier<ProgressModel> {
 
   static const _kBestTimes = 'best_times';
 
+  // In-memory only — resets on app restart, not persisted
+  int _sessionCompletedCount = 0;
+  int get sessionCompletedCount => _sessionCompletedCount;
+
   Future<void> markDrawingComplete(String drawingId) async {
+    final isNew = !state.completedDrawingIds.contains(drawingId);
     await _service.markDrawingComplete(drawingId);
     state = state.copyWith(
       completedDrawingIds: {...state.completedDrawingIds, drawingId},
     );
+    if (isNew) {
+      _sessionCompletedCount++;
+    }
   }
 
   Future<void> setLanguage(String lang) async {
