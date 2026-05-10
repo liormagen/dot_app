@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gal/gal.dart';
@@ -409,7 +410,7 @@ class _DrawingCardState extends State<_DrawingCard>
                   ),
                   child: Text(
                     widget.isCompleted
-                        ? widget.drawing.getName(widget.lang)
+                        ? AppLocalizations.of(context)!.chapter(widget.drawing.chapter)
                         : '???',
                     style: TextStyle(fontFamily: 'Fredoka',
                       fontSize: 15,
@@ -594,7 +595,7 @@ class _FullScreenDialogState extends State<_FullScreenDialog> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        widget.drawing.getName(widget.lang),
+                        AppLocalizations.of(context)!.chapter(widget.drawing.chapter),
                         style: const TextStyle(
                           fontFamily: 'Fredoka',
                           fontSize: 28,

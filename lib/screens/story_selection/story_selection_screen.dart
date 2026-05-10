@@ -150,6 +150,7 @@ class StorySelectionScreen extends ConsumerWidget {
     List<String> drawingIds,
     Set<String> completed,
   ) {
+    if (drawingIds.isEmpty) return; // coming soon — no drawings yet
     String? target;
     for (final id in drawingIds) {
       if (!completed.contains(id)) {

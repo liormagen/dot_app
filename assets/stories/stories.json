@@ -3,36 +3,40 @@
     {
       "id": "story1",
       "titles": {
-        "en": "The Knight's Quest",
-        "he": "מסע הפרש",
-        "ar": "رحلة الفارس"
+        "en": "The Brave Little Knight",
+        "he": "הפרש האמיץ הקטן",
+        "ar": "الفارس الصغير الشجاع"
       },
       "companion_asset": "assets/characters/the_knight.png",
-      "preview_asset": "assets/story_cards/story1.png",
-      "drawing_ids": ["story1_ch1", "story1_ch2", "story1_ch3"],
+      "preview_asset": "assets/stories/story1/ch1/ch1_colored.png",
+      "drawing_ids": [
+        "story1_ch1",
+        "story1_ch2",
+        "story1_ch3"
+      ],
       "chapters": [
         {
           "chapter": 1,
           "narrations": {
-            "en": "Once upon a time, a brave knight set out on a great quest...",
-            "he": "פעם היה פרש אמיץ שיצא למסע גדול...",
-            "ar": "كان يا ما كان، فارس شجاع خرج في رحلة عظيمة..."
+            "en": "Pip looks up at the tall trees. His heart is going thump-thump-thump. He takes one big breath. Then he steps into the forest.",
+            "he": "פיפ מביט על העצים הגבוהים. ליבו הולם דום-דום-דום. הוא נושם נשימה עמוקה. ואז הוא נכנס אל תוך היער.",
+            "ar": "ينظر بيب إلى الأشجار الطويلة. قلبه يدق دوم-دوم-دوم. يأخذ نفسًا عميقًا. ثم يخطو داخل الغابة."
           }
         },
         {
           "chapter": 2,
           "narrations": {
-            "en": "Deep in the forest, the knight encountered a fearsome dragon...",
-            "he": "עמוק ביער, נתקל הפרש בדרקון מפחיד...",
-            "ar": "في عمق الغابة، واجه الفارس تنيناً مخيفاً..."
+            "en": "Deep in the forest, Pip hears a tiny sound. Not a roar. Not a growl. A sniffle. He peeks around a tree — and there is the dragon. But she is not scary at all. She is crying. A thorn is stuck in her paw.",
+            "he": "עמוק ביער, פיפ שומע צליל קטן. לא שאגה. לא נהמה. נחרחור. הוא מציץ מאחורי עץ — ושם הדרקון. אבל היא כלל לא מפחידה. היא בוכה. קוץ תקוע בכפתה.",
+            "ar": "في عمق الغابة، يسمع بيب صوتًا خفيفًا. ليس زئيرًا. ليس هدةً. بل أنينًا. يطل من وراء شجرة — وهناك التنين. لكنها ليست مخيفة أبدًا. إنها تبكي. شوكة عالقة في كفها."
           }
         },
         {
           "chapter": 3,
           "narrations": {
-            "en": "At last, the brave knight and the dragon became friends!",
-            "he": "לבסוף, הפרש האמיץ והדרקון נעשו חברים!",
-            "ar": "في النهاية، أصبح الفارس الشجاع والتنين أصدقاء!"
+            "en": "Pip pulls the thorn out gently. The dragon's eyes go wide. She lowers her head and lets him climb on. Together they fly home, and the golden bell rings for the whole village to hear. The bravest thing Pip did was not fighting. It was being kind.",
+            "he": "פיפ מוציא את הקוץ בעדינות. עיני הדרקון מתרחבות. היא משפילה ראשה ומניחה לו לטפס עליה. יחד הם עפים הביתה, ופעמון הזהב מצלצל לכל הכפר. הדבר האמיץ ביותר שפיפ עשה לא היה להילחם. זה היה להיות אדיב.",
+            "ar": "يسحب بيب الشوكة برفق. تتسع عيون التنين. تنحني برأسها وتدعه يتسلق. يطيران معًا إلى البيت، ويُدقّ الجرس الذهبي في كل القرية. أشجع ما فعله بيب لم يكن القتال. بل كان اللطف."
           }
         }
       ]
@@ -40,36 +44,40 @@
     {
       "id": "story2",
       "titles": {
-        "en": "Story 2",
-        "he": "סיפור 2",
-        "ar": "قصة 2"
+        "en": "Luna the Lost Star",
+        "he": "לונה, הכוכב האבוד",
+        "ar": "لونا النجمة الضائعة"
       },
       "companion_asset": "assets/characters/the_knight.png",
-      "preview_asset": "assets/story_cards/story1.png",
-      "drawing_ids": ["story2_ch1", "story2_ch2", "story2_ch3"],
+      "preview_asset": "assets/stories/story2/ch1/ch1_colored.png",
+      "drawing_ids": [
+        "story2_ch1",
+        "story2_ch2",
+        "story2_ch3"
+      ],
       "chapters": [
         {
           "chapter": 1,
           "narrations": {
-            "en": "Chapter 1...",
-            "he": "פרק 1...",
-            "ar": "الفصل 1..."
+            "en": "Luna tumbles through the sky, flickering on and off. She looks all around. Everything looks so different from down here. 'Where is my home?' she whispers.",
+            "he": "לונה מתגלגלת בשמיים, מהבהבת ונכבית. היא מביטה סביב. הכל נראה כל כך שונה מכאן למטה. 'איפה ביתי?' היא לוחשת.",
+            "ar": "تتدحرج لونا عبر السماء، تومض وتخبو. تنظر حولها. كل شيء يبدو مختلفًا جدًا من هنا. 'أين بيتي؟' تهمس."
           }
         },
         {
           "chapter": 2,
           "narrations": {
-            "en": "Chapter 2...",
-            "he": "פרק 2...",
-            "ar": "الفصل 2..."
+            "en": "An owl with big kind eyes spots her. 'Don't worry, little star,' he hoots. 'I know exactly where you belong.' He flies through the clouds, and Luna follows. He points his wing at a beautiful pattern of stars in the sky.",
+            "he": "ינשוף בעיניים טובות וגדולות מבחין בה. 'אל תדאגי, כוכב קטן,' הוא קורא. 'אני יודע בדיוק איפה את שייכת.' הוא עף דרך העננים, ולונה עוקבת. הוא מצביע בכנפו על דוגמה יפה של כוכבים בשמיים.",
+            "ar": "يلحظها بومة ذات عيون كبيرة طيبة. 'لا تقلقي يا نجمة صغيرة،' يصيح. 'أعرف تمامًا أين مكانك.' يطير عبر الغيوم، وتتبعه لونا. يشير بجناحه إلى نمط جميل من النجوم في السماء."
           }
         },
         {
           "chapter": 3,
           "narrations": {
-            "en": "Chapter 3...",
-            "he": "פרק 3...",
-            "ar": "الفصل 3..."
+            "en": "Luna clicks back into her place — right where she belongs. The other stars cheer. And just as the sky turns pink with morning, Luna shines brighter than ever before. She knows now. She is exactly where she should be.",
+            "he": "לונה נכנסת חזרה למקומה — בדיוק שם שהיא שייכת. הכוכבים האחרים מריעים. וממש כאשר השמיים הופכים לוורוד עם הבוקר, לונה זורחת יותר ממה שהייתה אי פעם. היא יודעת עכשיו. היא בדיוק במקום שהיא צריכה להיות.",
+            "ar": "تعود لونا إلى مكانها — في المكان المناسب تمامًا. النجوم الأخرى تهتف. وفي اللحظة التي تتوردّ فيها السماء مع الصباح، تضيء لونا أكثر من أي وقت مضى. تعرف الآن. إنها في المكان الذي ينبغي أن تكون فيه."
           }
         }
       ]
@@ -77,36 +85,40 @@
     {
       "id": "story3",
       "titles": {
-        "en": "Story 3",
-        "he": "סיפור 3",
-        "ar": "قصة 3"
+        "en": "Captain Fin's Big Journey",
+        "he": "המסע הגדול של קפטן סנפיר",
+        "ar": "رحلة الكابتن فين الكبيرة"
       },
       "companion_asset": "assets/characters/the_knight.png",
-      "preview_asset": "assets/story_cards/story1.png",
-      "drawing_ids": ["story3_ch1", "story3_ch2", "story3_ch3"],
+      "preview_asset": "assets/stories/story3/ch1/ch1_colored.png",
+      "drawing_ids": [
+        "story3_ch1",
+        "story3_ch2",
+        "story3_ch3"
+      ],
       "chapters": [
         {
           "chapter": 1,
           "narrations": {
-            "en": "Chapter 1...",
-            "he": "פרק 1...",
-            "ar": "الفصل 1..."
+            "en": "Fin starts swimming up. The water gets warmer. The light gets brighter. His little fins go faster and faster. 'I'm really doing it!' he says.",
+            "he": "סנפיר מתחיל לשחות מעלה. המים מתחממים. האור מתבהר. סנפיריו הקטנים הולכים מהר ומהר יותר. 'אני ממש עושה את זה!' הוא אומר.",
+            "ar": "يبدأ فين بالسباحة للأعلى. يصبح الماء أدفأ. يصبح الضوء أكثر إشراقًا. تتحرك زعانفه الصغيرة بشكل أسرع وأسرع. 'أنا أفعلها فعلًا!' يقول."
           }
         },
         {
           "chapter": 2,
           "narrations": {
-            "en": "Chapter 2...",
-            "he": "פרק 2...",
-            "ar": "الفصل 2..."
+            "en": "A huge gentle whale glides up beside him. 'Going to the top, little one?' she hums. 'Be careful — watch out for the fisherman's net.' Fin nods. He swims around the net very carefully and keeps going up, up, up.",
+            "he": "לוויתן ענקי ועדין שט לצדו. 'הולך לפסגה, קטנטן?' היא מנהמת. 'היזהר — שמור מרשת הדייג.' סנפיר מהנהן. הוא שוחה סביב הרשת בזהירות רבה וממשיך מעלה, מעלה, מעלה.",
+            "ar": "يحوم إلى جانبه حوت ضخم هادئ. 'تذهب إلى القمة يا صغير؟' تُهمهم. 'احذر — انتبه لشبكة الصياد.' يومئ فين برأسه. يسبح حول الشبكة بعناية شديدة ويواصل الصعود، للأعلى، للأعلى."
           }
         },
         {
           "chapter": 3,
           "narrations": {
-            "en": "Chapter 3...",
-            "he": "פרק 3...",
-            "ar": "الفصل 3..."
+            "en": "Fin bursts out of the water — splash! — and for one big magical moment, he sees the sun, the sky, and a giant rainbow. Then plop! Back into the cool blue sea. He swims home so fast, ready to tell every fish he knows.",
+            "he": "סנפיר מתפרץ מהמים — שפלאץ! — ולרגע קסום גדול אחד, הוא רואה את השמש, את השמיים וקשת ענקית. ואז פלופ! חזרה אל הים הכחול הקריר. הוא שוחה הביתה כל כך מהר, מוכן לספר לכל דג שהוא מכיר.",
+            "ar": "يندفع فين خارج الماء — رشاش! — وفي لحظة سحرية كبيرة واحدة، يرى الشمس والسماء وقوس قزح عملاق. ثم بلوب! عودة إلى البحر الأزرق البارد. يسبح إلى البيت بسرعة كبيرة، مستعدًا لإخبار كل سمكة يعرفها."
           }
         }
       ]
@@ -114,52 +126,770 @@
     {
       "id": "story4",
       "titles": {
-        "en": "Story 4",
-        "he": "סיפור 4",
-        "ar": "قصة 4"
+        "en": "Mia and the Magic Paintbrush",
+        "he": "מיה ומברשת הקסם",
+        "ar": "ميا وفرشاة الرسم السحرية"
       },
       "companion_asset": "assets/characters/the_knight.png",
-      "preview_asset": "assets/story_cards/story1.png",
-      "drawing_ids": ["story4_ch1", "story4_ch2", "story4_ch3", "story4_ch4", "story4_ch5"],
+      "preview_asset": "assets/stories/story4/ch1/ch1_colored.png",
+      "drawing_ids": [
+        "story4_ch1",
+        "story4_ch2",
+        "story4_ch3",
+        "story4_ch4",
+        "story4_ch5"
+      ],
       "chapters": [
         {
           "chapter": 1,
           "narrations": {
-            "en": "Chapter 1...",
-            "he": "פרק 1...",
-            "ar": "الفصل 1..."
+            "en": "Mia picks up the brush. It feels warm in her hand. She dips it in blue paint and draws a little butterfly on her paper. Then... the butterfly twitches its wings.",
+            "he": "מיה מרימה את המברשת. היא מרגישה חמה בידה. היא טובלת אותה בצבע כחול ומציירת פרפר קטן על הנייר. ואז... הפרפר מרפרף בכנפיו.",
+            "ar": "تلتقط ميا الفرشاة. تشعر بدفء في يدها. تغمسها في الطلاء الأزرق وترسم فراشة صغيرة على ورقتها. ثم... ترف الفراشة بجناحيها."
           }
         },
         {
           "chapter": 2,
           "narrations": {
-            "en": "Chapter 2...",
-            "he": "פרק 2...",
-            "ar": "الفصل 2..."
+            "en": "The butterfly flutters right off the page! It loops around Mia's head. She gasps and laughs at the same time. 'I have to try something else!' she shouts. She paints big, fast, exciting strokes — but oh no, what did she just draw?",
+            "he": "הפרפר מרפרף ממש מהדף! הוא מסתובב סביב ראשה של מיה. היא נושמת בפה פתוח וצוחקת בו-זמנית. 'אני חייבת לנסות משהו אחר!' היא צועקת. היא מציירת קווים גדולים, מהירים ומרגשים — אבל אוי לא, מה היא בדיוק ציירה?",
+            "ar": "ترفّ الفراشة خارج الصفحة! تحوم حول رأس ميا. تلهث وتضحك في آنٍ واحد. 'يجب أن أجرب شيئًا آخر!' تصرخ. ترسم خطوطًا كبيرة وسريعة ومثيرة — لكن يا إلهي، ماذا رسمت للتو؟"
           }
         },
         {
           "chapter": 3,
           "narrations": {
-            "en": "Chapter 3...",
-            "he": "פרק 3...",
-            "ar": "الفصل 3..."
+            "en": "A rain cloud! A real one! Drip, drip, drip — it starts raining inside her room. Soon there are puddles everywhere. Mia squeaks. 'I need to dry this up — fast!'",
+            "he": "ענן גשם! ענן אמיתי! טיפ-טיפ-טיפ — מתחיל לגשום בתוך חדרה. בקרוב יש שלוליות בכל מקום. מיה מצרחת. 'אני צריכה לייבש את זה — מהר!'",
+            "ar": "سحابة مطر! حقيقية! قطرة، قطرة، قطرة — يبدأ المطر في غرفتها. قريبًا توجد برك في كل مكان. تصرخ ميا بصوت حاد. 'أحتاج إلى تجفيف هذا — بسرعة!'"
           }
         },
         {
           "chapter": 4,
           "narrations": {
-            "en": "Chapter 4...",
-            "he": "פרק 4...",
-            "ar": "الفصل 4..."
+            "en": "She paints a big sunny sun. It works! The puddles dry up. But uh-oh — now her room is too hot. Her cheeks turn pink. 'Hmm,' Mia thinks. 'Maybe I should slow down. Maybe I should think first.'",
+            "he": "היא מציירת שמש גדולה ושמחה. זה עובד! השלוליות מתייבשות. אבל אוי לא — עכשיו חדרה חם מדי. לחייה מתאדמות. 'הממ,' חושבת מיה. 'אולי כדאי שאאט. אולי כדאי שאחשוב קודם.'",
+            "ar": "ترسم شمسًا كبيرة مشرقة. ينجح الأمر! تجف البرك. لكن آيه — غرفتها أصبحت حارة جدًا. يتوردّ خداها. 'همم,' تفكر ميا. 'ربما يجب أن أتباطأ. ربما يجب أن أفكر أولًا.'"
           }
         },
         {
           "chapter": 5,
           "narrations": {
-            "en": "Chapter 5...",
-            "he": "פרק 5...",
-            "ar": "الفصل 5..."
+            "en": "Mia closes her eyes. She thinks about something gentle and beautiful. Then she paints — slowly this time — a perfect rainbow. It glows softly across her wall. Mia smiles. Magic is wonderful, but it works best when you think before you paint.",
+            "he": "מיה עוצמת עיניים. היא חושבת על משהו עדין ויפה. ואז היא מציירת — לאט הפעם — קשת מושלמת. היא זורחת בעדינות לכל רוחב קירה. מיה מחייכת. קסם הוא נפלא, אבל הוא עובד הכי טוב כשחושבים לפני שמציירים.",
+            "ar": "تغمض ميا عينيها. تفكر في شيء لطيف وجميل. ثم ترسم — ببطء هذه المرة — قوس قزح مثاليًا. يتوهج بلطف على جدارها. تبتسم ميا. السحر رائع، لكنه يعمل بشكل أفضل عندما تفكر قبل أن ترسم."
+          }
+        }
+      ]
+    },
+    {
+      "id": "story5",
+      "titles": {
+        "en": "Zara the Zebra Who Lost Her Stripes",
+        "he": "זרה הזברה שאיבדה את הפסים",
+        "ar": "زارا الحمار الوحشي التي فقدت خطوطها"
+      },
+      "companion_asset": "assets/characters/the_knight.png",
+      "preview_asset": "assets/stories/story5/ch1/ch1_colored.png",
+      "drawing_ids": [
+        "story5_ch1",
+        "story5_ch2",
+        "story5_ch3"
+      ],
+      "chapters": [
+        {
+          "chapter": 1,
+          "narrations": {
+            "en": "Zara stares at the water. A plain white zebra stares back. 'Oh no,' she whispers. 'What do I do?' She hides behind a tree just as her friends start walking toward the water.",
+            "he": "זרה מביטה במים. זברה לבנה פשוטה מביטה בחזרה. 'אוי לא,' היא לוחשת. 'מה אני עושה?' היא מתחבאת מאחורי עץ ממש כשחבריה מתחילים ללכת לכיוון המים.",
+            "ar": "تحدق زارا في الماء. حمار وحشي أبيض سادة يحدق في المقابل. 'يا إلهي،' تهمس. 'ماذا أفعل؟' تختبئ خلف شجرة في اللحظة التي يبدأ فيها أصدقاؤها بالمشي نحو الماء."
+          }
+        },
+        {
+          "chapter": 2,
+          "narrations": {
+            "en": "A wise old elephant finds her hiding. He smiles a slow, kind smile. 'Little Zara,' he says, 'your stripes are not lost. They hide inside you when you feel afraid. They come back when you feel brave.'",
+            "he": "פיל זקן וחכם מוצא אותה מסתתרת. הוא מחייך חיוך איטי ואדיב. 'זרה הקטנה,' הוא אומר, 'הפסים שלך לא אבדו. הם מסתתרים בתוכך כשאת מרגישה פחד. הם חוזרים כשאת מרגישה אמיצה.'",
+            "ar": "يجدها فيل عجوز حكيم وهي تختبئ. يبتسم ابتسامة هادئة طيبة. 'زارا الصغيرة،' يقول، 'خطوطك لم تضع. إنها تختبئ بداخلك عندما تشعرين بالخوف. تعود عندما تشعرين بالشجاعة.'"
+          }
+        },
+        {
+          "chapter": 3,
+          "narrations": {
+            "en": "Just then, Zara hears a tiny squeak. A hyena is being mean to a baby bunny. Zara's heart goes thump. She runs over and stands tall. 'Stop it! Leave the bunny alone!' And one by one — zip, zip, zip — her beautiful stripes come back.",
+            "he": "ממש אז, זרה שומעת צריחה קטנה. צבוע מתנכל לארנבון תינוק. ליבה של זרה דופק. היא רצה ועומדת זקופה. 'תפסיק! עזוב את הארנבון!' ואחד אחרי השני — זיפ, זיפ, זיפ — הפסים היפים שלה חוזרים.",
+            "ar": "في تلك اللحظة، تسمع زارا صريرًا صغيرًا. ضبع يؤذي أرنبًا صغيرًا. يقفز قلب زارا. تركض وتقف شامخة. 'أوقف هذا! دع الأرنب وشأنه!' واحدًا تلو الآخر — زيب، زيب، زيب — تعود خطوطها الجميلة."
+          }
+        }
+      ]
+    },
+    {
+      "id": "story6",
+      "titles": {
+        "en": "The Rocket Who Was Afraid of Space",
+        "he": "הרקטה שפחדה מהחלל",
+        "ar": "الصاروخ الخائف من الفضاء"
+      },
+      "companion_asset": "assets/characters/the_knight.png",
+      "preview_asset": "assets/stories/story6/ch1/ch1_colored.png",
+      "drawing_ids": [
+        "story6_ch1",
+        "story6_ch2",
+        "story6_ch3"
+      ],
+      "chapters": [
+        {
+          "chapter": 1,
+          "narrations": {
+            "en": "All the other rockets — WHOOSH! — fly up into the sky. But Zoom just sits there. His lights blink slowly. 'I'm scared,' he says quietly. 'Space is so big. And I am so small.'",
+            "he": "כל הרקטות האחרות — וושוש! — עפות השמיימה. אבל זום פשוט יושב שם. האורות שלו מהבהבים לאט. 'אני פוחד,' הוא אומר בשקט. 'החלל כל כך גדול. ואני כל כך קטן.'",
+            "ar": "كل الصواريخ الأخرى — ووش! — تطير إلى السماء. لكن زوم يجلس هناك فقط. أضواؤه تومض ببطء. 'أنا خائف،' يقول بهدوء. 'الفضاء كبير جدًا. وأنا صغير جدًا.'"
+          }
+        },
+        {
+          "chapter": 2,
+          "narrations": {
+            "en": "A small astronaut climbs the ladder into Zoom. She pats his side gently. 'I'm scared too,' she tells him. 'But you know what? We can be scared together. And we can be brave together too.' Zoom feels his engines warm up.",
+            "he": "אסטרונאוטית קטנה מטפסת בסולם אל תוך זום. היא מטפחת על צידו בעדינות. 'גם אני פוחדת,' היא אומרת לו. 'אבל אתה יודע מה? אנחנו יכולים לפחד ביחד. ואנחנו יכולים גם להיות אמיצים ביחד.' זום מרגיש שמנועיו מתחממים.",
+            "ar": "تتسلق رائدة فضاء صغيرة السلم إلى داخل زوم. تربت على جانبه برفق. 'أنا خائفة أيضًا،' تخبره. 'لكن تعلم ماذا؟ يمكننا أن نخاف معًا. ويمكننا أن نكون شجاعين معًا أيضًا.' يشعر زوم بأن محركاته تسخن."
+          }
+        },
+        {
+          "chapter": 3,
+          "narrations": {
+            "en": "WHOOSH! They blast off! Up, up, up — past the clouds, past the blue sky, into the big black space. And then... they see it. The whole Earth. All blue and green and beautiful. The sun rises over it like a giant gold coin. Zoom has never felt happier.",
+            "he": "וושוש! הם ממריאים! מעלה, מעלה, מעלה — מעבר לעננים, מעבר לשמיים הכחולים, אל תוך החלל הגדול והשחור. ואז... הם רואים את זה. כדור הארץ כולו. כחול וירוק ויפה. השמש עולה מעליו כמו מטבע זהב ענקי. זום מעולם לא הרגיש יותר מאושר.",
+            "ar": "ووش! ينطلقان! للأعلى، للأعلى، للأعلى — عبر الغيوم، عبر السماء الزرقاء، إلى الفضاء الأسود الكبير. ثم... يريانه. الأرض بأكملها. زرقاء وخضراء وجميلة. تشرق الشمس فوقها كعملة ذهبية عملاقة. لم يشعر زوم بسعادة أكبر من قبل."
+          }
+        }
+      ]
+    },
+    {
+      "id": "story7",
+      "titles": {
+        "en": "Princess Noor and the Invisible Crown",
+        "he": "הנסיכה נור והכתר הבלתי נראה",
+        "ar": "الأميرة نور والتاج الخفي"
+      },
+      "companion_asset": "assets/characters/the_knight.png",
+      "preview_asset": "",
+      "drawing_ids": [],
+      "chapters": [
+        {
+          "chapter": 1,
+          "narrations": {
+            "en": "Noor looks everywhere. Under cushions. Behind curtains. Inside flower pots. She asks every guard. She asks every cook. No crown anywhere. Tears sting her eyes. 'I don't feel like me without it,' she whispers.",
+            "he": "נור מחפשת בכל מקום. מתחת לכריות. מאחורי וילונות. בתוך עציצי פרחים. היא שואלת כל שומר. היא שואלת כל טבח. אין כתר בשום מקום. דמעות צורבות את עיניה. 'אני לא מרגישה כמוני בלעדיו,' היא לוחשת.",
+            "ar": "تبحث نور في كل مكان. تحت الوسائد. خلف الستائر. داخل أواني الزهور. تسأل كل حارس. تسأل كل طاهٍ. لا تاج في أي مكان. الدموع تلسع عينيها. 'لا أشعر أنني أنا بدونه،' تهمس."
+          }
+        },
+        {
+          "chapter": 2,
+          "narrations": {
+            "en": "For the very first time, Noor walks out of the palace by herself. The market is loud and bright. Then she sees a tiny boy crying. He has lost his mother. Noor takes his hand. 'Don't be afraid,' she says. 'I'll help you find her.' And she does.",
+            "he": "בפעם הראשונה בחייה, נור יוצאת מהארמון לבדה. השוק רועש ומואר. ואז היא רואה ילד קטן שבוכה. הוא איבד את אמו. נור תופסת את ידו. 'אל תפחד,' היא אומרת. 'אני אעזור לך למצוא אותה.' והיא עושה זאת.",
+            "ar": "للمرة الأولى في حياتها، تخرج نور من القصر وحدها. السوق صاخب ومشرق. ثم ترى صبيًا صغيرًا يبكي. لقد فقد أمه. تأخذ نور يده. 'لا تخف،' تقول. 'سأساعدك في العثور عليها.' وتفعل."
+          }
+        },
+        {
+          "chapter": 3,
+          "narrations": {
+            "en": "When Noor walks back into her room — there it is. Her crown. Sitting on her pillow as if it never left. Her grandmother smiles from the doorway. 'The crown comes back,' she says, 'when you stop needing it. A real princess is brave and kind, with or without it.'",
+            "he": "כשנור חוזרת לחדרה — הנה הוא. כתרה. יושב על הכרית שלה כאילו לא עזב. סבתה מחייכת מהדלת. 'הכתר חוזר,' היא אומרת, 'כשאת מפסיקה להזדקק לו. נסיכה אמיתית היא אמיצה ואדיבה, עם הכתר ובלעדיו.'",
+            "ar": "عندما تعود نور إلى غرفتها — ها هو. تاجها. جالس على وسادتها كأنه لم يغادر. تبتسم جدتها من عتبة الباب. 'يعود التاج،' تقول، 'عندما تتوقفين عن الحاجة إليه. الأميرة الحقيقية شجاعة وطيبة، معه أو بدونه.'"
+          }
+        }
+      ]
+    },
+    {
+      "id": "story8",
+      "titles": {
+        "en": "Benny the Bear and the Honey Mystery",
+        "he": "בני הדוב ומסתורין הדבש",
+        "ar": "بيني الدب ولغز العسل"
+      },
+      "companion_asset": "assets/characters/the_knight.png",
+      "preview_asset": "assets/stories/story8/ch1/ch1_colored.png",
+      "drawing_ids": [
+        "story8_ch1",
+        "story8_ch2",
+        "story8_ch3",
+        "story8_ch4",
+        "story8_ch5"
+      ],
+      "chapters": [
+        {
+          "chapter": 1,
+          "narrations": {
+            "en": "Benny scratches his head. 'Empty again!' he grumbles. Tonight, he decides, he will stay awake. He will wait. He will catch the sneaky honey thief once and for all.",
+            "he": "בני מגרד את ראשו. 'שוב ריקה!' הוא מתלונן. הלילה, הוא מחליט, הוא יישאר ער. הוא יחכה. הוא יתפוס את גנב הדבש הנבזי אחת ולתמיד.",
+            "ar": "يحك بيني رأسه. 'فارغ مجددًا!' يتذمر. الليلة، يقرر، سيبقى مستيقظًا. سينتظر. سيمسك بلص العسل الماكر مرة وإلى الأبد."
+          }
+        },
+        {
+          "chapter": 2,
+          "narrations": {
+            "en": "In the morning, by the empty jar, Benny sees something he missed before. Tiny, tiny footprints. Smaller than his claw! He gets down on his paws and follows them, very quietly, into the forest.",
+            "he": "בבוקר, ליד הצנצנת הריקה, בני רואה משהו שפספס קודם. טביעות רגל קטנות, קטנטנות. קטנות מציפורן שלו! הוא כורע על ארבע ועוקב אחריהן, בשקט רב, אל תוך היער.",
+            "ar": "في الصباح، بجانب الجرة الفارغة، يرى بيني شيئًا فاته من قبل. آثار أقدام صغيرة، صغيرة جدًا. أصغر من مخلبه! يجثو على قوائمه ويتتبعها، بهدوء شديد، إلى داخل الغابة."
+          }
+        },
+        {
+          "chapter": 3,
+          "narrations": {
+            "en": "The footprints lead him to a buzzing beehive. And under it... a little family of mice! They are licking up tiny golden drips that fall from his leaky honey jar. Drip, drip, drip. They look up at Benny with big scared eyes.",
+            "he": "טביעות הרגל מובילות אותו לכוורת שגועשת. ומתחתיה... משפחה קטנה של עכברים! הם מלקקים טיפות זהובות קטנות שנופלות מהצנצנת הדולפת שלו. טיפ, טיפ, טיפ. הם מביטים בבני בעיניים גדולות ופוחדות.",
+            "ar": "تقوده الآثار إلى خلية نحل طنانة. وتحتها... عائلة صغيرة من الفئران! يلعقون قطرات ذهبية صغيرة تسقط من جرته المتسربة. قطرة، قطرة، قطرة. ينظرون إلى بيني بعيون كبيرة خائفة."
+          }
+        },
+        {
+          "chapter": 4,
+          "narrations": {
+            "en": "Benny's heart goes soft. They are so tiny. They can only carry tiny drops. 'I have plenty,' he says gently. 'Why don't I share with you properly?' The mice squeak with joy and bring him their tiniest, brightest smiles.",
+            "he": "ליבו של בני מתרכך. הם כל כך קטנים. הם יכולים לשאת רק טיפות קטנות. 'יש לי הרבה,' הוא אומר בעדינות. 'למה שלא אחלוק אתכם כמו שצריך?' העכברים מצרחים מאושר ומביאים לו את החיוכים הקטנים והמאירים שלהם.",
+            "ar": "يلين قلب بيني. إنهم صغار جدًا. يستطيعون حمل قطرات صغيرة فقط. 'لدي الكثير،' يقول برفق. 'لماذا لا أتقاسم معكم بشكل صحيح؟' يصرخ الفئران فرحًا ويجلبون له أصغر ابتساماتهم وأكثرها إشراقًا."
+          }
+        },
+        {
+          "chapter": 5,
+          "narrations": {
+            "en": "Now every morning, Benny's jar is full. And every morning, on his doorstep, there is a basket of fresh wildflowers. A thank-you from his very best new friends.",
+            "he": "עכשיו כל בוקר, צנצנת בני מלאה. וכל בוקר, על מפתן ביתו, יש סל של פרחי בר טריים. תודה מחבריו החדשים הטובים ביותר.",
+            "ar": "الآن كل صباح، جرة بيني ممتلئة. وكل صباح، على عتبة بابه، توجد سلة من أزهار برية طازجة. شكرًا من أعز أصدقائه الجدد."
+          }
+        }
+      ]
+    },
+    {
+      "id": "story9",
+      "titles": {
+        "en": "The Dinosaur Who Was Afraid of the Dark",
+        "he": "הדינוזאור שפחד מהחושך",
+        "ar": "الديناصور الخائف من الظلام"
+      },
+      "companion_asset": "assets/characters/the_knight.png",
+      "preview_asset": "assets/stories/story9/ch1/ch1_colored.png",
+      "drawing_ids": [
+        "story9_ch1",
+        "story9_ch2",
+        "story9_ch3"
+      ],
+      "chapters": [
+        {
+          "chapter": 1,
+          "narrations": {
+            "en": "Every day Rex stomps and roars. ROOOAR! But the moment the sun starts to set, Rex tiptoes home, finds his giant favorite leaf, and pulls it right over his head. 'Goodnight, dark,' he whispers. 'Please go away.'",
+            "he": "כל יום רקס דורך ושואג. רואאאר! אבל ברגע שהשמש מתחילה לשקוע, רקס הולך על קצות אצבעותיו הביתה, מוצא את העלה האהוב הענקי שלו, ומושך אותו ממש מעל ראשו. 'לילה טוב, חושך,' הוא לוחש. 'בבקשה לך.'",
+            "ar": "كل يوم يدوس ركس ويزأر. روووار! لكن في اللحظة التي تبدأ فيها الشمس بالغروب، يمشي ركس على أطراف أصابعه إلى البيت، يجد ورقته المفضلة العملاقة، ويسحبها فوق رأسه. 'تصبح على خير يا ظلام،' يهمس. 'من فضلك اذهب.'"
+          }
+        },
+        {
+          "chapter": 2,
+          "narrations": {
+            "en": "One night, a little voice says, 'Why are you hiding?' It's a tiny firefly! 'I'll be your night light,' she says, glowing softly. 'Come outside and look up. Just for a minute. I promise it's beautiful.' Rex peeks out from under his leaf.",
+            "he": "לילה אחד, קול קטן אומר, 'למה אתה מסתתר?' זאת גחלילית קטנטנה! 'אני אהיה אורך הלילה,' היא אומרת, זוהרת בעדינות. 'בוא החוצה ותסתכל מעלה. רק דקה. אני מבטיחה שזה יפה.' רקס מציץ מתחת לעלה.",
+            "ar": "ذات ليلة، يقول صوت صغير: 'لماذا تختبئ؟' إنها يراعة صغيرة! 'سأكون ضوء ليلك،' تقول، تتوهج برفق. 'تعال للخارج وانظر للأعلى. دقيقة واحدة فقط. أعدك أنه جميل.' يطل ركس من تحت ورقته."
+          }
+        },
+        {
+          "chapter": 3,
+          "narrations": {
+            "en": "Rex looks up — and gasps. The whole sky is full of stars. Millions of them. Twinkling like silver dust. 'It's not dark,' he whispers. 'It's full of light. I just never looked up.' From that night on, Rex sleeps with his eyes wide open.",
+            "he": "רקס מביט מעלה — ונושם בפה פתוח. כל השמיים מלאים בכוכבים. מיליונים מהם. מנצנצים כמו אבק כסף. 'זה לא חשוך,' הוא לוחש. 'זה מלא באור. פשוט אף פעם לא הסתכלתי מעלה.' מאותו לילה ואילך, רקס ישן עם עיניים פקוחות לרווחה.",
+            "ar": "ينظر ركس للأعلى — ويتنهد دهشةً. السماء كلها مليئة بالنجوم. الملايين منها. تتلألأ كالغبار الفضي. 'الأمر ليس مظلمًا،' يهمس. 'إنه مليء بالضوء. أنا فقط لم أنظر للأعلى قط.' من تلك الليلة فصاعدًا، ينام ركس بعيون مفتوحة على مصراعيها."
+          }
+        }
+      ]
+    },
+    {
+      "id": "story10",
+      "titles": {
+        "en": "Superhero Sam's First Day",
+        "he": "היום הראשון של סופרגיבור סם",
+        "ar": "اليوم الأول للبطل الخارق سام"
+      },
+      "companion_asset": "assets/characters/the_knight.png",
+      "preview_asset": "assets/stories/story10/ch1/ch1_colored.png",
+      "drawing_ids": [
+        "story10_ch1",
+        "story10_ch2",
+        "story10_ch3",
+        "story10_ch4",
+        "story10_ch5"
+      ],
+      "chapters": [
+        {
+          "chapter": 1,
+          "narrations": {
+            "en": "Sam blinks. He looks down. His bed is way below him! 'Whoa! Whoa! Whoa!' He waves his arms. He bumps into the ceiling. Boink! 'Okay,' he says. 'Today is going to be different.'",
+            "he": "סם מצמוץ. הוא מביט למטה. המיטה שלו רחוק מתחתיו! 'וואו! וואו! וואו!' הוא מנופף בזרועותיו. הוא מתנגש בתקרה. בויינק! 'בסדר,' הוא אומר. 'היום הולך להיות שונה.'",
+            "ar": "يرمش سام. ينظر للأسفل. سريره بعيد تحته! 'واو! واو! واو!' يلوّح بذراعيه. يصطدم بالسقف. بوينك! 'حسنًا،' يقول. 'اليوم سيكون مختلفًا.'"
+          }
+        },
+        {
+          "chapter": 2,
+          "narrations": {
+            "en": "Sam flies to school. Pretty cool! But on the way down... 'Ah... ah... ACHOO!' His sneeze blasts the roof clean off. WHOOSH! Papers fly everywhere. The teachers stare. Sam's face turns red. 'Sorry! Sorry! I'll fix it! Maybe!'",
+            "he": "סם עף לבית הספר. ממש מגניב! אבל בדרך למטה... 'אה... אה... אפצ'!' העיטוש שלו מפוצץ את הגג לחלוטין. וושוש! ניירות עפים בכל מקום. המורים מביטים. פניו של סם מסמיקים. 'סליחה! סליחה! אני אתקן את זה! אולי!'",
+            "ar": "يطير سام إلى المدرسة. رائع جدًا! لكن في الطريق للأسفل... 'آ... آ... آتشو!' تفجّر عطسته السقف بالكامل. ووش! تطير الأوراق في كل مكان. يحدق المعلمون. يحمر وجه سام. 'آسف! آسف! سأصلحه! ربما!'"
+          }
+        },
+        {
+          "chapter": 3,
+          "narrations": {
+            "en": "A little kitten is stuck in a tree. Sam runs over. 'I'll save you!' He gives the kitten a tiny boost — and SHWOOP — the kitten launches up into the clouds. Sam watches her disappear. 'Oh no,' he says. 'Oh no oh no oh no.'",
+            "he": "חתול קטן תקוע על עץ. סם רץ לשם. 'אני אציל אותך!' הוא נותן לחתלתול דחיפה קטנה — ושוופ — החתלתול מתיז מעלה לתוך העננים. סם מביט בה נעלמת. 'אוי לא,' הוא אומר. 'אוי לא אוי לא אוי לא.'",
+            "ar": "قطة صغيرة عالقة في شجرة. يركض سام إليها. 'سأنقذك!' يعطي القطة دفعة صغيرة — وشووب — تنطلق القطة إلى السحاب. يراقبها سام وهي تختفي. 'يا إلهي،' يقول. 'يا إلهي يا إلهي يا إلهي.'"
+          }
+        },
+        {
+          "chapter": 4,
+          "narrations": {
+            "en": "An old superhero lands gently next to Sam. He has a friendly smile and a long swooshy cape. 'Take a breath, kid,' he says. 'Powers are not about being strong. They're about being careful. Big strength needs a soft touch.' He shows Sam how to slow down.",
+            "he": "גיבור-על זקן נוחת בעדינות לצד סם. יש לו חיוך ידידותי ואדרת ארוכה ומתנפנפת. 'תיקח נשימה, ילד,' הוא אומר. 'כוחות זה לא בחוזקה. זה בזהירות. כוח גדול צריך מגע עדין.' הוא מראה לסם איך להאט.",
+            "ar": "يهبط بطل خارق عجوز بلطف بجانب سام. لديه ابتسامة ودودة وعباءة طويلة ترفرف. 'خذ نفسًا يا صبي،' يقول. 'القدرات لا تتعلق بالقوة. إنها تتعلق بالحذر. القوة الكبيرة تحتاج إلى لمسة ناعمة.' يُريه سام كيف يتباطأ."
+          }
+        },
+        {
+          "chapter": 5,
+          "narrations": {
+            "en": "A bus is rolling down the hill — with no driver! Sam takes a deep breath. He remembers: soft touch. He flies in front. He places his hands gently on the bus. He pushes — slowly, slowly — until it stops. Everyone cheers. Sam grins. He found his kitten too. (She was on the moon. Just kidding. She was on a cloud.)",
+            "he": "אוטובוס מתגלגל במורד הגבעה — בלי נהג! סם נושם עמוק. הוא זוכר: מגע עדין. הוא עף לפנים. הוא מניח את ידיו בעדינות על האוטובוס. הוא דוחף — לאט, לאט — עד שהוא עוצר. כולם מריעים. סם מחייך. הוא גם מצא את החתלתול שלו. (היא הייתה על הירח. סתם. היא הייתה על ענן.)",
+            "ar": "حافلة تتدحرج أسفل التل — بلا سائق! يأخذ سام نفسًا عميقًا. يتذكر: لمسة ناعمة. يطير للأمام. يضع يديه برفق على الحافلة. يدفع — ببطء، ببطء — حتى تتوقف. الجميع يهتف. يبتسم سام. وجد قطته أيضًا. (كانت على القمر. مزحة. كانت على سحابة.)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "story11",
+      "titles": {
+        "en": "The Cloud Who Wanted to Be a Mountain",
+        "he": "הענן שרצה להיות הר",
+        "ar": "السحابة التي أرادت أن تكون جبلاً"
+      },
+      "companion_asset": "assets/characters/the_knight.png",
+      "preview_asset": "",
+      "drawing_ids": [],
+      "chapters": [
+        {
+          "chapter": 1,
+          "narrations": {
+            "en": "Fluffy looks down at the mountain. 'Look how strong he is,' he sighs. 'He never moves. He never has to drift around. He just gets to be there. I wish I could be like that.'",
+            "he": "פלאפי מביט למטה על ההר. 'תראו כמה הוא חזק,' הוא נאנח. 'הוא לעולם לא זז. הוא לעולם לא צריך לנדוד. הוא פשוט שם. הלוואי ויכולתי להיות כמוהו.'",
+            "ar": "ينظر فلافي إلى أسفل نحو الجبل. 'انظر كم هو قوي،' يتنهد. 'إنه لا يتحرك أبدًا. لا يضطر إلى الانجراف. إنه يجلس هناك فقط. أتمنى لو كنت مثله.'"
+          }
+        },
+        {
+          "chapter": 2,
+          "narrations": {
+            "en": "Suddenly, WHOOSH! A big storm wind grabs Fluffy and pushes him way, way up. So high it's freezing! His fluffy body turns to crinkly ice crystals. 'Eek! I don't like this! I want to be soft again!' Fluffy says shakily.",
+            "he": "פתאום, וושוש! רוח סופה גדולה תופסת את פלאפי ודוחפת אותו רחוק, רחוק מעלה. גבוה כל כך שקפוא! גופו הרך הופך לגבישי קרח מקומטים. 'יאייי! אני לא אוהב את זה! אני רוצה להיות רך שוב!' פלאפי אומר ברתיתה.",
+            "ar": "فجأة، ووش! يمسك ريح عاصفة كبيرة فلافي ويدفعه بعيدًا جدًا للأعلى. عاليًا لدرجة أنه متجمد! يتحول جسمه الناعم إلى بلورات ثلجية مجعّدة. 'آه! لا أحب هذا! أريد أن أكون ناعمًا مجددًا!' يقول فلافي بارتجاف."
+          }
+        },
+        {
+          "chapter": 3,
+          "narrations": {
+            "en": "The wind dies down. Fluffy melts back to his soft, fluffy self. He floats over the world — over rivers, over forests, sprinkling rain to thirsty flowers. 'Oh,' he says, smiling. 'Being a cloud is wonderful too. I get to travel. I get to help things grow. I am exactly right.'",
+            "he": "הרוח שוככת. פלאפי נמס חזרה לעצמו הרך והנפנף. הוא צף מעל העולם — מעל נהרות, מעל יערות, מזלף גשם לפרחים צמאים. 'אוה,' הוא אומר ומחייך. 'להיות ענן גם כן נפלא. אני יכול לנסוע. אני יכול לעזור לדברים לצמוח. אני בדיוק כמו שצריך.'",
+            "ar": "تهدأ الريح. يذوب فلافي ويعود إلى نفسه الناعم المنفوش. يطوف فوق العالم — فوق الأنهار، فوق الغابات، يرش المطر على الأزهار العطشى. 'آه،' يقول مبتسمًا. 'كونك سحابة رائع أيضًا. أستطيع السفر. أستطيع مساعدة الأشياء على النمو. أنا بالضبط كما ينبغي.'"
+          }
+        }
+      ]
+    },
+    {
+      "id": "story12",
+      "titles": {
+        "en": "Lily the Lighthouse",
+        "he": "לילי המגדלור",
+        "ar": "ليلي المنارة"
+      },
+      "companion_asset": "assets/characters/the_knight.png",
+      "preview_asset": "",
+      "drawing_ids": [],
+      "chapters": [
+        {
+          "chapter": 1,
+          "narrations": {
+            "en": "Lily watches the empty sea. Her light is just a little flicker. 'Maybe I'm not needed anymore,' she whispers. The waves go shhh, shhh. The seagulls fly past. Nobody waves. Nobody comes.",
+            "he": "לילי מביטה על הים הריק. אורה הוא רק הבהוב קטן. 'אולי כבר לא צריכים אותי,' היא לוחשת. הגלים הולכים שששש, שששש. השחפים עוברים. אף אחד לא מנופף. אף אחד לא בא.",
+            "ar": "تراقب ليلي البحر الفارغ. ضوؤها مجرد وميض صغير. 'ربما لم أعد مطلوبة،' تهمس. تذهب الأمواج شششش، شششش. النوارس تطير عابرة. لا أحد يلوّح. لا أحد يأتي."
+          }
+        },
+        {
+          "chapter": 2,
+          "narrations": {
+            "en": "On the darkest, foggiest night of the year, a little boat gets lost. A mom, a dad, and a tiny child. They can't see anything! Just gray, gray fog all around. 'We need help,' the mom whispers. 'Please... someone help us.'",
+            "he": "בלילה הכהה ומעורפל ביותר של השנה, סירה קטנה אובדת. אמא, אבא וילד קטנטן. הם לא רואים כלום! רק ערפל אפור, אפור מסביב. 'אנחנו צריכים עזרה,' האמא לוחשת. 'בבקשה... מישהו יעזור לנו.'",
+            "ar": "في أحلك ليلة ضبابية في السنة، يضيع قارب صغير. أم وأب وطفل صغير. لا يرون شيئًا! فقط ضباب رمادي في كل مكان. 'نحتاج إلى مساعدة،' تهمس الأم. 'من فضلك... أحد ساعدنا.'"
+          }
+        },
+        {
+          "chapter": 3,
+          "narrations": {
+            "en": "Lily hears them. She gathers all her strength — every single bit — and SHINES! Her light cuts through the fog like a golden sword. The little boat sees her! Slowly, safely, they sail straight toward her glow. The next morning, the family paints Lily's picture and hangs it on their wall. Lily's light has never gone dim again.",
+            "he": "לילי שומעת אותם. היא אוספת את כל כוחה — כל פיסה ממנו — ומאירה! אורה חותך דרך הערפל כמו חרב זהב. הסירה הקטנה רואה אותה! לאט לאט, בבטחה, הם שטים ישר לכיוון זוהרה. בבוקר למחרת, המשפחה מצייר את תמונתה של לילי ותולה אותה על קיר ביתם. אורה של לילי מעולם לא כהה שוב.",
+            "ar": "تسمعهم ليلي. تجمع كل قوتها — كل ذرة منها — وتُضيء! يخترق ضوؤها الضباب كسيف ذهبي. القارب الصغير يراها! ببطء وأمان، يبحرون مباشرة نحو توهّجها. في صباح اليوم التالي، ترسم العائلة صورة ليلي وتعلقها على جدارها. لم يخبُ ضوء ليلي مطلقًا بعد ذلك."
+          }
+        }
+      ]
+    },
+    {
+      "id": "story13",
+      "titles": {
+        "en": "Omar and the Flying Carpet's Last Ride",
+        "he": "עומר והטיסה האחרונה של השטיח המעופף",
+        "ar": "عمر وآخر رحلة للسجادة الطائرة"
+      },
+      "companion_asset": "assets/characters/the_knight.png",
+      "preview_asset": "",
+      "drawing_ids": [],
+      "chapters": [
+        {
+          "chapter": 1,
+          "narrations": {
+            "en": "Omar carefully unrolls the carpet. The patterns shimmer in the sunlight. He whispers, 'Are you really magic?' The carpet wiggles. Just a little. Then a lot. Omar grins.",
+            "he": "עומר פורש את השטיח בזהירות. הדוגמאות מנצנצות באור השמש. הוא לוחש, 'האם אתה באמת קסמי?' השטיח מתמרמר. רק קצת. ואז הרבה. עומר מחייך.",
+            "ar": "يفرد عمر السجادة بعناية. تتلألأ الأنماط في ضوء الشمس. يهمس: 'هل أنت فعلًا سحري؟' تتمايل السجادة. قليلًا فقط. ثم كثيرًا. يبتسم عمر."
+          }
+        },
+        {
+          "chapter": 2,
+          "narrations": {
+            "en": "WHOOSH! The carpet zips out the attic window into the sky. Omar grabs the edges and laughs and laughs. The wind tickles his face. The houses below look like little toy blocks. 'Where are we going?' he calls. The carpet glides on, sure of the way.",
+            "he": "וושוש! השטיח מתנשא מחוץ לחלון העליית הגג אל השמיים. עומר תופס את הקצוות וצוחק וצוחק. הרוח מדגדגת את פניו. הבתים למטה נראים כמו קוביות צעצוע קטנות. 'לאן אנחנו הולכים?' הוא קורא. השטיח ממשיך לגלוש, בטוח בדרכו.",
+            "ar": "ووش! تنطلق السجادة من نافذة العلية إلى السماء. يمسك عمر بحوافها ويضحك ويضحك. الريح تدغدغ وجهه. البيوت في الأسفل تبدو كمكعبات لعب صغيرة. 'إلى أين نذهب؟' يصرخ. تنزلق السجادة للأمام، متأكدة من طريقها."
+          }
+        },
+        {
+          "chapter": 3,
+          "narrations": {
+            "en": "They float down into a busy market full of every color in the world. Spices smell like cinnamon and oranges. Silk scarves dance in the wind. A merchant smiles and gives Omar a sweet date. He has never tasted anything so good.",
+            "he": "הם צפים למטה אל שוק עמוס מלא בכל צבע שיש בעולם. תבלינים מריחים כמו קינמון ותפוזים. צעיפי משי רוקדים ברוח. סוחר מחייך ונותן לעומר תמר מתוק. הוא מעולם לא טעם משהו כל כך טוב.",
+            "ar": "يحلقان نزولًا إلى سوق مزدحم مليء بكل لون في العالم. تفوح رائحة البهارات كالقرفة والبرتقال. أوشحة الحرير ترقص في الريح. يبتسم تاجر ويعطي عمر تمرة حلوة. لم يتذوق شيئًا بهذا الطعم من قبل."
+          }
+        },
+        {
+          "chapter": 4,
+          "narrations": {
+            "en": "Up they go, higher and higher, to the very tip of a mountain. A great eagle is waiting there. He bows his head to the carpet, like greeting an old, old friend. Omar pets his soft feathers. The eagle gives him one shining feather to take home.",
+            "he": "הם עולים, גבוה ויותר גבוה, עד לפסגת ההר. נשר גדול מחכה שם. הוא מקדוד בפני השטיח, כמו ברכה לחבר ישן, ישן. עומר מלטף את נוצותיו הרכות. הנשר נותן לו נוצה אחת מבריקה להביא הביתה.",
+            "ar": "يرتفعان، أعلى وأعلى، حتى قمة جبل. نسر عظيم ينتظر هناك. ينحني برأسه للسجادة، كتحية لصديق قديم جدًا. يداعب عمر ريشه الناعم. يعطيه النسر ريشة واحدة لامعة ليأخذها إلى البيت."
+          }
+        },
+        {
+          "chapter": 5,
+          "narrations": {
+            "en": "As the sun melts into gold, the carpet glides home. Through the attic window. Onto the floor. Then, very gently, it folds itself up. 'Thank you,' Omar whispers. He runs to get a pencil and a journal. He writes down every smell, every sound, every color. So he will remember forever.",
+            "he": "כשהשמש נמסה לזהב, השטיח מחליק הביתה. דרך חלון העליית הגג. על הרצפה. ואז, בעדינות רבה, הוא מקפל את עצמו. 'תודה,' עומר לוחש. הוא רץ לקחת עיפרון ויומן. הוא כותב כל ריח, כל צליל, כל צבע. כדי שיזכור לנצח.",
+            "ar": "بينما تذوب الشمس إلى ذهب، تنزلق السجادة إلى البيت. عبر نافذة العلية. على الأرض. ثم، برفق شديد، تطوي نفسها. 'شكرًا،' يهمس عمر. يركض ليأخذ قلمًا ومذكرة. يكتب كل رائحة، كل صوت، كل لون. حتى يتذكر إلى الأبد."
+          }
+        }
+      ]
+    },
+    {
+      "id": "story14",
+      "titles": {
+        "en": "The Little Seed Who Was Afraid to Grow",
+        "he": "הזרע הקטן שפחד לגדול",
+        "ar": "البذرة الصغيرة التي خافت من النمو"
+      },
+      "companion_asset": "assets/characters/the_knight.png",
+      "preview_asset": "",
+      "drawing_ids": [],
+      "chapters": [
+        {
+          "chapter": 1,
+          "narrations": {
+            "en": "All around her, other seeds stretch and pop. Boing! Boing! Up they go. 'Bye!' they call. The little seed pulls her roots in tight. 'No thank you,' she whispers. 'I'll just stay here. Where it's safe.'",
+            "he": "סביבה, זרעים אחרים מתמתחים ומתפוצצים. בויינג! בויינג! הם עולים מעלה. 'ביי!' הם קוראים. הזרע הקטן מושכת את שורשיה חזק. 'לא תודה,' היא לוחשת. 'אני פשוט אישאר כאן. היכן שזה בטוח.'",
+            "ar": "حولها، تتمدد البذور الأخرى وتنفجر. بوينج! بوينج! يصعدون للأعلى. 'وداعًا!' ينادون. تشد البذرة الصغيرة جذورها بإحكام. 'لا شكرًا،' تهمس. 'سأبقى هنا فقط. حيث الأمان.'"
+          }
+        },
+        {
+          "chapter": 2,
+          "narrations": {
+            "en": "A friendly worm wiggles by. 'Why are you still down here, little one?' he asks. The seed sniffles. 'I'm scared.' The worm smiles. 'Oh sweet seed. Up there is sunshine. And butterflies. And wind that smells like flowers. You belong up there.' The seed thinks for a long, long time.",
+            "he": "תולעת ידידותית מתפתלת ועוברת. 'למה את עדיין כאן למטה, קטנה?' היא שואלת. הזרע מרחרחת. 'אני פוחדת.' התולעת מחייכת. 'אוי זרע מתוק. שם למעלה יש שמש. ופרפרים. ורוח שמריחה כמו פרחים. את שייכת שם למעלה.' הזרע חושבת זמן רב, רב מאוד.",
+            "ar": "تمر دودة ودودة متلوّية. 'لماذا لا تزالين هنا في الأسفل يا صغيرة؟' تسأل. تشخر البذرة. 'أنا خائفة.' تبتسم الدودة. 'أيتها البذرة الحلوة. هناك في الأعلى شمس. وفراشات. وريح تفوح كالزهور. مكانك هناك في الأعلى.' تفكر البذرة لوقت طويل، طويل جدًا."
+          }
+        },
+        {
+          "chapter": 3,
+          "narrations": {
+            "en": "She takes a tiny breath. She pushes — just a little. Then a little more. Then... POP! Her green head pokes through the soil. The sun warms her face. A butterfly lands on her. And up, up, up she grows — into the tallest, brightest, happiest sunflower in the whole garden.",
+            "he": "היא נושמת נשימה קטנה. היא דוחפת — רק קצת. ואז עוד קצת. ואז... פופ! ראשה הירוק בוקע דרך האדמה. השמש מחממת את פניה. פרפר יורד עליה. ומעלה, מעלה, מעלה היא גדלה — אל חמנייה הגבוהה, המבריקה והמאושרת ביותר בכל הגן.",
+            "ar": "تأخذ نفسًا صغيرًا. تدفع — قليلًا فقط. ثم قليلًا أكثر. ثم... فرقعة! يبرز رأسها الأخضر من التربة. تدفئ الشمس وجهها. فراشة تحط عليها. وللأعلى، للأعلى، للأعلى تنمو — إلى أطول وأسعد زهرة عباد شمس في الحديقة كلها."
+          }
+        }
+      ]
+    },
+    {
+      "id": "story15",
+      "titles": {
+        "en": "Captain Cosmo and the Lost Planet",
+        "he": "קפטן קוסמו והכוכב האבוד",
+        "ar": "الكابتن كوسمو والكوكب الضائع"
+      },
+      "companion_asset": "assets/characters/the_knight.png",
+      "preview_asset": "",
+      "drawing_ids": [],
+      "chapters": [
+        {
+          "chapter": 1,
+          "narrations": {
+            "en": "BONK! Cosmo's helmet bumps into something. He looks down. It's a planet! A tiny, tiny one. About the size of a swimming pool. 'Hello?' he calls gently. 'Is anybody home?'",
+            "he": "בונק! קסדתו של קוסמו מתנגשת במשהו. הוא מביט למטה. זה כוכב לכת! כוכב לכת קטן, קטנטן. בגודל של בריכת שחייה בערך. 'שלום?' הוא קורא בעדינות. 'יש מישהו בבית?'",
+            "ar": "بونك! تصطدم خوذة كوسمو بشيء ما. ينظر للأسفل. إنه كوكب! كوكب صغير، صغير جدًا. بحجم حوض سباحة تقريبًا. 'مرحبًا؟' يسأل برفق. 'هل من أحد هنا؟'"
+          }
+        },
+        {
+          "chapter": 2,
+          "narrations": {
+            "en": "Three little aliens peek out. They are pushing their planet with sticks! They speak fast and worried: 'Our home is drifting away from our sun! It's getting cold! Please, can you help us?' Cosmo nods. 'Don't worry. I can help.'",
+            "he": "שלושה חייזרים קטנים מציצים החוצה. הם דוחפים את הכוכב שלהם עם מקלות! הם מדברים מהר ומודאגים: 'ביתנו מתרחק מהשמש שלנו! הוא מתקרר! בבקשה, אתה יכול לעזור לנו?' קוסמו מהנהן. 'אל תדאגו. אני יכול לעזור.'",
+            "ar": "ثلاثة كائنات فضائية صغيرة تطل للخارج. إنهم يدفعون كوكبهم بالعصي! يتكلمون بسرعة وقلق: 'منزلنا يبتعد عن شمسنا! إنه يبرد! من فضلك، هل يمكنك مساعدتنا؟' يومئ كوسمو. 'لا تقلقوا. يمكنني المساعدة.'"
+          }
+        },
+        {
+          "chapter": 3,
+          "narrations": {
+            "en": "Cosmo needs fuel for his rocket. He spots something glittering nearby — an asteroid covered in icy crystals. 'Perfect! These crystals will turn into fuel when they melt.' He gathers them carefully and zooms back to the little planet.",
+            "he": "קוסמו זקוק לדלק לרקטה שלו. הוא שם לב למשהו נוצץ בקרבת מקום — אסטרואיד מכוסה בגבישי קרח. 'מושלם! גבישים אלה יהפכו לדלק כשיימסו.' הוא אוסף אותם בזהירות ומקפץ חזרה לכוכב הקטן.",
+            "ar": "يحتاج كوسمو إلى وقود لصاروخه. يلحظ شيئًا يتلألأ قريبًا — كويكب مغطى بكريستالات جليدية. 'مثالي! هذه الكريستالات ستتحول إلى وقود عند ذوبانها.' يجمعها بعناية ويعود بسرعة إلى الكوكب الصغير."
+          }
+        },
+        {
+          "chapter": 4,
+          "narrations": {
+            "en": "Cosmo aims his rocket gently behind the little planet. The fuel burns warm and bright. WHOOSH! Slowly, gently, the planet starts moving. The aliens hold their breath. Push, push, push... back toward their warm yellow sun.",
+            "he": "קוסמו מכוון את הרקטה שלו בעדינות מאחורי הכוכב הקטן. הדלק בוער חם ובוהק. וושוש! לאט, בעדינות, הכוכב מתחיל לזוז. החייזרים עוצרים את נשימתם. דחוף, דחוף, דחוף... חזרה לכיוון השמש הצהובה החמה שלהם.",
+            "ar": "يوجّه كوسمو صاروخه برفق خلف الكوكب الصغير. يحترق الوقود دافئًا ومشرقًا. ووش! ببطء وبلطف، يبدأ الكوكب بالتحرك. الكائنات الفضائية تحبس أنفاسها. ادفع، ادفع، ادفع... عودة نحو شمسهم الصفراء الدافئة."
+          }
+        },
+        {
+          "chapter": 5,
+          "narrations": {
+            "en": "The little planet slides back into its perfect orbit around its sun. The aliens cheer and hug each other. Then they cheer and hug Cosmo. Before he leaves, they build a tiny, tiny statue of him. So they will never, ever forget the kind astronaut who brought them home.",
+            "he": "הכוכב הקטן חוזר למסלול המושלם שלו סביב שמשו. החייזרים מריעים ומחבקים אחד את השני. ואז הם מריעים ומחבקים את קוסמו. לפני שהוא עוזב, הם בונים פסל קטן, קטנטן שלו. כדי שלא ישכחו לעולם, לעולם את האסטרונאוט האדיב שהביא אותם הביתה.",
+            "ar": "يعود الكوكب الصغير إلى مداره المثالي حول شمسه. الكائنات الفضائية تهتف وتتعانق. ثم يهتفون ويعانقون كوسمو. قبل مغادرته، يبنون له تمثالًا صغيرًا جدًا. حتى لا ينسوا أبدًا رائد الفضاء اللطيف الذي أعادهم إلى البيت."
+          }
+        }
+      ]
+    },
+    {
+      "id": "story16",
+      "titles": {
+        "en": "The Baker Who Forgot the Secret Ingredient",
+        "he": "הקונדיטורית ששכחה את המרכיב הסודי",
+        "ar": "الخبازة التي نسيت المكون السري"
+      },
+      "companion_asset": "assets/characters/the_knight.png",
+      "preview_asset": "",
+      "drawing_ids": [],
+      "chapters": [
+        {
+          "chapter": 1,
+          "narrations": {
+            "en": "Nadia watches Grandma Rosa carefully. Flour. Yes. Water. Yes. Salt, yeast, a sprinkle of love — yes, yes, yes. Everything from the list. The bread comes out warm and smells nice. But when they taste it... 'Hmm,' says Grandma. 'Still not right.'",
+            "he": "נאדיה מביטה בסבתא רוזה בקשב. קמח. כן. מים. כן. מלח, שמרים, מעט אהבה — כן, כן, כן. הכל מהרשימה. הלחם יוצא חם ומריח נפלא. אבל כשהם טועמים... 'הממ,' אומרת הסבתא. 'עדיין לא בסדר.'",
+            "ar": "تراقب ناديا الجدة روزا بعناية. طحين. نعم. ماء. نعم. ملح، خميرة، قليل من الحب — نعم، نعم، نعم. كل شيء من القائمة. يخرج الخبز دافئًا وذو رائحة جميلة. لكن عندما يتذوقانه... 'همم،' تقول الجدة. 'لا يزال غير صحيح.'"
+          }
+        },
+        {
+          "chapter": 2,
+          "narrations": {
+            "en": "Nadia goes door to door. 'Do you remember Grandma's bread?' she asks the neighbors. Their eyes light up. 'Oh yes! At my wedding!' 'At my birthday!' 'On my first day of school!' Every neighbor has a story. A happy story. Nadia starts to wonder...",
+            "he": "נאדיה הולכת מדלת לדלת. 'האם אתם זוכרים את לחם הסבתא?' היא שואלת את השכנים. עיניהם נדלקות. 'אוה כן! בחתונה שלי!' 'ביום ההולדת שלי!' 'ביום הראשון שלי בבית הספר!' לכל שכן יש סיפור. סיפור שמח. נאדיה מתחילה לתהות...",
+            "ar": "تذهب ناديا من باب إلى باب. 'هل تتذكرون خبز الجدة؟' تسأل الجيران. تضيء عيونهم. 'آه نعم! في حفل زفافي!' 'في عيد ميلادي!' 'في يومي الأول في المدرسة!' لكل جار قصة. قصة سعيدة. تبدأ ناديا بالتساؤل..."
+          }
+        },
+        {
+          "chapter": 3,
+          "narrations": {
+            "en": "Nadia runs home. 'Grandma!' she says. 'I think I know! The secret ingredient is making it for somebody you love!' Grandma's eyes go shiny. 'My darling girl,' she whispers, 'will you make it with me?' They knead the dough together, side by side, laughing. And when the bread comes out... it tastes perfect. Just like she remembered.",
+            "he": "נאדיה רצה הביתה. 'סבתא!' היא אומרת. 'אני חושבת שאני יודעת! המרכיב הסודי הוא להכין את זה למישהו שאוהבים!' עיני הסבתא נדלקות. 'ילדתי היקרה,' היא לוחשת, 'האם תכיני את זה איתי?' הן לשות את הבצק יחד, זו לצד זו, צוחקות. וכשהלחם יוצא... הוא טועם מושלם. בדיוק כפי שהיא זכרה.",
+            "ar": "تركض ناديا إلى البيت. 'يا جدة!' تقول. 'أعتقد أنني أعرف! المكون السري هو صنعه لشخص تحبينه!' تتلألأ عينا الجدة. 'يا حبيبتي،' تهمس، 'هل ستصنعينه معي؟' تعجنان العجين معًا، جنبًا إلى جنب، وهما تضحكان. وعندما يخرج الخبز... طعمه مثالي. تمامًا كما تذكرت."
+          }
+        }
+      ]
+    },
+    {
+      "id": "story17",
+      "titles": {
+        "en": "Pip the Penguin Goes North",
+        "he": "פינגווין פיפ הולך צפונה",
+        "ar": "البطريق بيب يسافر شمالًا"
+      },
+      "companion_asset": "assets/characters/the_knight.png",
+      "preview_asset": "",
+      "drawing_ids": [],
+      "chapters": [
+        {
+          "chapter": 1,
+          "narrations": {
+            "en": "Pip waves goodbye to his colony. 'Be careful!' they squeak. 'Send a postcard!' Pip waddles north. Wibble-wobble, wibble-wobble. The world gets bigger and stranger with every step.",
+            "he": "פיפ מנופף לשלום למושבה שלו. 'היזהר!' הם מצרחים. 'שלח גלויה!' פיפ הולך בסמסום צפונה. ויבל-וובל, ויבל-וובל. העולם הולך וגדל ומוזר יותר עם כל צעד.",
+            "ar": "يلوّح بيب بالوداع لمستعمرته. 'كن حذرًا!' يصرخون. 'أرسل بطاقة بريدية!' يتمشى بيب شمالًا بخطوات متقلقلة. ويبل-وبل، ويبل-وبل. يكبر العالم ويغرب مع كل خطوة."
+          }
+        },
+        {
+          "chapter": 2,
+          "narrations": {
+            "en": "After many many days, Pip meets a huge polar bear. The bear looks down. He blinks. 'Well!' he booms with a big laugh. 'I've never seen a penguin this far north before! Welcome, little friend. Want to walk with me?'",
+            "he": "אחרי ימים רבים, רבים מאוד, פיפ פוגש דוב קוטב ענקי. הדוב מביט למטה. הוא מצמוץ. 'ובכן!' הוא מרעים עם צחוק גדול. 'מעולם לא ראיתי פינגווין כל כך רחוק צפונה! ברוך הבא, חבר קטן. רוצה ללכת איתי?'",
+            "ar": "بعد أيام كثيرة جدًا، يلتقي بيب بدب قطبي ضخم. ينظر الدب إلى أسفل. يرمش. 'حسنًا!' يهدر بضحكة كبيرة. 'لم أرَ بطريقًا بعيدًا في الشمال هكذا من قبل! أهلًا بك يا صديقي الصغير. هل تريد أن تمشي معي؟'"
+          }
+        },
+        {
+          "chapter": 3,
+          "narrations": {
+            "en": "A blizzard rolls in — WHOOSH-SHHHHH! Pip and the bear duck into an ice cave. They wait. They tell stories. The bear shares his fish. Pip shares his songs. Two whole days pass before the wind goes quiet. They become best friends.",
+            "he": "סופת שלגים מגיעה — וושוש-שששש! פיפ והדוב מתכנסים אל מערת קרח. הם מחכים. הם מספרים סיפורים. הדוב מחלק את הדגים שלו. פיפ מחלק את שיריו. שני ימים שלמים עוברים לפני שהרוח שוקטת. הם הופכים לחברים הכי טובים.",
+            "ar": "تهب عاصفة ثلجية — ووش-شششش! ينحشر بيب والدب في كهف جليدي. ينتظران. يحكيان القصص. يتقاسم الدب أسماكه. يتقاسم بيب أغانيه. يمران يومان كاملان قبل أن تهدأ الريح. يصبحان أفضل الأصدقاء."
+          }
+        },
+        {
+          "chapter": 4,
+          "narrations": {
+            "en": "When the storm ends, the bear takes Pip outside. 'Look up,' he whispers. The whole sky is alive — green and purple ribbons dancing slowly above them. Pip cannot speak. He just watches. His little heart feels so full it might burst.",
+            "he": "כשהסופה נגמרת, הדוב לוקח את פיפ החוצה. 'תסתכל מעלה,' הוא לוחש. כל השמיים חיים — סרטי ירוק וסגול רוקדים לאט מעליהם. פיפ לא יכול לדבר. הוא פשוט מביט. ליבו הקטן מרגיש כל כך מלא שהוא עשוי להתפוצץ.",
+            "ar": "عندما تنتهي العاصفة، يأخذ الدب بيب إلى الخارج. 'انظر للأعلى،' يهمس. السماء كلها حية — أشرطة خضراء وأرجوانية ترقص ببطء فوقهما. لا يستطيع بيب الكلام. يراقب فقط. يشعر قلبه الصغير بامتلاء شديد قد ينفجر."
+          }
+        },
+        {
+          "chapter": 5,
+          "narrations": {
+            "en": "Pip waddles all the way home. In his beak — a little drawing he made of the lights. He pins it carefully to the wall of his igloo. Every penguin who visits now stops and stares. 'Tell us the story, Pip!' they squeak. And he does. Again and again.",
+            "he": "פיפ הולך בסמסום כל הדרך הביתה. בפיו — ציור קטן שעשה של האורות. הוא מצמיד אותו בזהירות לקיר האיגלו שלו. כל פינגווין שמבקר עכשיו עוצר ומביט. 'ספר לנו את הסיפור, פיפ!' הם מצרחים. והוא מספר. שוב ושוב.",
+            "ar": "يتمشى بيب إلى البيت طوال الطريق. في منقاره — رسمة صغيرة رسمها للأضواء. يعلقها بعناية على جدار إيغلو خاصته. كل بطريق يزور يتوقف الآن ويحدق. 'احكِ لنا القصة يا بيب!' يصرخون. وهو يحكي. مرة بعد مرة."
+          }
+        }
+      ]
+    },
+    {
+      "id": "story18",
+      "titles": {
+        "en": "The Dragon Who Collected Fears",
+        "he": "הדרקון שאסף פחדים",
+        "ar": "التنين الذي جمع المخاوف"
+      },
+      "companion_asset": "assets/characters/the_knight.png",
+      "preview_asset": "",
+      "drawing_ids": [],
+      "chapters": [
+        {
+          "chapter": 1,
+          "narrations": {
+            "en": "Ember's cave shines with hundreds of glowing jars. A green one for fear of the dark. A blue one for fear of thunder. A pink one for fear of being lost. She keeps them all safe. But she is getting so tired.",
+            "he": "המערה של אמבר זורחת עם מאות צנצנות מאירות. ירוקה אחת לפחד מהחושך. כחולה אחת לפחד מרעם. ורודה אחת לפחד מאיבוד. היא שומרת על כולן בבטחה. אבל היא הולכת ועייפה.",
+            "ar": "يتألق كهف إمبر بمئات الجرار المضيئة. واحدة خضراء للخوف من الظلام. واحدة زرقاء للخوف من الرعد. واحدة وردية للخوف من الضياع. تحفظهم جميعًا بأمان. لكنها باتت تشعر بتعب شديد."
+          }
+        },
+        {
+          "chapter": 2,
+          "narrations": {
+            "en": "A young fox tiptoes into the cave. 'Please, Ember,' she whispers. 'Take my fear. I'm so scared of being alone.' Ember nods kindly and breathes in gently. The fox smiles and runs away light as a feather. But Ember sinks down. She feels so heavy.",
+            "he": "שועל צעיר נכנס למערה על בהונות. 'בבקשה, אמבר,' היא לוחשת. 'קחי את הפחד שלי. אני כל כך פוחדת מלהיות לבד.' אמבר מהנהנת בחביבות ושואפת בעדינות. השועל מחייכת ורצה כנוצה קלה. אבל אמבר שוקעת. היא מרגישה כל כך כבדה.",
+            "ar": "ثعلبة صغيرة تدخل الكهف على أطراف أقدامها. 'من فضلك يا إمبر،' تهمس. 'خذي خوفي. أنا خائفة جدًا من الوحدة.' تومئ إمبر بلطف وتتنفس برفق. تبتسم الثعلبة وتركض خفيفة كريشة. لكن إمبر تغوص. تشعر بثقل شديد."
+          }
+        },
+        {
+          "chapter": 3,
+          "narrations": {
+            "en": "Ember thinks for a long time. Then she calls every creature back. 'I love you all,' she says, 'but I cannot carry your fears forever. So let's open them — together.' One by one, the jars open. POP! POP! POP! Soft sparkles drift up. And Ember teaches each creature how to be brave, with a friend by their side. The cave fills with light and laughter.",
+            "he": "אמבר חושבת זמן רב. ואז היא קוראת לכל יצור לחזור. 'אני אוהבת אתכם כולכם,' היא אומרת, 'אבל אני לא יכולה לשאת את הפחדים שלכם לנצח. אז בואו נפתח אותם — יחד.' אחד אחרי השני, הצנצנות נפתחות. פופ! פופ! פופ! נצנצים רכים נדרפים מעלה. ואמבר מלמדת כל יצור כיצד להיות אמיץ, עם חבר לצד. המערה מתמלאת באור ובצחוק.",
+            "ar": "تفكر إمبر لوقت طويل. ثم تستدعي كل مخلوق للعودة. 'أحبكم جميعًا،' تقول، 'لكن لا أستطيع حمل مخاوفكم إلى الأبد. إذن لنفتحها — معًا.' واحدة تلو الأخرى، تفتح الجرار. فرقعة! فرقعة! فرقعة! تتصاعد بريقات ناعمة. وتعلم إمبر كل مخلوق كيف يكون شجاعًا مع صديق بجانبه. يمتلئ الكهف بالضوء والضحك."
+          }
+        }
+      ]
+    },
+    {
+      "id": "story19",
+      "titles": {
+        "en": "Amara and the Talking River",
+        "he": "אמארה והנהר המדבר",
+        "ar": "أمارا والنهر المتكلم"
+      },
+      "companion_asset": "assets/characters/the_knight.png",
+      "preview_asset": "",
+      "drawing_ids": [],
+      "chapters": [
+        {
+          "chapter": 1,
+          "narrations": {
+            "en": "'A-ma-ra... A-ma-ra...' the river whispers. Amara walks beside it, listening hard. The river leads her up into the hills. The trees are tall. The birds sing. She is not afraid.",
+            "he": "'א-מא-רה... א-מא-רה...' הנהר לוחש. אמארה הולכת לצידו, מקשיבה בקשב. הנהר מוביל אותה מעלה לגבעות. העצים גבוהים. הציפורים שרות. היא לא פוחדת.",
+            "ar": "'أ-ما-را... أ-ما-را...' يهمس النهر. تسير أمارا بجانبه، تستمع بانتباه. يقودها النهر للأعلى نحو التلال. الأشجار طويلة. الطيور تغني. هي لا تخاف."
+          }
+        },
+        {
+          "chapter": 2,
+          "narrations": {
+            "en": "She climbs higher. The river gets smaller. Then... a beautiful waterfall! And something strange — the water is going UP in places. Bubbles are floating sideways. The voice is louder here. 'A-ma-ra...' Almost a song now. Amara keeps climbing.",
+            "he": "היא מטפסת גבוה יותר. הנהר הולך וקטן. ואז... מפל מים יפהפה! ומשהו מוזר — המים עולים מעלה במקומות מסוימים. בועות צפות לצדדים. הקול רם יותר כאן. 'א-מא-רה...' כמעט שיר עכשיו. אמארה ממשיכה לטפס.",
+            "ar": "تتسلق أعلى. يصغر النهر. ثم... شلال جميل! وشيء غريب — الماء يصعد في أماكن. فقاعات تطفو إلى الجانب. الصوت أعلى هنا. 'أ-ما-را...' شبه أغنية الآن. تواصل أمارا التسلق."
+          }
+        },
+        {
+          "chapter": 3,
+          "narrations": {
+            "en": "At the very top — a tiny spring. Just a little bubble of water. Amara leans down and listens. And then she remembers. Her grandmother used to bring her here. Her grandmother used to sing this song. The voice was the river remembering. Amara sits down and sings the song too. And the river sings back.",
+            "he": "בפסגה הגבוהה ביותר — מעיין קטנטן. רק בועה קטנה של מים. אמארה שוחה למטה ומקשיבה. ואז היא נזכרת. סבתא שלה נהגה להביאה לכאן. סבתא שלה נהגה לשיר את השיר הזה. הקול היה הנהר שזוכר. אמארה יושבת ושרה גם היא את השיר. והנהר שר בחזרה.",
+            "ar": "في أعلى القمة — ينبوع صغير. مجرد فقاعة صغيرة من الماء. تنحني أمارا وتستمع. وعندها تتذكر. كانت جدتها تحضرها إلى هنا. كانت جدتها تغني هذه الأغنية. كان الصوت هو النهر يتذكر. تجلس أمارا وتغني الأغنية هي أيضًا. والنهر يغني في المقابل."
+          }
+        }
+      ]
+    },
+    {
+      "id": "story20",
+      "titles": {
+        "en": "The Robot Who Wanted to Dream",
+        "he": "הרובוט שרצה לחלום",
+        "ar": "الروبوت الذي أراد أن يحلم"
+      },
+      "companion_asset": "assets/characters/the_knight.png",
+      "preview_asset": "",
+      "drawing_ids": [],
+      "chapters": [
+        {
+          "chapter": 1,
+          "narrations": {
+            "en": "Click. Click. All the other robots go dark and still. But Unit 7's lights stay on. 'I wish I could close my eyes and see colors and stories,' he beeps softly. 'I wish I could dream.'",
+            "he": "קליק. קליק. כל הרובוטים האחרים כהים ושקטים. אבל האורות של יחידה 7 נשארים דלוקים. 'הלוואי שיכולתי לעצום עיניים ולראות צבעים וסיפורים,' הוא מצפצף בעדינות. 'הלוואי שיכולתי לחלום.'",
+            "ar": "كليك. كليك. كل الروبوتات الأخرى تظلم وتصمت. لكن أضواء الوحدة 7 تبقى مضاءة. 'أتمنى لو أستطيع أن أغمض عيني وأرى ألوانًا وقصصًا،' يصفر بلطف. 'أتمنى لو أستطيع أن أحلم.'"
+          }
+        },
+        {
+          "chapter": 2,
+          "narrations": {
+            "en": "One night, a stray cat slips through a window. She tilts her head at Unit 7. 'You look bored,' she purrs. 'Want me to show you the city at night? It's the best time. Trust me.' Unit 7's lights blink with excitement. He has never been outside before.",
+            "he": "לילה אחד, חתולת רחוב מחליקה דרך חלון. היא מטה את ראשה לכיוון יחידה 7. 'אתה נראה משועמם,' היא מנהמת. 'רוצה שאראה לך את העיר בלילה? זה הזמן הכי טוב. תאמין לי.' האורות של יחידה 7 מהבהבים מהתרגשות. הוא מעולם לא היה בחוץ.",
+            "ar": "في ليلة ما، قطة ضالة تتسلل عبر نافذة. تميل برأسها نحو الوحدة 7. 'تبدو مملًا،' تموء. 'هل تريدني أن أريك المدينة في الليل؟ إنه أفضل وقت. ثق بي.' أضواء الوحدة 7 تومض إثارةً. لم يكن خارجًا قط."
+          }
+        },
+        {
+          "chapter": 3,
+          "narrations": {
+            "en": "Together they walk through the quiet streets. Past a park where the swings sway in the wind. Past a bakery, warm and smelling like fresh bread. Across an old stone bridge over a slow, silver river. Unit 7's circuits glow. Everything is so beautiful.",
+            "he": "יחד הם הולכים דרך הרחובות השקטים. מעבר לפארק שבו הנדנדות מתנדנדות ברוח. מעבר לאפייה, חמה ומריחה כמו לחם טרי. דרך גשר אבן ישן מעל נהר איטי כסוף. המעגלים של יחידה 7 זורחים. הכל כל כך יפה.",
+            "ar": "يسيران معًا عبر الشوارع الهادئة. عبر حديقة تتأرجح فيها الأراجيح في الريح. عبر مخبز، دافئ يفوح برائحة الخبز الطازج. عبر جسر حجري قديم فوق نهر بطيء فضي. تتوهج دوائر الوحدة 7. كل شيء جميل جدًا."
+          }
+        },
+        {
+          "chapter": 4,
+          "narrations": {
+            "en": "Back at the factory, Unit 7 finds a piece of chalk. He starts to draw. A star. A cat. A bridge. He fills the whole factory floor with everything he saw. He cannot dream with his eyes closed. But maybe — maybe this is even better.",
+            "he": "חזרה במפעל, יחידה 7 מוצא חתיכת גיר. הוא מתחיל לצייר. כוכב. חתול. גשר. הוא ממלא את כל רצפת המפעל בכל מה שראה. הוא לא יכול לחלום עם עיניים עצומות. אבל אולי — אולי זה אפילו טוב יותר.",
+            "ar": "عودة إلى المصنع، تجد الوحدة 7 قطعة طباشير. تبدأ بالرسم. نجمة. قطة. جسر. تملأ أرضية المصنع كلها بكل ما رأته. لا تستطيع أن تحلم بعيون مغلقة. لكن ربما — ربما هذا أفضل حتى."
+          }
+        },
+        {
+          "chapter": 5,
+          "narrations": {
+            "en": "In the morning, the factory manager walks in. She stops. She stares. She does not get angry. She smiles a slow, soft smile. The next night, sitting on Unit 7's desk, is a brand-new sketchbook. With his name on it. Unit 7's lights have never glowed brighter.",
+            "he": "בבוקר, מנהלת המפעל נכנסת. היא עוצרת. היא מביטה. היא לא כועסת. היא מחייכת חיוך איטי ורך. בלילה הבא, על שולחן יחידה 7, נמצא פנקס סקיצות חדש לגמרי. עם שמו עליו. האורות של יחידה 7 מעולם לא זרחו בצורה בוהקת יותר.",
+            "ar": "في الصباح، تدخل مديرة المصنع. تتوقف. تحدق. لا تغضب. تبتسم ابتسامة بطيئة ناعمة. في الليلة التالية، يجلس على مكتب الوحدة 7 دفتر رسم جديد تمامًا. مع اسمه عليه. لم تتوهج أضواء الوحدة 7 بسطوع أكبر من قبل."
           }
         }
       ]

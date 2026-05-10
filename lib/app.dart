@@ -138,22 +138,30 @@ class DotStoryApp extends ConsumerWidget {
 // ---------------------------------------------------------------------------
 // SplashScreen
 // ---------------------------------------------------------------------------
-class SplashScreen extends ConsumerWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final progress = ref.watch(progressProvider);
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
+}
 
+class _SplashScreenState extends ConsumerState<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!context.mounted) return;
+      if (!mounted) return;
+      final progress = ref.read(progressProvider);
       if (progress.onboardingComplete) {
         context.go('/welcome');
       } else {
         context.go('/onboarding');
       }
     });
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return const Scaffold(
       backgroundColor: Color(0xFF6B4EFF),
       body: Center(

@@ -279,7 +279,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
     // Smooth fade-in for newly revealed dots in Hard/SuperHard
     _dotRevealCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 150),
     )..addListener(() {
         if (mounted) setState(() {});
       });
@@ -352,7 +352,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
         _totalSeconds = timerSecs;
         _remainingSeconds = timerSecs;
         _visibleDotCount = isTimedMode
-            ? (difficulty == DifficultyMode.superHard ? 1 : min(5, effectiveDots.length))
+            ? (difficulty == DifficultyMode.superHard ? 2 : min(5, effectiveDots.length))
             : 0;
       });
       ref.read(audioServiceProvider).playMusic('audio/music/drawing_theme.mp3');
@@ -603,10 +603,11 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
       return;
     }
     final session = ref.read(drawingSessionProvider);
-    // 1 new dot revealed every 2 connections; SuperHard starts at 1, Hard at 5
-    final startCount = _difficulty == DifficultyMode.superHard ? 1 : 5;
-    final newVisible =
-        min(startCount + session.connections.length ~/ 2, drawing.dots.length);
+    // Sliding window anchored to the next required dot so the player is never
+    // blocked: every correct tap immediately reveals the dot that follows.
+    // SuperHard lookahead=1 (next target + 1 peek), Hard lookahead=4 (5-dot window).
+    final int lookahead = _difficulty == DifficultyMode.superHard ? 1 : 4;
+    final newVisible = min(session.nextExpectedDotId + lookahead, drawing.dots.length);
     if (newVisible > _visibleDotCount) {
       setState(() {
         _fadingInDotId = newVisible;
@@ -769,7 +770,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
       _firstWrongTapTime = null;
       _fadingInDotId = -1;
       _visibleDotCount = _difficulty == DifficultyMode.superHard
-          ? 1
+          ? 2
           : min(5, drawing.dots.length);
     });
     _dotRevealCtrl.reset();
@@ -791,7 +792,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
       _encouragementPlayed = false;
       if (isTimedMode) {
         _visibleDotCount = _difficulty == DifficultyMode.superHard
-            ? 1
+            ? 2
             : min(5, drawing.dots.length);
       }
     });
@@ -1144,8 +1145,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
   }
 
   Widget _buildCelebrationLayer() {
-    final drawing = _drawing!;
-    final lang = ref.read(progressProvider).selectedLanguage;
+    final l10n = AppLocalizations.of(context)!;
     final raw = _overlayEnterCtrl.value.clamp(0.0, 1.0);
     final badgeT = Curves.elasticOut.transform(raw);
 
@@ -1202,7 +1202,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                         ],
                       ),
                       child: Text(
-                        drawing.getName(lang),
+                        l10n.chapter(_chapterNumber),
                         style: const TextStyle(
                           fontFamily: 'Boogaloo',
                           color: _kInk,
@@ -1223,8 +1223,6 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
 
   Widget _buildNarrationPanel() {
     final l10n = AppLocalizations.of(context)!;
-    final drawing = _drawing!;
-    final lang = ref.read(progressProvider).selectedLanguage;
     final t = Curves.easeOutCubic.transform(_panelCtrl.value.clamp(0.0, 1.0));
     // Slide up from off-screen bottom — 380px gives a readable arrival motion
     final slideY = (1.0 - t) * 380.0;
@@ -1256,36 +1254,8 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const SizedBox(height: 20),
-                    // Header: chapter badge + drawing name together
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _DrawingChapterBadge(chapter: _chapterNumber, l10n: l10n),
-                        const SizedBox(width: 10),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 18, vertical: 7),
-                          decoration: BoxDecoration(
-                            color: _kYellow,
-                            borderRadius: BorderRadius.circular(99),
-                            border: Border.all(color: _kInk, width: 3),
-                            boxShadow: const [
-                              BoxShadow(
-                                  color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
-                            ],
-                          ),
-                          child: Text(
-                            drawing.getName(lang),
-                            style: const TextStyle(
-                              fontFamily: 'Boogaloo',
-                              color: _kInk,
-                              fontSize: 20,
-                              height: 1.0,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Header: chapter badge
+                    _DrawingChapterBadge(chapter: _chapterNumber, l10n: l10n),
                     const SizedBox(height: 18),
                     // Narration text — 28px, generous line height
                     Padding(

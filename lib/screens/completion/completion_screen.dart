@@ -310,9 +310,6 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
   // ── Color reveal ─────────────────────────────────────────────────────────
 
   Widget _buildColorReveal() {
-    final drawing = _drawing!;
-    final lang = ref.read(progressProvider).selectedLanguage;
-
     return Container(
       color: _kPaper,
       child: Column(
@@ -329,7 +326,7 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 4, 24, 32),
-            child: _TocaNameBadge(name: drawing.getName(lang)),
+            child: _TocaChapterBadge(chapter: _chapterNumber),
           ),
         ],
       ),
@@ -339,9 +336,6 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
   // ── Name reveal ──────────────────────────────────────────────────────────
 
   Widget _buildNameReveal() {
-    final drawing = _drawing!;
-    final lang = ref.read(progressProvider).selectedLanguage;
-
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
@@ -386,7 +380,7 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        drawing.getName(lang),
+                        AppLocalizations.of(context)!.chapter(_chapterNumber),
                         style: const TextStyle(fontFamily: 'Boogaloo',
                           color: _kInk,
                           fontSize: 52,
@@ -878,37 +872,7 @@ class _RevealImageBox extends StatelessWidget {
   }
 }
 
-// ── Toca Boca name badge (used in color-reveal phase) ────────────────────────
-
-class _TocaNameBadge extends StatelessWidget {
-  const _TocaNameBadge({required this.name});
-  final String name;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 10),
-      decoration: BoxDecoration(
-        color: _kYellow,
-        borderRadius: BorderRadius.circular(99),
-        border: Border.all(color: _kInk, width: 3),
-        boxShadow: const [
-          BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(4, 4)),
-        ],
-      ),
-      child: Text(
-        name,
-        style: const TextStyle(fontFamily: 'Boogaloo',
-          color: _kInk,
-          fontSize: 26,
-          height: 1.0,
-        ),
-      ),
-    );
-  }
-}
-
-// ── Toca Boca chapter badge (used in narration phase) ────────────────────────
+// ── Toca Boca chapter badge ───────────────────────────────────────────────────
 
 class _TocaChapterBadge extends StatelessWidget {
   const _TocaChapterBadge({required this.chapter});

@@ -1,0 +1,888 @@
+Dot Story
+20 Stories — App Format
+Connect-the-dots image, subject word, and narration scripts ready for production.
+How to read this document
+Each story follows the same structure that the app already supports. The flow is: opening narration → first connect-the-dots → image reveals + subject word spoken → coloring → narration before next part → and so on.
+In each story below you will find:
+Companion character — the figure that appears on the story transition screen and grows or changes through the story.
+Emotional arc — the feeling journey for the child.
+Opening narration — plays before the first dots appear.
+Per part: the connect-the-dots image (the picture revealed), the subject word (shown on screen and spoken aloud when the image is fully connected), and the narration that plays after that part is colored, before the next part.
+Closing narration — plays on the story completion screen, with all images shown together.
+Tone notes
+All language is age-6-appropriate: short sentences, simple words, sound effects (whoosh, plop, drip) where they help. Each story has a small dip — a worry, a problem, a moment of feeling small — and then lifts the child back up to safety, joy, or wonder. Voiceover talent should read warmly, with energy on the action moments and softness on the feelings.
+Color key in this document
+🖼  Yellow blocks = the connect-the-dots image to be drawn.
+"Green blocks = the spoken narration line. This is exactly what the voiceover artist will read."
+
+============================================================
+
+Story 1 — The Brave Little Knight
+ID: story1
+3 parts
+Companion character: Sir Pip — a small knight. Starts looking nervous, then surprised, then proud and smiling on the dragon's back.
+Emotional arc: Nervous → surprised (it's not what he feared) → proud and brave
+
+Opening — before drawing 1
+Plays on the story start screen, before the first dots appear.
+"This is Sir Pip. He is a very small knight with a very big sword. The bell from his village has been taken. Today, Pip must walk into the dark forest all by himself. Are you ready to help him?"
+
+Part 1
+Connect-the-dots image
+🖼  A small knight standing at the edge of a dark forest, holding a sword that looks too big for his hands.
+Subject word (shown + spoken): Knight
+Narration — after part 1 colored, before part 2
+Plays on the story transition screen with companion character visible.
+"Pip looks up at the tall trees. His heart is going thump-thump-thump. He takes one big breath. Then he steps into the forest."
+
+Part 2
+Connect-the-dots image
+🖼  A dragon sitting in a forest clearing, looking sad, with a thorn stuck in one paw.
+Subject word (shown + spoken): Dragon
+Narration — after part 2 colored, before part 3
+Plays on the story transition screen with companion character visible.
+"Deep in the forest, Pip hears a tiny sound. Not a roar. Not a growl. A sniffle. He peeks around a tree — and there is the dragon. But she is not scary at all. She is crying. A thorn is stuck in her paw."
+
+Part 3
+Connect-the-dots image
+🖼  A castle with a tall bell tower. The dragon flies over it with the golden bell hanging from her neck and Pip riding on her back.
+Subject word (shown + spoken): Castle
+Closing narration — after final image is colored
+Plays on the story completion screen, with all images shown together.
+"Pip pulls the thorn out gently. The dragon's eyes go wide. She lowers her head and lets him climb on. Together they fly home, and the golden bell rings for the whole village to hear. The bravest thing Pip did was not fighting. It was being kind."
+
+
+
+============================================================
+
+Story 2 — Luna the Lost Star
+ID: story2
+3 parts
+Companion character: Luna — a little star. Starts dim and flickering, gets brighter through the story, ends shining her brightest.
+Emotional arc: Lost and scared → finds a friend → home and shining bright
+
+Opening — before drawing 1
+Plays on the story start screen, before the first dots appear.
+"High up in the night sky lives a little star named Luna. One night, Luna slipped. Down, down, down she fell. Now she has to find her way back home before the sun comes up. Will you help her?"
+
+Part 1
+Connect-the-dots image
+🖼  A little star with a face, falling through the night sky with a sparkly trail behind her.
+Subject word (shown + spoken): Star
+Narration — after part 1 colored, before part 2
+Plays on the story transition screen with companion character visible.
+"Luna tumbles through the sky, flickering on and off. She looks all around. Everything looks so different from down here. 'Where is my home?' she whispers."
+
+Part 2
+Connect-the-dots image
+🖼  A friendly owl with big round eyes, sitting on a branch with the moon behind him.
+Subject word (shown + spoken): Owl
+Narration — after part 2 colored, before part 3
+Plays on the story transition screen with companion character visible.
+"An owl with big kind eyes spots her. 'Don't worry, little star,' he hoots. 'I know exactly where you belong.' He flies through the clouds, and Luna follows. He points his wing at a beautiful pattern of stars in the sky."
+
+Part 3
+Connect-the-dots image
+🖼  A night sky filled with a glowing constellation, with one star shining brighter than the rest.
+Subject word (shown + spoken): Stars
+Closing narration — after final image is colored
+Plays on the story completion screen, with all images shown together.
+"Luna clicks back into her place — right where she belongs. The other stars cheer. And just as the sky turns pink with morning, Luna shines brighter than ever before. She knows now. She is exactly where she should be."
+
+
+
+============================================================
+
+Story 3 — Captain Fin's Big Journey
+ID: story3
+3 parts
+Companion character: Captain Fin — a small fish with a brave little smile. Starts curious, gets a tiny bit worried, ends thrilled.
+Emotional arc: Curious → cautious → wonder and joy
+
+Opening — before drawing 1
+Plays on the story start screen, before the first dots appear.
+"Way down deep in the ocean lives a tiny fish named Captain Fin. Every day he looks up at the shimmering light far above and wonders... what is up there? Today is the day he finds out!"
+
+Part 1
+Connect-the-dots image
+🖼  A small fish looking upward through the water, with sunbeams shining down from above.
+Subject word (shown + spoken): Fish
+Narration — after part 1 colored, before part 2
+Plays on the story transition screen with companion character visible.
+"Fin starts swimming up. The water gets warmer. The light gets brighter. His little fins go faster and faster. 'I'm really doing it!' he says."
+
+Part 2
+Connect-the-dots image
+🖼  A big friendly whale with a kind smile, swimming next to a small fish.
+Subject word (shown + spoken): Whale
+Narration — after part 2 colored, before part 3
+Plays on the story transition screen with companion character visible.
+"A huge gentle whale glides up beside him. 'Going to the top, little one?' she hums. 'Be careful — watch out for the fisherman's net.' Fin nods. He swims around the net very carefully and keeps going up, up, up."
+
+Part 3
+Connect-the-dots image
+🖼  A bright rainbow stretching across the sky over the ocean, with a little fish leaping out of the waves below.
+Subject word (shown + spoken): Rainbow
+Closing narration — after final image is colored
+Plays on the story completion screen, with all images shown together.
+"Fin bursts out of the water — splash! — and for one big magical moment, he sees the sun, the sky, and a giant rainbow. Then plop! Back into the cool blue sea. He swims home so fast, ready to tell every fish he knows."
+
+
+
+============================================================
+
+Story 4 — Mia and the Magic Paintbrush
+ID: story4
+5 parts
+Companion character: Mia — a curious girl with a paint-smudged cheek. Starts excited, gets surprised by chaos, learns and becomes confident.
+Emotional arc: Excited → oops! → uh-oh → trying again → proud
+
+Opening — before drawing 1
+Plays on the story start screen, before the first dots appear.
+"Mia loves to paint. One rainy afternoon, deep in her grandmother's old wooden chest, she finds something amazing. A paintbrush that glows. Just a little. Just enough to make her smile."
+
+Part 1
+Connect-the-dots image
+🖼  A glowing paintbrush with sparkles around it, sitting on top of an old wooden chest.
+Subject word (shown + spoken): Paintbrush
+Narration — after part 1 colored, before part 2
+Plays on the story transition screen with companion character visible.
+"Mia picks up the brush. It feels warm in her hand. She dips it in blue paint and draws a little butterfly on her paper. Then... the butterfly twitches its wings."
+
+Part 2
+Connect-the-dots image
+🖼  A colorful butterfly with patterned wings, flying through the air.
+Subject word (shown + spoken): Butterfly
+Narration — after part 2 colored, before part 3
+Plays on the story transition screen with companion character visible.
+"The butterfly flutters right off the page! It loops around Mia's head. She gasps and laughs at the same time. 'I have to try something else!' she shouts. She paints big, fast, exciting strokes — but oh no, what did she just draw?"
+
+Part 3
+Connect-the-dots image
+🖼  A puffy rain cloud with raindrops falling from it.
+Subject word (shown + spoken): Cloud
+Narration — after part 3 colored, before part 4
+Plays on the story transition screen with companion character visible.
+"A rain cloud! A real one! Drip, drip, drip — it starts raining inside her room. Soon there are puddles everywhere. Mia squeaks. 'I need to dry this up — fast!'"
+
+Part 4
+Connect-the-dots image
+🖼  A bright smiling sun with rays stretching out around it.
+Subject word (shown + spoken): Sun
+Narration — after part 4 colored, before part 5
+Plays on the story transition screen with companion character visible.
+"She paints a big sunny sun. It works! The puddles dry up. But uh-oh — now her room is too hot. Her cheeks turn pink. 'Hmm,' Mia thinks. 'Maybe I should slow down. Maybe I should think first.'"
+
+Part 5
+Connect-the-dots image
+🖼  A perfect rainbow with seven bright stripes arching across the sky.
+Subject word (shown + spoken): Rainbow
+Closing narration — after final image is colored
+Plays on the story completion screen, with all images shown together.
+"Mia closes her eyes. She thinks about something gentle and beautiful. Then she paints — slowly this time — a perfect rainbow. It glows softly across her wall. Mia smiles. Magic is wonderful, but it works best when you think before you paint."
+
+
+
+============================================================
+
+Story 5 — Zara the Zebra Who Lost Her Stripes
+ID: story5
+3 parts
+Companion character: Zara — a zebra. Starts blank-white and worried, ends with bold, beautiful stripes.
+Emotional arc: Worried → confused → brave → herself again
+
+Opening — before drawing 1
+Plays on the story start screen, before the first dots appear.
+"Zara is a zebra. But this morning, when she looked in the water, something was very strange. Her stripes were gone! All of them! Now she has to figure out where they went... before the other animals see."
+
+Part 1
+Connect-the-dots image
+🖼  A zebra without any stripes, looking at her reflection in a watering hole.
+Subject word (shown + spoken): Zebra
+Narration — after part 1 colored, before part 2
+Plays on the story transition screen with companion character visible.
+"Zara stares at the water. A plain white zebra stares back. 'Oh no,' she whispers. 'What do I do?' She hides behind a tree just as her friends start walking toward the water."
+
+Part 2
+Connect-the-dots image
+🖼  A wise old elephant with kind eyes and big floppy ears.
+Subject word (shown + spoken): Elephant
+Narration — after part 2 colored, before part 3
+Plays on the story transition screen with companion character visible.
+"A wise old elephant finds her hiding. He smiles a slow, kind smile. 'Little Zara,' he says, 'your stripes are not lost. They hide inside you when you feel afraid. They come back when you feel brave.'"
+
+Part 3
+Connect-the-dots image
+🖼  A zebra standing tall with full bold stripes, with the sun rising behind her.
+Subject word (shown + spoken): Stripes
+Closing narration — after final image is colored
+Plays on the story completion screen, with all images shown together.
+"Just then, Zara hears a tiny squeak. A hyena is being mean to a baby bunny. Zara's heart goes thump. She runs over and stands tall. 'Stop it! Leave the bunny alone!' And one by one — zip, zip, zip — her beautiful stripes come back."
+
+
+
+============================================================
+
+Story 6 — The Rocket Who Was Afraid of Space
+ID: story6
+3 parts
+Companion character: Zoom — a small rocket with a worried face. Calms down through the story, ends smiling and proud.
+Emotional arc: Frozen with fear → meets a friend → brave together → joyful
+
+Opening — before drawing 1
+Plays on the story start screen, before the first dots appear.
+"Zoom is a little rocket. He has trained and trained and trained for years. Today is the big day. The day he goes to space. But on the launch pad... his engines just won't start."
+
+Part 1
+Connect-the-dots image
+🖼  A small rocket sitting still on a launch pad, with other rockets blasting off in the background.
+Subject word (shown + spoken): Rocket
+Narration — after part 1 colored, before part 2
+Plays on the story transition screen with companion character visible.
+"All the other rockets — WHOOSH! — fly up into the sky. But Zoom just sits there. His lights blink slowly. 'I'm scared,' he says quietly. 'Space is so big. And I am so small.'"
+
+Part 2
+Connect-the-dots image
+🖼  A young astronaut girl in a white space suit and round helmet, smiling kindly.
+Subject word (shown + spoken): Astronaut
+Narration — after part 2 colored, before part 3
+Plays on the story transition screen with companion character visible.
+"A small astronaut climbs the ladder into Zoom. She pats his side gently. 'I'm scared too,' she tells him. 'But you know what? We can be scared together. And we can be brave together too.' Zoom feels his engines warm up."
+
+Part 3
+Connect-the-dots image
+🖼  Planet Earth seen from space — a beautiful blue and green ball with white clouds, with the sun rising over it.
+Subject word (shown + spoken): Earth
+Closing narration — after final image is colored
+Plays on the story completion screen, with all images shown together.
+"WHOOSH! They blast off! Up, up, up — past the clouds, past the blue sky, into the big black space. And then... they see it. The whole Earth. All blue and green and beautiful. The sun rises over it like a giant gold coin. Zoom has never felt happier."
+
+
+
+============================================================
+
+Story 7 — Princess Noor and the Invisible Crown
+ID: story7
+3 parts
+Companion character: Princess Noor — a princess in soft robes. Starts upset, grows confident as the story goes on.
+Emotional arc: Upset → searching → kind to others → realizes she had it all along
+
+Opening — before drawing 1
+Plays on the story start screen, before the first dots appear.
+"Princess Noor has a beautiful golden crown. She wears it every day. But this morning... it's gone! Without her crown, she doesn't feel like a princess at all. She has to find it!"
+
+Part 1
+Connect-the-dots image
+🖼  A princess in flowing robes, looking worried, peeking under a fancy cushion.
+Subject word (shown + spoken): Princess
+Narration — after part 1 colored, before part 2
+Plays on the story transition screen with companion character visible.
+"Noor looks everywhere. Under cushions. Behind curtains. Inside flower pots. She asks every guard. She asks every cook. No crown anywhere. Tears sting her eyes. 'I don't feel like me without it,' she whispers."
+
+Part 2
+Connect-the-dots image
+🖼  A busy market with colorful stalls, baskets of fruit, and people walking around.
+Subject word (shown + spoken): Market
+Narration — after part 2 colored, before part 3
+Plays on the story transition screen with companion character visible.
+"For the very first time, Noor walks out of the palace by herself. The market is loud and bright. Then she sees a tiny boy crying. He has lost his mother. Noor takes his hand. 'Don't be afraid,' she says. 'I'll help you find her.' And she does."
+
+Part 3
+Connect-the-dots image
+🖼  A beautiful golden crown sitting on a soft pillow, glowing gently.
+Subject word (shown + spoken): Crown
+Closing narration — after final image is colored
+Plays on the story completion screen, with all images shown together.
+"When Noor walks back into her room — there it is. Her crown. Sitting on her pillow as if it never left. Her grandmother smiles from the doorway. 'The crown comes back,' she says, 'when you stop needing it. A real princess is brave and kind, with or without it.'"
+
+
+
+============================================================
+
+Story 8 — Benny the Bear and the Honey Mystery
+ID: story8
+5 parts
+Companion character: Benny — a fluffy brown bear. Starts grumpy, gets curious, becomes warm and generous.
+Emotional arc: Grumpy → curious → surprised → kind → joyful friendship
+
+Opening — before drawing 1
+Plays on the story start screen, before the first dots appear.
+"Benny the bear loves honey more than anything. But every single morning, his honey jar is empty. Empty! Today, Benny is going to find out who is taking it."
+
+Part 1
+Connect-the-dots image
+🖼  A friendly brown bear holding an empty honey jar, looking puzzled.
+Subject word (shown + spoken): Bear
+Narration — after part 1 colored, before part 2
+Plays on the story transition screen with companion character visible.
+"Benny scratches his head. 'Empty again!' he grumbles. Tonight, he decides, he will stay awake. He will wait. He will catch the sneaky honey thief once and for all."
+
+Part 2
+Connect-the-dots image
+🖼  A line of tiny footprints in soft mud, leading off into the trees.
+Subject word (shown + spoken): Footprints
+Narration — after part 2 colored, before part 3
+Plays on the story transition screen with companion character visible.
+"In the morning, by the empty jar, Benny sees something he missed before. Tiny, tiny footprints. Smaller than his claw! He gets down on his paws and follows them, very quietly, into the forest."
+
+Part 3
+Connect-the-dots image
+🖼  A round beehive hanging from a tree branch, with little bees buzzing around it.
+Subject word (shown + spoken): Beehive
+Narration — after part 3 colored, before part 4
+Plays on the story transition screen with companion character visible.
+"The footprints lead him to a buzzing beehive. And under it... a little family of mice! They are licking up tiny golden drips that fall from his leaky honey jar. Drip, drip, drip. They look up at Benny with big scared eyes."
+
+Part 4
+Connect-the-dots image
+🖼  A small family of mice standing close together, with sweet round ears and little smiles.
+Subject word (shown + spoken): Mice
+Narration — after part 4 colored, before part 5
+Plays on the story transition screen with companion character visible.
+"Benny's heart goes soft. They are so tiny. They can only carry tiny drops. 'I have plenty,' he says gently. 'Why don't I share with you properly?' The mice squeak with joy and bring him their tiniest, brightest smiles."
+
+Part 5
+Connect-the-dots image
+🖼  A woven basket overflowing with bright colorful flowers.
+Subject word (shown + spoken): Flowers
+Closing narration — after final image is colored
+Plays on the story completion screen, with all images shown together.
+"Now every morning, Benny's jar is full. And every morning, on his doorstep, there is a basket of fresh wildflowers. A thank-you from his very best new friends."
+
+
+
+============================================================
+
+Story 9 — The Dinosaur Who Was Afraid of the Dark
+ID: story9
+3 parts
+Companion character: Rex — a big T-Rex with a goofy smile. Big and brave by day, scared at night, then learns to love the dark.
+Emotional arc: Brave by day → scared at night → meets a friend → wonder
+
+Opening — before drawing 1
+Plays on the story start screen, before the first dots appear.
+"Rex is the biggest dinosaur in the whole jungle. STOMP STOMP STOMP! Nobody messes with Rex during the day. But at night... shhh... we have a little secret about Rex."
+
+Part 1
+Connect-the-dots image
+🖼  A big friendly T-Rex with tiny arms and a goofy smile, standing in a jungle.
+Subject word (shown + spoken): Dinosaur
+Narration — after part 1 colored, before part 2
+Plays on the story transition screen with companion character visible.
+"Every day Rex stomps and roars. ROOOAR! But the moment the sun starts to set, Rex tiptoes home, finds his giant favorite leaf, and pulls it right over his head. 'Goodnight, dark,' he whispers. 'Please go away.'"
+
+Part 2
+Connect-the-dots image
+🖼  A tiny bright firefly with little wings, glowing softly in the night.
+Subject word (shown + spoken): Firefly
+Narration — after part 2 colored, before part 3
+Plays on the story transition screen with companion character visible.
+"One night, a little voice says, 'Why are you hiding?' It's a tiny firefly! 'I'll be your night light,' she says, glowing softly. 'Come outside and look up. Just for a minute. I promise it's beautiful.' Rex peeks out from under his leaf."
+
+Part 3
+Connect-the-dots image
+🖼  A starry night sky filled with bright twinkling stars and a glowing moon.
+Subject word (shown + spoken): Stars
+Closing narration — after final image is colored
+Plays on the story completion screen, with all images shown together.
+"Rex looks up — and gasps. The whole sky is full of stars. Millions of them. Twinkling like silver dust. 'It's not dark,' he whispers. 'It's full of light. I just never looked up.' From that night on, Rex sleeps with his eyes wide open."
+
+
+
+============================================================
+
+Story 10 — Superhero Sam's First Day
+ID: story10
+5 parts
+Companion character: Sam — a kid in a homemade cape. Starts wobbly and clumsy, learns control, ends standing tall.
+Emotional arc: Surprised → oops → bigger oops → learning → triumph
+
+Opening — before drawing 1
+Plays on the story start screen, before the first dots appear.
+"Sam woke up one morning and... he was floating! Right above his bed! Sam has superpowers. But here's the thing — nobody told him how to use them. This is going to be a wild day."
+
+Part 1
+Connect-the-dots image
+🖼  A boy in pajamas and a cape, floating in the air above his bed with a surprised face.
+Subject word (shown + spoken): Sam
+Narration — after part 1 colored, before part 2
+Plays on the story transition screen with companion character visible.
+"Sam blinks. He looks down. His bed is way below him! 'Whoa! Whoa! Whoa!' He waves his arms. He bumps into the ceiling. Boink! 'Okay,' he says. 'Today is going to be different.'"
+
+Part 2
+Connect-the-dots image
+🖼  A school building with windows and a flag, with a few clouds in the sky above it.
+Subject word (shown + spoken): School
+Narration — after part 2 colored, before part 3
+Plays on the story transition screen with companion character visible.
+"Sam flies to school. Pretty cool! But on the way down... 'Ah... ah... ACHOO!' His sneeze blasts the roof clean off. WHOOSH! Papers fly everywhere. The teachers stare. Sam's face turns red. 'Sorry! Sorry! I'll fix it! Maybe!'"
+
+Part 3
+Connect-the-dots image
+🖼  A tall leafy tree with branches reaching up into the sky.
+Subject word (shown + spoken): Tree
+Narration — after part 3 colored, before part 4
+Plays on the story transition screen with companion character visible.
+"A little kitten is stuck in a tree. Sam runs over. 'I'll save you!' He gives the kitten a tiny boost — and SHWOOP — the kitten launches up into the clouds. Sam watches her disappear. 'Oh no,' he says. 'Oh no oh no oh no.'"
+
+Part 4
+Connect-the-dots image
+🖼  An older friendly superhero in a long cape, with kind eyes and a wise smile.
+Subject word (shown + spoken): Hero
+Narration — after part 4 colored, before part 5
+Plays on the story transition screen with companion character visible.
+"An old superhero lands gently next to Sam. He has a friendly smile and a long swooshy cape. 'Take a breath, kid,' he says. 'Powers are not about being strong. They're about being careful. Big strength needs a soft touch.' He shows Sam how to slow down."
+
+Part 5
+Connect-the-dots image
+🖼  A big yellow city bus with lots of windows.
+Subject word (shown + spoken): Bus
+Closing narration — after final image is colored
+Plays on the story completion screen, with all images shown together.
+"A bus is rolling down the hill — with no driver! Sam takes a deep breath. He remembers: soft touch. He flies in front. He places his hands gently on the bus. He pushes — slowly, slowly — until it stops. Everyone cheers. Sam grins. He found his kitten too. (She was on the moon. Just kidding. She was on a cloud.)"
+
+
+
+============================================================
+
+Story 11 — The Cloud Who Wanted to Be a Mountain
+ID: story11
+3 parts
+Companion character: Fluffy — a soft round cloud with a face. Starts wishful, becomes thankful for who he is.
+Emotional arc: Wishful → tries something hard → scared → relieved → happy being himself
+
+Opening — before drawing 1
+Plays on the story start screen, before the first dots appear.
+"Fluffy is a cloud. He floats over the same mountain every day. And every day he sighs. 'I wish I were a mountain. So tall! So strong! So... still.' But Fluffy is going to learn something today."
+
+Part 1
+Connect-the-dots image
+🖼  A soft round fluffy cloud with a little face, drifting in the sky.
+Subject word (shown + spoken): Cloud
+Narration — after part 1 colored, before part 2
+Plays on the story transition screen with companion character visible.
+"Fluffy looks down at the mountain. 'Look how strong he is,' he sighs. 'He never moves. He never has to drift around. He just gets to be there. I wish I could be like that.'"
+
+Part 2
+Connect-the-dots image
+🖼  A swirling thunderstorm with dark clouds and zigzag lightning.
+Subject word (shown + spoken): Storm
+Narration — after part 2 colored, before part 3
+Plays on the story transition screen with companion character visible.
+"Suddenly, WHOOSH! A big storm wind grabs Fluffy and pushes him way, way up. So high it's freezing! His fluffy body turns to crinkly ice crystals. 'Eek! I don't like this! I want to be soft again!' Fluffy says shakily."
+
+Part 3
+Connect-the-dots image
+🖼  A tall mountain with snow on top and a soft cloud floating happily nearby.
+Subject word (shown + spoken): Mountain
+Closing narration — after final image is colored
+Plays on the story completion screen, with all images shown together.
+"The wind dies down. Fluffy melts back to his soft, fluffy self. He floats over the world — over rivers, over forests, sprinkling rain to thirsty flowers. 'Oh,' he says, smiling. 'Being a cloud is wonderful too. I get to travel. I get to help things grow. I am exactly right.'"
+
+
+
+============================================================
+
+Story 12 — Lily the Lighthouse
+ID: story12
+3 parts
+Companion character: Lily — a tall lighthouse with a kind face. Starts dim and sad, ends shining brilliantly.
+Emotional arc: Forgotten and sad → hopeful → fully bright → loved
+
+Opening — before drawing 1
+Plays on the story start screen, before the first dots appear.
+"On a rocky coast there stands an old lighthouse named Lily. Once, ships used to wave hello. Now... nobody comes. Lily worries that everyone has forgotten her."
+
+Part 1
+Connect-the-dots image
+🖼  A tall striped lighthouse standing on rocky cliffs by the sea, with a small dim light.
+Subject word (shown + spoken): Lighthouse
+Narration — after part 1 colored, before part 2
+Plays on the story transition screen with companion character visible.
+"Lily watches the empty sea. Her light is just a little flicker. 'Maybe I'm not needed anymore,' she whispers. The waves go shhh, shhh. The seagulls fly past. Nobody waves. Nobody comes."
+
+Part 2
+Connect-the-dots image
+🖼  A small wooden boat floating in thick gray fog, with a tiny family inside looking worried.
+Subject word (shown + spoken): Boat
+Narration — after part 2 colored, before part 3
+Plays on the story transition screen with companion character visible.
+"On the darkest, foggiest night of the year, a little boat gets lost. A mom, a dad, and a tiny child. They can't see anything! Just gray, gray fog all around. 'We need help,' the mom whispers. 'Please... someone help us.'"
+
+Part 3
+Connect-the-dots image
+🖼  A bright lighthouse shining a strong golden beam across a harbor at night, with a small boat sailing safely toward it.
+Subject word (shown + spoken): Harbor
+Closing narration — after final image is colored
+Plays on the story completion screen, with all images shown together.
+"Lily hears them. She gathers all her strength — every single bit — and SHINES! Her light cuts through the fog like a golden sword. The little boat sees her! Slowly, safely, they sail straight toward her glow. The next morning, the family paints Lily's picture and hangs it on their wall. Lily's light has never gone dim again."
+
+
+
+============================================================
+
+Story 13 — Omar and the Flying Carpet's Last Ride
+ID: story13
+5 parts
+Companion character: Omar — a curious boy in soft clothes. Wide-eyed wonder throughout, growing more grateful.
+Emotional arc: Curious → amazed → joyful → grateful
+
+Opening — before drawing 1
+Plays on the story start screen, before the first dots appear.
+"Up in his grandfather's dusty attic, Omar finds an old, old rug. The colors are faded. The edges are fraying. But... it tingles when he touches it. This is no ordinary rug. This is a magic carpet. And it has one last ride left."
+
+Part 1
+Connect-the-dots image
+🖼  A rolled-up patterned carpet sitting on the wooden floor of an attic, with sunlight coming through.
+Subject word (shown + spoken): Carpet
+Narration — after part 1 colored, before part 2
+Plays on the story transition screen with companion character visible.
+"Omar carefully unrolls the carpet. The patterns shimmer in the sunlight. He whispers, 'Are you really magic?' The carpet wiggles. Just a little. Then a lot. Omar grins."
+
+Part 2
+Connect-the-dots image
+🖼  A boy sitting cross-legged on a flying carpet that soars through the sky.
+Subject word (shown + spoken): Carpet
+Narration — after part 2 colored, before part 3
+Plays on the story transition screen with companion character visible.
+"WHOOSH! The carpet zips out the attic window into the sky. Omar grabs the edges and laughs and laughs. The wind tickles his face. The houses below look like little toy blocks. 'Where are we going?' he calls. The carpet glides on, sure of the way."
+
+Part 3
+Connect-the-dots image
+🖼  A wide golden desert with rolling sandy dunes and a small caravan of camels.
+Subject word (shown + spoken): Desert
+Narration — after part 3 colored, before part 4
+Plays on the story transition screen with companion character visible.
+"They float down into a busy market full of every color in the world. Spices smell like cinnamon and oranges. Silk scarves dance in the wind. A merchant smiles and gives Omar a sweet date. He has never tasted anything so good."
+
+Part 4
+Connect-the-dots image
+🖼  A majestic eagle with wide brown wings, flying high above mountain peaks.
+Subject word (shown + spoken): Eagle
+Narration — after part 4 colored, before part 5
+Plays on the story transition screen with companion character visible.
+"Up they go, higher and higher, to the very tip of a mountain. A great eagle is waiting there. He bows his head to the carpet, like greeting an old, old friend. Omar pets his soft feathers. The eagle gives him one shining feather to take home."
+
+Part 5
+Connect-the-dots image
+🖼  A glowing golden sunset sky with soft clouds turning pink and orange.
+Subject word (shown + spoken): Sunset
+Closing narration — after final image is colored
+Plays on the story completion screen, with all images shown together.
+"As the sun melts into gold, the carpet glides home. Through the attic window. Onto the floor. Then, very gently, it folds itself up. 'Thank you,' Omar whispers. He runs to get a pencil and a journal. He writes down every smell, every sound, every color. So he will remember forever."
+
+
+
+============================================================
+
+Story 14 — The Little Seed Who Was Afraid to Grow
+ID: story14
+3 parts
+Companion character: Seedy — a small seed with a tiny face. Starts shy and cozy, ends standing tall.
+Emotional arc: Shy and safe → curious → brave → blooming
+
+Opening — before drawing 1
+Plays on the story start screen, before the first dots appear.
+"Deep under the warm soft soil, there is a tiny seed. All her friends are wiggling up to the surface. But this seed is staying right here. It's warm. It's cozy. Growing sounds scary."
+
+Part 1
+Connect-the-dots image
+🖼  A tiny seed with a sleepy face, curled up under the dirt with little roots starting to peek out.
+Subject word (shown + spoken): Seed
+Narration — after part 1 colored, before part 2
+Plays on the story transition screen with companion character visible.
+"All around her, other seeds stretch and pop. Boing! Boing! Up they go. 'Bye!' they call. The little seed pulls her roots in tight. 'No thank you,' she whispers. 'I'll just stay here. Where it's safe.'"
+
+Part 2
+Connect-the-dots image
+🖼  A friendly pink worm with a wiggly smile, peeking out of the dirt.
+Subject word (shown + spoken): Worm
+Narration — after part 2 colored, before part 3
+Plays on the story transition screen with companion character visible.
+"A friendly worm wiggles by. 'Why are you still down here, little one?' he asks. The seed sniffles. 'I'm scared.' The worm smiles. 'Oh sweet seed. Up there is sunshine. And butterflies. And wind that smells like flowers. You belong up there.' The seed thinks for a long, long time."
+
+Part 3
+Connect-the-dots image
+🖼  A tall sunflower with bright yellow petals, standing in a sunny garden.
+Subject word (shown + spoken): Sunflower
+Closing narration — after final image is colored
+Plays on the story completion screen, with all images shown together.
+"She takes a tiny breath. She pushes — just a little. Then a little more. Then... POP! Her green head pokes through the soil. The sun warms her face. A butterfly lands on her. And up, up, up she grows — into the tallest, brightest, happiest sunflower in the whole garden."
+
+
+
+============================================================
+
+Story 15 — Captain Cosmo and the Lost Planet
+ID: story15
+5 parts
+Companion character: Cosmo — an astronaut with a big round helmet. Confident, kind, helpful throughout.
+Emotional arc: Surprised → caring → problem-solving → triumph → warm farewell
+
+Opening — before drawing 1
+Plays on the story start screen, before the first dots appear.
+"Captain Cosmo loves exploring space. He has been to the Moon. He has been to Mars. But today... he bumps into something that isn't on any map at all. A tiny lost planet. And it needs his help."
+
+Part 1
+Connect-the-dots image
+🖼  A small round planet floating in space, with little mountains and trees on it.
+Subject word (shown + spoken): Planet
+Narration — after part 1 colored, before part 2
+Plays on the story transition screen with companion character visible.
+"BONK! Cosmo's helmet bumps into something. He looks down. It's a planet! A tiny, tiny one. About the size of a swimming pool. 'Hello?' he calls gently. 'Is anybody home?'"
+
+Part 2
+Connect-the-dots image
+🖼  Three tiny round alien creatures with big eyes and little antennae, holding sticks.
+Subject word (shown + spoken): Aliens
+Narration — after part 2 colored, before part 3
+Plays on the story transition screen with companion character visible.
+"Three little aliens peek out. They are pushing their planet with sticks! They speak fast and worried: 'Our home is drifting away from our sun! It's getting cold! Please, can you help us?' Cosmo nods. 'Don't worry. I can help.'"
+
+Part 3
+Connect-the-dots image
+🖼  A big bumpy asteroid covered in sparkling blue ice crystals.
+Subject word (shown + spoken): Asteroid
+Narration — after part 3 colored, before part 4
+Plays on the story transition screen with companion character visible.
+"Cosmo needs fuel for his rocket. He spots something glittering nearby — an asteroid covered in icy crystals. 'Perfect! These crystals will turn into fuel when they melt.' He gathers them carefully and zooms back to the little planet."
+
+Part 4
+Connect-the-dots image
+🖼  A bright silver rocket flying through space with a glowing trail behind it.
+Subject word (shown + spoken): Rocket
+Narration — after part 4 colored, before part 5
+Plays on the story transition screen with companion character visible.
+"Cosmo aims his rocket gently behind the little planet. The fuel burns warm and bright. WHOOSH! Slowly, gently, the planet starts moving. The aliens hold their breath. Push, push, push... back toward their warm yellow sun."
+
+Part 5
+Connect-the-dots image
+🖼  Two stars dancing around each other in space, with one glowing brighter.
+Subject word (shown + spoken): Stars
+Closing narration — after final image is colored
+Plays on the story completion screen, with all images shown together.
+"The little planet slides back into its perfect orbit around its sun. The aliens cheer and hug each other. Then they cheer and hug Cosmo. Before he leaves, they build a tiny, tiny statue of him. So they will never, ever forget the kind astronaut who brought them home."
+
+
+
+============================================================
+
+Story 16 — The Baker Who Forgot the Secret Ingredient
+ID: story16
+3 parts
+Companion character: Nadia — a girl with a flour-dusted apron and curly hair. Curious, kind, determined.
+Emotional arc: Confused → searching → understanding → warm and loving
+
+Opening — before drawing 1
+Plays on the story start screen, before the first dots appear.
+"Grandma Rosa makes the most famous bread in the village. Everybody loves it. But for the past whole year, the bread has tasted... wrong. Today, her granddaughter Nadia is going to find out why."
+
+Part 1
+Connect-the-dots image
+🖼  A round loaf of fresh bread with a crusty golden top, sitting on a wooden table.
+Subject word (shown + spoken): Bread
+Narration — after part 1 colored, before part 2
+Plays on the story transition screen with companion character visible.
+"Nadia watches Grandma Rosa carefully. Flour. Yes. Water. Yes. Salt, yeast, a sprinkle of love — yes, yes, yes. Everything from the list. The bread comes out warm and smells nice. But when they taste it... 'Hmm,' says Grandma. 'Still not right.'"
+
+Part 2
+Connect-the-dots image
+🖼  A row of cozy houses on a village street, with smoke curling from the chimneys.
+Subject word (shown + spoken): Village
+Narration — after part 2 colored, before part 3
+Plays on the story transition screen with companion character visible.
+"Nadia goes door to door. 'Do you remember Grandma's bread?' she asks the neighbors. Their eyes light up. 'Oh yes! At my wedding!' 'At my birthday!' 'On my first day of school!' Every neighbor has a story. A happy story. Nadia starts to wonder..."
+
+Part 3
+Connect-the-dots image
+🖼  A warm sunny kitchen with a girl and her grandmother kneading bread dough together at the table.
+Subject word (shown + spoken): Kitchen
+Closing narration — after final image is colored
+Plays on the story completion screen, with all images shown together.
+"Nadia runs home. 'Grandma!' she says. 'I think I know! The secret ingredient is making it for somebody you love!' Grandma's eyes go shiny. 'My darling girl,' she whispers, 'will you make it with me?' They knead the dough together, side by side, laughing. And when the bread comes out... it tastes perfect. Just like she remembered."
+
+
+
+============================================================
+
+Story 17 — Pip the Penguin Goes North
+ID: story17
+5 parts
+Companion character: Pip — a small black-and-white penguin. Brave and curious, ends with a quiet glow of joy.
+Emotional arc: Curious → determined → trapped briefly → wonder → grateful
+
+Opening — before drawing 1
+Plays on the story start screen, before the first dots appear.
+"Every penguin in the colony goes south. Always south. Always. But Pip... Pip wonders what's at the OTHER end of the world. So today, Pip is going to find out. He waddles north all by himself."
+
+Part 1
+Connect-the-dots image
+🖼  A small round penguin with bright eyes, waddling across the snow.
+Subject word (shown + spoken): Penguin
+Narration — after part 1 colored, before part 2
+Plays on the story transition screen with companion character visible.
+"Pip waves goodbye to his colony. 'Be careful!' they squeak. 'Send a postcard!' Pip waddles north. Wibble-wobble, wibble-wobble. The world gets bigger and stranger with every step."
+
+Part 2
+Connect-the-dots image
+🖼  A big white polar bear with a friendly face and a fluffy white coat.
+Subject word (shown + spoken): Bear
+Narration — after part 2 colored, before part 3
+Plays on the story transition screen with companion character visible.
+"After many many days, Pip meets a huge polar bear. The bear looks down. He blinks. 'Well!' he booms with a big laugh. 'I've never seen a penguin this far north before! Welcome, little friend. Want to walk with me?'"
+
+Part 3
+Connect-the-dots image
+🖼  A round ice cave with sparkly icicles hanging from the ceiling.
+Subject word (shown + spoken): Cave
+Narration — after part 3 colored, before part 4
+Plays on the story transition screen with companion character visible.
+"A blizzard rolls in — WHOOSH-SHHHHH! Pip and the bear duck into an ice cave. They wait. They tell stories. The bear shares his fish. Pip shares his songs. Two whole days pass before the wind goes quiet. They become best friends."
+
+Part 4
+Connect-the-dots image
+🖼  Wavy green and purple northern lights dancing across the night sky.
+Subject word (shown + spoken): Lights
+Narration — after part 4 colored, before part 5
+Plays on the story transition screen with companion character visible.
+"When the storm ends, the bear takes Pip outside. 'Look up,' he whispers. The whole sky is alive — green and purple ribbons dancing slowly above them. Pip cannot speak. He just watches. His little heart feels so full it might burst."
+
+Part 5
+Connect-the-dots image
+🖼  A glowing sky full of soft pink and orange clouds at sunrise.
+Subject word (shown + spoken): Sky
+Closing narration — after final image is colored
+Plays on the story completion screen, with all images shown together.
+"Pip waddles all the way home. In his beak — a little drawing he made of the lights. He pins it carefully to the wall of his igloo. Every penguin who visits now stops and stares. 'Tell us the story, Pip!' they squeak. And he does. Again and again."
+
+
+
+============================================================
+
+Story 18 — The Dragon Who Collected Fears
+ID: story18
+3 parts
+Companion character: Ember — a thoughtful dragon with soft kind eyes. Starts heavy-hearted, ends warm and wise.
+Emotional arc: Burdened → caring → tired → wise → joyful sharing
+
+Opening — before drawing 1
+Plays on the story start screen, before the first dots appear.
+"Ember the dragon is special. She doesn't breathe fire. She breathes... fears! Other creatures bring her their scary feelings, and she tucks them safely into glass jars. But her cave is getting very, very full."
+
+Part 1
+Connect-the-dots image
+🖼  A friendly dragon sitting in a cave full of glowing colorful jars on shelves.
+Subject word (shown + spoken): Dragon
+Narration — after part 1 colored, before part 2
+Plays on the story transition screen with companion character visible.
+"Ember's cave shines with hundreds of glowing jars. A green one for fear of the dark. A blue one for fear of thunder. A pink one for fear of being lost. She keeps them all safe. But she is getting so tired."
+
+Part 2
+Connect-the-dots image
+🖼  A small orange fox with a fluffy white-tipped tail and big eyes.
+Subject word (shown + spoken): Fox
+Narration — after part 2 colored, before part 3
+Plays on the story transition screen with companion character visible.
+"A young fox tiptoes into the cave. 'Please, Ember,' she whispers. 'Take my fear. I'm so scared of being alone.' Ember nods kindly and breathes in gently. The fox smiles and runs away light as a feather. But Ember sinks down. She feels so heavy."
+
+Part 3
+Connect-the-dots image
+🖼  Many bright glowing jars opening up, with soft colorful sparkles drifting out.
+Subject word (shown + spoken): Jars
+Closing narration — after final image is colored
+Plays on the story completion screen, with all images shown together.
+"Ember thinks for a long time. Then she calls every creature back. 'I love you all,' she says, 'but I cannot carry your fears forever. So let's open them — together.' One by one, the jars open. POP! POP! POP! Soft sparkles drift up. And Ember teaches each creature how to be brave, with a friend by their side. The cave fills with light and laughter."
+
+
+
+============================================================
+
+Story 19 — Amara and the Talking River
+ID: story19
+3 parts
+Companion character: Amara — a girl with long hair and a quiet, listening face. Curious, brave, ends with peaceful warmth.
+Emotional arc: Curious → wondering → climbing → discovering → tender memory
+
+Opening — before drawing 1
+Plays on the story start screen, before the first dots appear.
+"Every night, Amara hears something strange in the sound of the river. It almost sounds like... her name. Today, she is going to follow the river all the way up, to find out who is calling."
+
+Part 1
+Connect-the-dots image
+🖼  A winding sparkling river curling through green hills and tall trees.
+Subject word (shown + spoken): River
+Narration — after part 1 colored, before part 2
+Plays on the story transition screen with companion character visible.
+"'A-ma-ra... A-ma-ra...' the river whispers. Amara walks beside it, listening hard. The river leads her up into the hills. The trees are tall. The birds sing. She is not afraid."
+
+Part 2
+Connect-the-dots image
+🖼  A tall waterfall pouring down rocks into a sparkling pool.
+Subject word (shown + spoken): Waterfall
+Narration — after part 2 colored, before part 3
+Plays on the story transition screen with companion character visible.
+"She climbs higher. The river gets smaller. Then... a beautiful waterfall! And something strange — the water is going UP in places. Bubbles are floating sideways. The voice is louder here. 'A-ma-ra...' Almost a song now. Amara keeps climbing."
+
+Part 3
+Connect-the-dots image
+🖼  A small bubbling spring of clear water surrounded by smooth stones and tiny flowers.
+Subject word (shown + spoken): Spring
+Closing narration — after final image is colored
+Plays on the story completion screen, with all images shown together.
+"At the very top — a tiny spring. Just a little bubble of water. Amara leans down and listens. And then she remembers. Her grandmother used to bring her here. Her grandmother used to sing this song. The voice was the river remembering. Amara sits down and sings the song too. And the river sings back."
+
+
+
+============================================================
+
+Story 20 — The Robot Who Wanted to Dream
+ID: story20
+5 parts
+Companion character: Unit 7 — a small friendly robot with bright eyes. Lonely at first, ends bursting with creativity.
+Emotional arc: Lonely and wishing → curious → wonder → creative → seen and celebrated
+
+Opening — before drawing 1
+Plays on the story start screen, before the first dots appear.
+"In a quiet factory, all the robots power down at night. All except one. Unit 7 stays awake. He watches the stars through the skylight. He wishes — more than anything — that he could dream."
+
+Part 1
+Connect-the-dots image
+🖼  A small friendly robot with round eyes and a square body, looking up through a skylight at the stars.
+Subject word (shown + spoken): Robot
+Narration — after part 1 colored, before part 2
+Plays on the story transition screen with companion character visible.
+"Click. Click. All the other robots go dark and still. But Unit 7's lights stay on. 'I wish I could close my eyes and see colors and stories,' he beeps softly. 'I wish I could dream.'"
+
+Part 2
+Connect-the-dots image
+🖼  A small black cat with big green eyes and a long swishing tail.
+Subject word (shown + spoken): Cat
+Narration — after part 2 colored, before part 3
+Plays on the story transition screen with companion character visible.
+"One night, a stray cat slips through a window. She tilts her head at Unit 7. 'You look bored,' she purrs. 'Want me to show you the city at night? It's the best time. Trust me.' Unit 7's lights blink with excitement. He has never been outside before."
+
+Part 3
+Connect-the-dots image
+🖼  A dreamy nighttime city with twinkling windows, soft street lights, and a big glowing moon.
+Subject word (shown + spoken): City
+Narration — after part 3 colored, before part 4
+Plays on the story transition screen with companion character visible.
+"Together they walk through the quiet streets. Past a park where the swings sway in the wind. Past a bakery, warm and smelling like fresh bread. Across an old stone bridge over a slow, silver river. Unit 7's circuits glow. Everything is so beautiful."
+
+Part 4
+Connect-the-dots image
+🖼  Colorful chalk drawings on a stone floor — stars, cats, birds, swirls, and a tiny city.
+Subject word (shown + spoken): Drawings
+Narration — after part 4 colored, before part 5
+Plays on the story transition screen with companion character visible.
+"Back at the factory, Unit 7 finds a piece of chalk. He starts to draw. A star. A cat. A bridge. He fills the whole factory floor with everything he saw. He cannot dream with his eyes closed. But maybe — maybe this is even better."
+
+Part 5
+Connect-the-dots image
+🖼  An open sketchbook with a fresh blank page, a little pencil resting on it.
+Subject word (shown + spoken): Sketchbook
+Closing narration — after final image is colored
+Plays on the story completion screen, with all images shown together.
+"In the morning, the factory manager walks in. She stops. She stares. She does not get angry. She smiles a slow, soft smile. The next night, sitting on Unit 7's desk, is a brand-new sketchbook. With his name on it. Unit 7's lights have never glowed brighter."
+
+

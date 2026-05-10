@@ -114,17 +114,7 @@ class _StoryCardState extends State<StoryCard>
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      widget.completedImagePath != null
-                          ? Image.asset(
-                              widget.completedImagePath!,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => _PlaceholderImage(
-                                index: widget.story.id.hashCode,
-                              ),
-                            )
-                          : _PlaceholderImage(
-                              index: widget.story.id.hashCode,
-                            ),
+                      _cardImage(widget.story, widget.completedImagePath),
                       // Rich gradient into info panel
                       Positioned(
                         bottom: 0,
@@ -144,6 +134,9 @@ class _StoryCardState extends State<StoryCard>
                           ),
                         ),
                       ),
+                      // Coming soon overlay for stories without assets
+                      if (widget.story.drawingIds.isEmpty)
+                        const _ComingSoonOverlay(),
                       // Done star badge
                       if (isComplete)
                         const Positioned(
@@ -255,6 +248,21 @@ class _ProgressRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (total == 0) {
+      return Row(
+        children: [
+          Text(
+            '—',
+            style: TextStyle(
+              fontFamily: 'Fredoka',
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: _kMuted.withValues(alpha: 0.7),
+            ),
+          ),
+        ],
+      );
+    }
     return Row(
       children: [
         ...List.generate(total.clamp(0, 8), (i) {
@@ -344,43 +352,85 @@ class _StarBadge extends StatelessWidget {
   }
 }
 
-// ── Placeholder image — shown for stories not yet completed ──────────────────
+// ── Card image resolver ───────────────────────────────────────────────────────
 
-class _PlaceholderImage extends StatelessWidget {
-  const _PlaceholderImage({required this.index});
+Widget _cardImage(StoryModel story, String? completedImagePath) {
+  // Completed story: show the final colored image
+  if (completedImagePath != null) {
+    return Image.asset(
+      completedImagePath,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => _DotGridBackground(index: story.id.hashCode),
+    );
+  }
+  // Story with assets: show ch1 preview image
+  if (story.previewAsset.isNotEmpty) {
+    return Image.asset(
+      story.previewAsset,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => _DotGridBackground(index: story.id.hashCode),
+    );
+  }
+  // No assets yet: plain dot-grid background
+  return _DotGridBackground(index: story.id.hashCode);
+}
+
+// ── Dot-grid background (neutral texture, no lock) ───────────────────────────
+
+class _DotGridBackground extends StatelessWidget {
+  const _DotGridBackground({required this.index});
   final int index;
 
   @override
   Widget build(BuildContext context) {
     const bgColors = [_kRed, _kBlue, _kGreen, _kYellow];
     final bg = bgColors[index.abs() % bgColors.length];
-
     return Container(
       color: _kPaper,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Dot grid texture
-          CustomPaint(painter: _DotGridPainter(color: bg)),
-          // Lock icon in the center
-          Center(
-            child: Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                color: bg,
-                shape: BoxShape.circle,
-                border: Border.all(color: _kInk, width: 3),
-                boxShadow: const [
-                  BoxShadow(
-                      color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
-                ],
-              ),
-              child: const Icon(Icons.lock_rounded,
-                  color: Colors.white, size: 30),
+      child: CustomPaint(painter: _DotGridPainter(color: bg)),
+    );
+  }
+}
+
+// ── Coming-soon overlay (only for stories with no drawings yet) ───────────────
+
+class _ComingSoonOverlay extends StatelessWidget {
+  const _ComingSoonOverlay();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: _kInk.withValues(alpha: 0.45),
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: _kYellow,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: _kInk, width: 2.5),
+            boxShadow: const [
+              BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
+            ],
+          ),
+          child: Text(
+            'Coming Soon',
+            style: TextStyle(
+              fontFamily: 'Boogaloo',
+              fontSize: 16,
+              color: _kInk,
+              height: 1.1,
+              shadows: [
+                for (final d in [-1.5, 0.0, 1.5])
+                  for (final e in [-1.5, 0.0, 1.5])
+                    if (d != 0 || e != 0)
+                      Shadow(
+                          color: _kInk.withValues(alpha: 0.0),
+                          offset: Offset(d, e),
+                          blurRadius: 0),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }

@@ -360,7 +360,6 @@ class _StoryCompletionScreenState
     String lang,
     AppLocalizations l10n,
   ) {
-    final drawing = _drawings[i];
     final image = i < _coloredImages.length ? _coloredImages[i] : null;
     final narration = i < _narrations.length ? _narrations[i] : '';
     final chapter = story.chapters[i];
@@ -430,24 +429,6 @@ class _StoryCompletionScreenState
                         color: Colors.white,
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const Spacer(),
-                    // Drawing name badge
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(99),
-                      ),
-                      child: Text(
-                        drawing.getName(lang),
-                        style: const TextStyle(fontFamily: 'Nunito',
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
                       ),
                     ),
                   ],
