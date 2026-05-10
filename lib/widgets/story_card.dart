@@ -394,44 +394,111 @@ class _DotGridBackground extends StatelessWidget {
 
 // ── Coming-soon overlay (only for stories with no drawings yet) ───────────────
 
-class _ComingSoonOverlay extends StatelessWidget {
+class _ComingSoonOverlay extends StatefulWidget {
   const _ComingSoonOverlay();
 
   @override
+  State<_ComingSoonOverlay> createState() => _ComingSoonOverlayState();
+}
+
+class _ComingSoonOverlayState extends State<_ComingSoonOverlay>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _shimmerCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _shimmerCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1600),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _shimmerCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      color: _kInk.withValues(alpha: 0.45),
-      child: Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: _kYellow,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: _kInk, width: 2.5),
-            boxShadow: const [
-              BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
-            ],
-          ),
-          child: Text(
-            'Coming Soon',
-            style: TextStyle(
-              fontFamily: 'Boogaloo',
-              fontSize: 16,
-              color: _kInk,
-              height: 1.1,
-              shadows: [
-                for (final d in [-1.5, 0.0, 1.5])
-                  for (final e in [-1.5, 0.0, 1.5])
-                    if (d != 0 || e != 0)
-                      Shadow(
-                          color: _kInk.withValues(alpha: 0.0),
-                          offset: Offset(d, e),
-                          blurRadius: 0),
-              ],
+    return AnimatedBuilder(
+      animation: _shimmerCtrl,
+      builder: (_, __) {
+        // Shimmer sweep: a bright diagonal band moving left→right
+        final shimmerX = _shimmerCtrl.value * 2.0 - 0.5; // -0.5 → 1.5
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            // Dark scrim
+            Container(color: _kInk.withValues(alpha: 0.52)),
+            // Shimmer layer
+            ShaderMask(
+              blendMode: BlendMode.srcATop,
+              shaderCallback: (bounds) => LinearGradient(
+                begin: Alignment(shimmerX - 0.6, -1),
+                end: Alignment(shimmerX + 0.6, 1),
+                colors: [
+                  Colors.white.withValues(alpha: 0.0),
+                  Colors.white.withValues(alpha: 0.12),
+                  Colors.white.withValues(alpha: 0.0),
+                ],
+              ).createShader(bounds),
+              child: Container(color: Colors.white),
             ),
-          ),
-        ),
-      ),
+            // Lock icon badge + "Coming Soon" label
+            Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: _kYellow,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: _kInk, width: 2.5),
+                      boxShadow: const [
+                        BoxShadow(
+                            color: _kInk,
+                            blurRadius: 0,
+                            offset: Offset(2, 2)),
+                      ],
+                    ),
+                    child: const Icon(Icons.lock_rounded,
+                        color: _kInk, size: 22),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: _kYellow,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: _kInk, width: 2.5),
+                      boxShadow: const [
+                        BoxShadow(
+                            color: _kInk,
+                            blurRadius: 0,
+                            offset: Offset(3, 3)),
+                      ],
+                    ),
+                    child: const Text(
+                      'Coming Soon',
+                      style: TextStyle(
+                        fontFamily: 'Boogaloo',
+                        fontSize: 15,
+                        color: _kInk,
+                        height: 1.1,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
