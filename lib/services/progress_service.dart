@@ -15,7 +15,6 @@ const _kMusic = 'music_enabled';
 const _kSfx = 'sfx_enabled';
 const _kPurchase = 'purchase_unlocked';
 const _kDifficulty = 'difficulty';
-const _kBestTimes = 'best_times';
 
 
 // ---------------------------------------------------------------------------
@@ -33,7 +32,7 @@ class ProgressService {
     if (prefs == null) return ProgressModel.initial;
 
     final completedList = prefs.getStringList(_kCompletedDrawings) ?? [];
-    final bestTimesStr = prefs.getString(_kBestTimes);
+    final bestTimesStr = prefs.getString(ProgressNotifier._kBestTimes);
     final bestTimeMs = bestTimesStr != null
         ? Map<String, int>.from(
             (jsonDecode(bestTimesStr) as Map<String, dynamic>)
@@ -90,6 +89,19 @@ class ProgressService {
 
   Future<void> setDifficulty(DifficultyMode mode) async =>
       _prefs?.setString(_kDifficulty, mode.name);
+
+  Future<void> saveBestTime(String drawingId, int elapsedMs) async {
+    final prefs = _prefs;
+    if (prefs == null) return;
+    final existing = prefs.getString(ProgressNotifier._kBestTimes);
+    final map = existing != null
+        ? Map<String, int>.from(
+            (jsonDecode(existing) as Map<String, dynamic>)
+                .map((k, v) => MapEntry(k, v as int)))
+        : <String, int>{};
+    map[drawingId] = elapsedMs;
+    await prefs.setString(ProgressNotifier._kBestTimes, jsonEncode(map));
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -101,6 +113,8 @@ class ProgressNotifier extends StateNotifier<ProgressModel> {
   }
 
   final ProgressService _service;
+
+  static const _kBestTimes = 'best_times';
 
   Future<void> markDrawingComplete(String drawingId) async {
     await _service.markDrawingComplete(drawingId);
@@ -148,8 +162,7 @@ class ProgressNotifier extends StateNotifier<ProgressModel> {
     final updated = Map<String, int>.from(state.bestTimeMs);
     updated[drawingId] = elapsedMs;
     state = state.copyWith(bestTimeMs: updated);
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_kBestTimes, jsonEncode(state.bestTimeMs));
+    await _service.saveBestTime(drawingId, elapsedMs);
   }
 }
 
