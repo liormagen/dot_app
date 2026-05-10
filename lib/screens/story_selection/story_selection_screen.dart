@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -32,11 +33,39 @@ List<Shadow> _inkOutline(double w) => [
 // ---------------------------------------------------------------------------
 // StorySelectionScreen
 // ---------------------------------------------------------------------------
-class StorySelectionScreen extends ConsumerWidget {
+class StorySelectionScreen extends ConsumerStatefulWidget {
   const StorySelectionScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<StorySelectionScreen> createState() =>
+      _StorySelectionScreenState();
+}
+
+class _StorySelectionScreenState extends ConsumerState<StorySelectionScreen> {
+  int _idleBounceIndex = -1;
+  Timer? _idleTimer;
+  int _cardCount = 0;
+
+  @override
+  void dispose() {
+    _idleTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startIdleTimer() {
+    _idleTimer?.cancel();
+    _idleTimer = Timer.periodic(const Duration(seconds: 4), (_) {
+      if (!mounted || _cardCount == 0) return;
+      final next = math.Random().nextInt(_cardCount);
+      setState(() => _idleBounceIndex = next);
+      Future.delayed(const Duration(milliseconds: 600), () {
+        if (mounted) setState(() => _idleBounceIndex = -1);
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final storiesAsync = ref.watch(storiesProvider);
     final progress = ref.watch(progressProvider);
 
@@ -94,6 +123,12 @@ class StorySelectionScreen extends ConsumerWidget {
                       break;
                     }
                   }
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (_cardCount != sorted.length) {
+                      _cardCount = sorted.length;
+                      _startIdleTimer();
+                    }
+                  });
                   return SliverPadding(
                     padding: const EdgeInsets.fromLTRB(24, 20, 24, 48),
                     sliver: SliverGrid(
@@ -115,6 +150,7 @@ class StorySelectionScreen extends ConsumerWidget {
                           return _TocaStoryCard(
                             index: index,
                             isContinue: index == continueIndex,
+                            isIdleBouncing: index == _idleBounceIndex,
                             baseTilt: index.isEven ? 0.026 : -0.026,
                             accentColor:
                                 cardColors[index % cardColors.length],
@@ -209,6 +245,7 @@ class _TocaStoryCard extends StatefulWidget {
     required this.onTap,
     required this.child,
     this.isContinue = false,
+    this.isIdleBouncing = false,
   });
 
   final int index;
@@ -217,6 +254,7 @@ class _TocaStoryCard extends StatefulWidget {
   final VoidCallback onTap;
   final Widget child;
   final bool isContinue;
+  final bool isIdleBouncing;
 
   @override
   State<_TocaStoryCard> createState() => _TocaStoryCardState();
@@ -236,6 +274,9 @@ class _TocaStoryCardState extends State<_TocaStoryCard>
   late AnimationController _entranceCtrl;
   late Animation<double> _entranceScale;
   late Animation<double> _entranceSlide; // 1.0→0.0, used as offset multiplier
+
+  // Idle bounce controller: gentle scale pulse to invite touch
+  late AnimationController _idleBounceCtrl;
 
   bool _pressed = false;
   bool _springing = false;
@@ -284,6 +325,11 @@ class _TocaStoryCardState extends State<_TocaStoryCard>
     Future.delayed(delay, () {
       if (mounted) _entranceCtrl.forward();
     });
+
+    _idleBounceCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    )..addListener(() => setState(() {}));
   }
 
   @override
@@ -291,8 +337,20 @@ class _TocaStoryCardState extends State<_TocaStoryCard>
     _pressCtrl.dispose();
     _springCtrl.dispose();
     _entranceCtrl.dispose();
+    _idleBounceCtrl.dispose();
     super.dispose();
   }
+
+  @override
+  void didUpdateWidget(_TocaStoryCard old) {
+    super.didUpdateWidget(old);
+    if (widget.isIdleBouncing && !old.isIdleBouncing) {
+      _idleBounceCtrl.forward(from: 0);
+    }
+  }
+
+  double get _idleBounceScale =>
+      1.0 + math.sin(_idleBounceCtrl.value * math.pi) * 0.07;
 
   double get _scale =>
       _springing ? _springScale.value : _pressScale.value;
@@ -342,7 +400,7 @@ class _TocaStoryCardState extends State<_TocaStoryCard>
           child: Opacity(
             opacity: (1.0 - _entranceSlide.value).clamp(0.0, 1.0),
             child: Transform.scale(
-              scale: _entranceScale.value,
+              scale: _entranceScale.value * _idleBounceScale,
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTapDown: _onTapDown,
