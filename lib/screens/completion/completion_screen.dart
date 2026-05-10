@@ -37,6 +37,8 @@ enum _CompletionPhase {
   tutorialSteps,     // How-to-draw images (if any)
 }
 
+enum _AchievementType { none, firstEver, sessionStreak }
+
 class CompletionScreen extends ConsumerStatefulWidget {
   const CompletionScreen({
     super.key,
@@ -74,6 +76,7 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
   int _tutorialStepIndex = 0;
   bool _nameVisible = false;
   bool _isNewRecord = false;
+  _AchievementType _achievement = _AchievementType.none;
 
   // Chapter narration data (loaded alongside drawing)
   String _narrationText = '';
@@ -150,6 +153,20 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
              progress.difficulty == DifficultyMode.superHard)) {
           final previous = progress.bestTimeMs[widget.drawingId];
           _isNewRecord = previous == null || widget.elapsedMs! < previous;
+        }
+        // Achievement detection (Easy/Normal only, new completions only)
+        final notifier = ref.read(progressProvider.notifier);
+        final currentDifficultyForAchievement = progress.difficulty;
+        if (currentDifficultyForAchievement == DifficultyMode.easy ||
+            currentDifficultyForAchievement == DifficultyMode.normal) {
+          final isNew = !progress.completedDrawingIds.contains(widget.drawingId);
+          if (isNew) {
+            if (progress.completedDrawingIds.isEmpty && notifier.sessionCompletedCount == 0) {
+              _achievement = _AchievementType.firstEver;
+            } else if (notifier.sessionCompletedCount >= 1) {
+              _achievement = _AchievementType.sessionStreak;
+            }
+          }
         }
       });
 
