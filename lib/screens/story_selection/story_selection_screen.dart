@@ -82,6 +82,18 @@ class StorySelectionScreen extends ConsumerWidget {
                       final bCs = b.drawingIds.isEmpty ? 1 : 0;
                       return aCs.compareTo(bCs);
                     });
+                  int continueIndex = -1;
+                  for (int i = 0; i < sorted.length; i++) {
+                    final s = sorted[i];
+                    if (s.drawingIds.isEmpty) continue;
+                    final done = s.drawingIds
+                        .where((id) => progress.completedDrawingIds.contains(id))
+                        .length;
+                    if (done < s.drawingIds.length) {
+                      continueIndex = i;
+                      break;
+                    }
+                  }
                   return SliverPadding(
                     padding: const EdgeInsets.fromLTRB(24, 20, 24, 48),
                     sliver: SliverGrid(
@@ -102,6 +114,7 @@ class StorySelectionScreen extends ConsumerWidget {
                           const cardColors = [_kRed, _kBlue, _kGreen];
                           return _TocaStoryCard(
                             index: index,
+                            isContinue: index == continueIndex,
                             baseTilt: index.isEven ? 0.026 : -0.026,
                             accentColor:
                                 cardColors[index % cardColors.length],
@@ -195,6 +208,7 @@ class _TocaStoryCard extends StatefulWidget {
     required this.accentColor,
     required this.onTap,
     required this.child,
+    this.isContinue = false,
   });
 
   final int index;
@@ -202,6 +216,7 @@ class _TocaStoryCard extends StatefulWidget {
   final Color accentColor;
   final VoidCallback onTap;
   final Widget child;
+  final bool isContinue;
 
   @override
   State<_TocaStoryCard> createState() => _TocaStoryCardState();
@@ -319,60 +334,71 @@ class _TocaStoryCardState extends State<_TocaStoryCard>
 
   @override
   Widget build(BuildContext context) {
-    return Transform.translate(
-      offset: Offset(0, _entranceSlide.value * 30.0),
-      child: Opacity(
-        opacity: (1.0 - _entranceSlide.value).clamp(0.0, 1.0),
-        child: Transform.scale(
-          scale: _entranceScale.value,
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTapDown: _onTapDown,
-            onTapUp: _onTapUp,
-            onTapCancel: _onTapCancel,
-            child: Transform.rotate(
-              angle: _currentTilt,
-              child: Transform.scale(
-                scale: _scale,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: _pressed ? _kYellow : _kInk,
-                      width: _pressed ? 4.5 : 4,
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Transform.translate(
+          offset: Offset(0, _entranceSlide.value * 30.0),
+          child: Opacity(
+            opacity: (1.0 - _entranceSlide.value).clamp(0.0, 1.0),
+            child: Transform.scale(
+              scale: _entranceScale.value,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTapDown: _onTapDown,
+                onTapUp: _onTapUp,
+                onTapCancel: _onTapCancel,
+                child: Transform.rotate(
+                  angle: _currentTilt,
+                  child: Transform.scale(
+                    scale: _scale,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(
+                          color: _pressed ? _kYellow : _kInk,
+                          width: _pressed ? 4.5 : 4,
+                        ),
+                        boxShadow: _isShadowActive
+                            ? [
+                                BoxShadow(
+                                  color: _kInk,
+                                  blurRadius: 0,
+                                  offset: Offset(
+                                    widget.baseTilt > 0 ? 6 : -2,
+                                    6,
+                                  ),
+                                ),
+                                BoxShadow(
+                                  color: widget.accentColor.withValues(alpha: 0.5),
+                                  blurRadius: 0,
+                                  offset: Offset(
+                                    widget.baseTilt > 0 ? 11 : -7,
+                                    11,
+                                  ),
+                                ),
+                              ]
+                            : [],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(14),
+                        child: widget.child,
+                      ),
                     ),
-                    boxShadow: _isShadowActive
-                        ? [
-                            BoxShadow(
-                              color: _kInk,
-                              blurRadius: 0,
-                              offset: Offset(
-                                widget.baseTilt > 0 ? 6 : -2,
-                                6,
-                              ),
-                            ),
-                            BoxShadow(
-                              color: widget.accentColor.withValues(alpha: 0.5),
-                              blurRadius: 0,
-                              offset: Offset(
-                                widget.baseTilt > 0 ? 11 : -7,
-                                11,
-                              ),
-                            ),
-                          ]
-                        : [],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(14),
-                    child: widget.child,
                   ),
                 ),
               ),
             ),
           ),
         ),
-      ),
+        if (widget.isContinue)
+          const Positioned(
+            top: -12,
+            left: 6,
+            child: _ContinueBadge(),
+          ),
+      ],
     );
   }
 }
@@ -878,6 +904,75 @@ class _EmptyState extends StatelessWidget {
               fontSize: 18, color: _kInk.withValues(alpha: 0.6)),
         ),
       ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Continue badge — pulsing red pill that floats above the next-up story card
+// ---------------------------------------------------------------------------
+class _ContinueBadge extends StatefulWidget {
+  const _ContinueBadge();
+
+  @override
+  State<_ContinueBadge> createState() => _ContinueBadgeState();
+}
+
+class _ContinueBadgeState extends State<_ContinueBadge>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _ctrl,
+      builder: (_, __) => Transform.scale(
+        scale: 1.0 + _ctrl.value * 0.06,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: BoxDecoration(
+            color: _kRed,
+            borderRadius: BorderRadius.circular(99),
+            border: Border.all(color: _kInk, width: 2.5),
+            boxShadow: const [
+              BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(2, 2)),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.play_arrow_rounded,
+                  color: Colors.white, size: 16),
+              const SizedBox(width: 4),
+              Text(
+                'Continue!',
+                style: TextStyle(
+                  fontFamily: 'Boogaloo',
+                  color: Colors.white,
+                  fontSize: 15,
+                  height: 1.0,
+                  shadows: _inkOutline(1.2),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
