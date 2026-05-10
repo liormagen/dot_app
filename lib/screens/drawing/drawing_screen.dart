@@ -840,7 +840,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
     _stopNarration();
     _countdownTimer?.cancel();
     if (!mounted) return;
-    ref.read(progressProvider.notifier).markDrawingComplete(widget.drawingId);
+    // NOTE: do NOT call markDrawingComplete here — CompletionScreen does it in _navigateNext()
 
     final elapsedMs = _drawingStartTime != null
         ? DateTime.now().difference(_drawingStartTime!).inMilliseconds
@@ -850,15 +850,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
     final query = queryParts.isNotEmpty
         ? '?${queryParts.entries.map((e) => '${e.key}=${e.value}').join('&')}'
         : '';
-
-    final nextId = _nextDrawingId;
-    if (nextId != null) {
-      context.go('/drawing/$nextId');
-    } else if (_storyId.isNotEmpty) {
-      context.go('/story-complete/$_storyId');
-    } else {
-      context.go('/completion/${widget.drawingId}$query');
-    }
+    context.go('/completion/${widget.drawingId}$query');
   }
 
   void _startCountdownTimer() {
