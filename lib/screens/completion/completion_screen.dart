@@ -11,6 +11,7 @@ import '../../l10n/app_localizations.dart';
 import '../../models/drawing_model.dart';
 import '../../services/asset_service.dart';
 import '../../services/audio_service.dart';
+import '../../models/progress_model.dart';
 import '../../services/progress_service.dart';
 
 // Toca Boca / Handmade tokens
@@ -72,6 +73,7 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
   _CompletionPhase _phase = _CompletionPhase.colorReveal;
   int _tutorialStepIndex = 0;
   bool _nameVisible = false;
+  bool _isNewRecord = false;
 
   // Chapter narration data (loaded alongside drawing)
   String _narrationText = '';
@@ -141,6 +143,15 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
             : null;
         _loading = false;
         if (widget.skipReveal) _phase = _CompletionPhase.nameReveal;
+        // Personal best detection (Hard/SuperHard only, only when elapsedMs provided)
+        final currentDifficulty = ref.read(progressProvider).difficulty;
+        if (widget.elapsedMs != null &&
+            (currentDifficulty == DifficultyMode.hard ||
+             currentDifficulty == DifficultyMode.superHard)) {
+          final progress = ref.read(progressProvider);
+          final previous = progress.bestTimeMs[widget.drawingId];
+          _isNewRecord = previous == null || widget.elapsedMs! < previous;
+        }
       });
 
       if (widget.skipReveal) {
@@ -258,6 +269,13 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
     await ref
         .read(progressProvider.notifier)
         .markDrawingComplete(drawing.id);
+    if (!mounted) return;
+
+    if (_isNewRecord && widget.elapsedMs != null) {
+      await ref
+          .read(progressProvider.notifier)
+          .saveBestTime(widget.drawingId, widget.elapsedMs!);
+    }
     if (!mounted) return;
 
     final nextId = _nextDrawingId;
