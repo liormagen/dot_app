@@ -224,6 +224,7 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
                   progress.completedDrawingIds.contains(drawingId);
               if (drawing == null) return const SizedBox.shrink();
               return _DrawingCard(
+                index: j,
                 drawing: drawing,
                 isCompleted: isCompleted,
                 onImageTap: isCompleted
@@ -300,11 +301,13 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
 // ---------------------------------------------------------------------------
 class _DrawingCard extends StatefulWidget {
   const _DrawingCard({
+    required this.index,
     required this.drawing,
     required this.isCompleted,
     required this.onImageTap,
   });
 
+  final int index;
   final DrawingModel drawing;
   final bool isCompleted;
   final void Function(ui.Image)? onImageTap;
@@ -314,9 +317,12 @@ class _DrawingCard extends StatefulWidget {
 }
 
 class _DrawingCardState extends State<_DrawingCard>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _pressController;
   late Animation<double> _scaleAnim;
+  late final AnimationController _entranceCtrl;
+  late final Animation<double> _entranceScale;
+  late final Animation<double> _entranceSlide;
   ui.Image? _image;
   bool _loadFailed = false;
 
@@ -330,6 +336,23 @@ class _DrawingCardState extends State<_DrawingCard>
     _scaleAnim = Tween<double>(begin: 1.0, end: 0.93).animate(
       CurvedAnimation(parent: _pressController, curve: Curves.easeOut),
     );
+    _entranceCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 450),
+    )..addListener(() => setState(() {}));
+
+    _entranceScale = Tween<double>(begin: 0.82, end: 1.0).animate(
+      CurvedAnimation(parent: _entranceCtrl, curve: Curves.elasticOut),
+    );
+
+    _entranceSlide = Tween<double>(begin: 1.0, end: 0.0).animate(
+      CurvedAnimation(parent: _entranceCtrl, curve: Curves.easeOutCubic),
+    );
+
+    Future.delayed(Duration(milliseconds: widget.index * 40), () {
+      if (mounted) _entranceCtrl.forward();
+    });
+
     if (widget.isCompleted) _loadImage();
   }
 
@@ -346,41 +369,51 @@ class _DrawingCardState extends State<_DrawingCard>
   @override
   void dispose() {
     _pressController.dispose();
+    _entranceCtrl.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final canTap = widget.isCompleted && _image != null;
-    return GestureDetector(
-      onTapDown: canTap ? (_) => _pressController.forward() : null,
-      onTapUp: canTap
-          ? (_) {
-              _pressController.reverse();
-              widget.onImageTap?.call(_image!);
-            }
-          : null,
-      onTapCancel: canTap ? () => _pressController.reverse() : null,
-      child: AnimatedBuilder(
-        animation: _scaleAnim,
-        builder: (_, child) =>
-            Transform.scale(scale: _scaleAnim.value, child: child),
-        child: Container(
-          decoration: BoxDecoration(
-            color: _kPaper,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: _kInk, width: 2.5),
-            boxShadow: const [
-              BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(13.5),
-            child: Column(
-              children: [
-                Expanded(child: _buildImageArea()),
-                _buildCaption(context),
-              ],
+    return Transform.translate(
+      offset: Offset(0, _entranceSlide.value * 20.0),
+      child: Opacity(
+        opacity: (1.0 - _entranceSlide.value).clamp(0.0, 1.0),
+        child: Transform.scale(
+          scale: _entranceScale.value,
+          child: GestureDetector(
+            onTapDown: canTap ? (_) => _pressController.forward() : null,
+            onTapUp: canTap
+                ? (_) {
+                    _pressController.reverse();
+                    widget.onImageTap?.call(_image!);
+                  }
+                : null,
+            onTapCancel: canTap ? () => _pressController.reverse() : null,
+            child: AnimatedBuilder(
+              animation: _scaleAnim,
+              builder: (_, child) =>
+                  Transform.scale(scale: _scaleAnim.value, child: child),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: _kPaper,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: _kInk, width: 2.5),
+                  boxShadow: const [
+                    BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(13.5),
+                  child: Column(
+                    children: [
+                      Expanded(child: _buildImageArea()),
+                      _buildCaption(context),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
         ),
