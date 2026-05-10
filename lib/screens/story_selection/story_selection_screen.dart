@@ -101,6 +101,7 @@ class StorySelectionScreen extends ConsumerWidget {
                               .length;
                           const cardColors = [_kRed, _kBlue, _kGreen];
                           return _TocaStoryCard(
+                            index: index,
                             baseTilt: index.isEven ? 0.026 : -0.026,
                             accentColor:
                                 cardColors[index % cardColors.length],
@@ -189,12 +190,14 @@ class StorySelectionScreen extends ConsumerWidget {
 // ---------------------------------------------------------------------------
 class _TocaStoryCard extends StatefulWidget {
   const _TocaStoryCard({
+    required this.index,
     required this.baseTilt,
     required this.accentColor,
     required this.onTap,
     required this.child,
   });
 
+  final int index;
   final double baseTilt;
   final Color accentColor;
   final VoidCallback onTap;
@@ -213,6 +216,11 @@ class _TocaStoryCardState extends State<_TocaStoryCard>
   // Spring-back controller: elastic overshoot from pressed to natural
   late AnimationController _springCtrl;
   late Animation<double> _springScale;
+
+  // Entrance controller: slide up + scale in, plays once on mount
+  late AnimationController _entranceCtrl;
+  late Animation<double> _entranceScale;
+  late Animation<double> _entranceSlide; // 1.0→0.0, used as offset multiplier
 
   bool _pressed = false;
   bool _springing = false;
@@ -244,12 +252,30 @@ class _TocaStoryCardState extends State<_TocaStoryCard>
     _springScale = Tween<double>(begin: 0.88, end: 1.0).animate(
       CurvedAnimation(parent: _springCtrl, curve: Curves.elasticOut),
     );
+
+    _entranceCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 620),
+    )..addListener(() => setState(() {}));
+
+    _entranceScale = Tween<double>(begin: 0.82, end: 1.0).animate(
+      CurvedAnimation(parent: _entranceCtrl, curve: Curves.elasticOut),
+    );
+    _entranceSlide = Tween<double>(begin: 1.0, end: 0.0).animate(
+      CurvedAnimation(parent: _entranceCtrl, curve: Curves.easeOutCubic),
+    );
+
+    final delay = Duration(milliseconds: widget.index * 55);
+    Future.delayed(delay, () {
+      if (mounted) _entranceCtrl.forward();
+    });
   }
 
   @override
   void dispose() {
     _pressCtrl.dispose();
     _springCtrl.dispose();
+    _entranceCtrl.dispose();
     super.dispose();
   }
 
@@ -293,47 +319,56 @@ class _TocaStoryCardState extends State<_TocaStoryCard>
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTapDown: _onTapDown,
-      onTapUp: _onTapUp,
-      onTapCancel: _onTapCancel,
-      child: Transform.rotate(
-        angle: _currentTilt,
+    return Transform.translate(
+      offset: Offset(0, _entranceSlide.value * 30.0),
+      child: Opacity(
+        opacity: (1.0 - _entranceSlide.value).clamp(0.0, 1.0),
         child: Transform.scale(
-          scale: _scale,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(
-                color: _pressed ? _kYellow : _kInk,
-                width: _pressed ? 4.5 : 4,
+          scale: _entranceScale.value,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapDown: _onTapDown,
+            onTapUp: _onTapUp,
+            onTapCancel: _onTapCancel,
+            child: Transform.rotate(
+              angle: _currentTilt,
+              child: Transform.scale(
+                scale: _scale,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: _pressed ? _kYellow : _kInk,
+                      width: _pressed ? 4.5 : 4,
+                    ),
+                    boxShadow: _isShadowActive
+                        ? [
+                            BoxShadow(
+                              color: _kInk,
+                              blurRadius: 0,
+                              offset: Offset(
+                                widget.baseTilt > 0 ? 6 : -2,
+                                6,
+                              ),
+                            ),
+                            BoxShadow(
+                              color: widget.accentColor.withValues(alpha: 0.5),
+                              blurRadius: 0,
+                              offset: Offset(
+                                widget.baseTilt > 0 ? 11 : -7,
+                                11,
+                              ),
+                            ),
+                          ]
+                        : [],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: widget.child,
+                  ),
+                ),
               ),
-              boxShadow: _isShadowActive
-                  ? [
-                      BoxShadow(
-                        color: _kInk,
-                        blurRadius: 0,
-                        offset: Offset(
-                          widget.baseTilt > 0 ? 6 : -2,
-                          6,
-                        ),
-                      ),
-                      BoxShadow(
-                        color: widget.accentColor.withValues(alpha: 0.5),
-                        blurRadius: 0,
-                        offset: Offset(
-                          widget.baseTilt > 0 ? 11 : -7,
-                          11,
-                        ),
-                      ),
-                    ]
-                  : [],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: widget.child,
             ),
           ),
         ),
