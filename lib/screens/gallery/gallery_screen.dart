@@ -16,31 +16,20 @@ import '../../services/asset_service.dart';
 import '../../services/progress_service.dart';
 
 // ---------------------------------------------------------------------------
-// Design tokens
+// Toca Boca / Handmade tokens (matches the rest of the app)
 // ---------------------------------------------------------------------------
-const _kPrimary = Color(0xFF6C48FF);
-const _kGold = Color(0xFFFFD93D);
-const _kNight = Color(0xFF1A0E3F);
-const _kBorder = Color(0xFFD4C8FF);
-const _kMuted = Color(0xFF7C6FA0);
-const _kForeground = Color(0xFF1A0A3F);
+const _kRed    = Color(0xFFE82D2D);
+const _kYellow = Color(0xFFF5C800);
+const _kGreen  = Color(0xFF2DB84B);
+const _kBlue   = Color(0xFF1FA3E8);
+const _kInk    = Color(0xFF1A1A2E);
+const _kPaper  = Color(0xFFFFF8E7);
 
-const _kTripleShadow = [
-  BoxShadow(
-    color: Color(0x373B2099),
-    blurRadius: 0,
-    offset: Offset(5, 5),
-  ),
-  BoxShadow(
-    color: Color(0x1F6C48FF),
-    blurRadius: 24,
-    offset: Offset(0, 8),
-  ),
-  BoxShadow(
-    color: Color(0xE5FFFFFF),
-    blurRadius: 0,
-    offset: Offset(-3, -3),
-  ),
+List<Shadow> _inkOutline(double w) => [
+  for (final dx in [-w, 0.0, w])
+    for (final dy in [-w, 0.0, w])
+      if (dx != 0 || dy != 0)
+        Shadow(color: _kInk, offset: Offset(dx, dy), blurRadius: 0),
 ];
 
 // ---------------------------------------------------------------------------
@@ -110,7 +99,7 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF0EEFF),
+      backgroundColor: _kPaper,
       body: Stack(
         children: [
           // Polka-dot decorative background
@@ -122,7 +111,7 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
                 child: _loading
                     ? const Center(
                         child: CircularProgressIndicator(
-                          color: _kPrimary,
+                          color: _kBlue,
                           strokeWidth: 3,
                         ),
                       )
@@ -144,21 +133,21 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
 
   Widget _buildHeader(BuildContext context, AppLocalizations l10n) {
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [_kPrimary, Color(0xFF9C6FFF)],
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [_kBlue, _kBlue],
         ),
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
         boxShadow: [
-          BoxShadow(
-            color: Color(0xFF3B1FCC),
+          const BoxShadow(
+            color: _kBlue,
             blurRadius: 0,
             offset: Offset(0, 5),
           ),
           BoxShadow(
-            color: Color(0x446C48FF),
+            color: _kBlue.withValues(alpha: 0.267),
             blurRadius: 20,
-            offset: Offset(0, 10),
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -173,9 +162,8 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
               Expanded(
                 child: Text(
                   l10n.gallery,
-                  style: const TextStyle(fontFamily: 'Fredoka',
+                  style: const TextStyle(fontFamily: 'Boogaloo',
                     fontSize: 32,
-                    fontWeight: FontWeight.w700,
                     color: Colors.white,
                     height: 1.1,
                   ),
@@ -209,10 +197,9 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
               Expanded(
                 child: Text(
                   story.getTitle(lang),
-                  style: const TextStyle(fontFamily: 'Fredoka',
+                  style: const TextStyle(fontFamily: 'Boogaloo',
                     fontSize: 26,
-                    fontWeight: FontWeight.w700,
-                    color: _kForeground,
+                    color: _kInk,
                   ),
                 ),
               ),
@@ -221,16 +208,15 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
                   color: completedCount == total
-                      ? const Color(0xFF6BCB77)
-                      : _kPrimary.withValues(alpha: 0.12),
+                      ? _kGreen
+                      : _kBlue.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   '$completedCount / $total',
-                  style: TextStyle(fontFamily: 'Fredoka',
+                  style: TextStyle(fontFamily: 'Boogaloo',
                     fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: completedCount == total ? Colors.white : _kPrimary,
+                    color: completedCount == total ? Colors.white : _kBlue,
                   ),
                 ),
               ),
@@ -356,8 +342,8 @@ class _DrawingCardState extends State<_DrawingCard>
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: _kBorder, width: 3),
-            boxShadow: _kTripleShadow,
+            border: Border.all(color: _kInk.withValues(alpha: 0.25), width: 3),
+            boxShadow: [BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(3, 3))],
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(21),
@@ -401,22 +387,21 @@ class _DrawingCardState extends State<_DrawingCard>
                       horizontal: 10, vertical: 8),
                   decoration: BoxDecoration(
                     color: widget.isCompleted
-                        ? _kPrimary.withValues(alpha: 0.06)
+                        ? _kBlue.withValues(alpha: 0.06)
                         : const Color(0xFFF5F5F5),
                     border: Border(
                         top: BorderSide(
-                            color: _kBorder.withValues(alpha: 0.6),
+                            color: _kInk.withValues(alpha: 0.15),
                             width: 1.5)),
                   ),
                   child: Text(
                     widget.isCompleted
                         ? AppLocalizations.of(context)!.chapter(widget.drawing.chapter)
                         : '???',
-                    style: TextStyle(fontFamily: 'Fredoka',
+                    style: TextStyle(fontFamily: 'Boogaloo',
                       fontSize: 15,
-                      fontWeight: FontWeight.w600,
                       color:
-                          widget.isCompleted ? _kForeground : _kMuted,
+                          widget.isCompleted ? _kInk : _kInk.withValues(alpha: 0.45),
                     ),
                     textAlign: TextAlign.center,
                     maxLines: 1,
@@ -433,11 +418,11 @@ class _DrawingCardState extends State<_DrawingCard>
 
   Widget _buildLockedState() {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFFEDE8FF), Color(0xFFD4C8FF)],
+          colors: [_kInk.withValues(alpha: 0.06), _kInk.withValues(alpha: 0.10)],
         ),
       ),
       child: Center(
@@ -450,10 +435,10 @@ class _DrawingCardState extends State<_DrawingCard>
               decoration: BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
-                border: Border.all(color: _kBorder, width: 2.5),
+                border: Border.all(color: _kInk.withValues(alpha: 0.25), width: 2.5),
                 boxShadow: [
                   BoxShadow(
-                    color: _kPrimary.withValues(alpha: 0.18),
+                    color: _kBlue.withValues(alpha: 0.18),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -462,16 +447,15 @@ class _DrawingCardState extends State<_DrawingCard>
               child: const Icon(
                 Icons.lock_rounded,
                 size: 26,
-                color: _kMuted,
+                color: _kInk,
               ),
             ),
             const SizedBox(height: 8),
             const Text(
               '?',
-              style: TextStyle(fontFamily: 'Fredoka',
+              style: TextStyle(fontFamily: 'Boogaloo',
                 fontSize: 32,
-                fontWeight: FontWeight.w700,
-                color: _kMuted,
+                color: _kInk,
               ),
             ),
           ],
@@ -536,7 +520,7 @@ class _FullScreenDialogState extends State<_FullScreenDialog> {
               style: TextStyle(fontFamily: 'Boogaloo', fontSize: 16),
             ),
             duration: Duration(seconds: 2),
-            backgroundColor: Color(0xFF2DB84B),
+            backgroundColor: _kGreen,
           ),
         );
       }
@@ -552,14 +536,14 @@ class _FullScreenDialogState extends State<_FullScreenDialog> {
       insetPadding: const EdgeInsets.all(24),
       child: Container(
         decoration: BoxDecoration(
-          color: _kNight,
+          color: _kInk,
           borderRadius: BorderRadius.circular(32),
-          border: Border.all(color: _kBorder, width: 3),
-          boxShadow: const [
+          border: Border.all(color: _kInk.withValues(alpha: 0.25), width: 3),
+          boxShadow: [
             BoxShadow(
-              color: Color(0x663B1FCC),
+              color: _kInk.withValues(alpha: 0.40),
               blurRadius: 40,
-              offset: Offset(0, 16),
+              offset: const Offset(0, 16),
             ),
           ],
         ),
@@ -584,11 +568,11 @@ class _FullScreenDialogState extends State<_FullScreenDialog> {
                 right: 0,
                 child: Container(
                   padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.bottomCenter,
                       end: Alignment.topCenter,
-                      colors: [Color(0xCC1A0E3F), Colors.transparent],
+                      colors: [_kInk.withValues(alpha: 0.8), Colors.transparent],
                     ),
                   ),
                   child: Column(
@@ -597,9 +581,8 @@ class _FullScreenDialogState extends State<_FullScreenDialog> {
                       Text(
                         AppLocalizations.of(context)!.chapter(widget.drawing.chapter),
                         style: const TextStyle(
-                          fontFamily: 'Fredoka',
+                          fontFamily: 'Boogaloo',
                           fontSize: 28,
-                          fontWeight: FontWeight.w700,
                           color: Colors.white,
                         ),
                         textAlign: TextAlign.center,
@@ -614,17 +597,17 @@ class _FullScreenDialogState extends State<_FullScreenDialog> {
                           decoration: BoxDecoration(
                             color: _saving
                                 ? Colors.white38
-                                : const Color(0xFF2DB84B),
+                                : _kGreen,
                             borderRadius: BorderRadius.circular(99),
                             border:
                                 Border.all(color: Colors.white, width: 2),
                             boxShadow: _saving
                                 ? []
-                                : const [
+                                : [
                                     BoxShadow(
-                                      color: Color(0xFF1A1A2E),
+                                      color: _kInk,
                                       blurRadius: 0,
-                                      offset: Offset(3, 3),
+                                      offset: const Offset(3, 3),
                                     ),
                                   ],
                           ),
@@ -671,7 +654,7 @@ class _FullScreenDialogState extends State<_FullScreenDialog> {
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                      color: _kNight.withValues(alpha: 0.7),
+                      color: _kInk.withValues(alpha: 0.7),
                       shape: BoxShape.circle,
                       border: Border.all(
                           color: Colors.white.withValues(alpha: 0.3),
@@ -690,7 +673,7 @@ class _FullScreenDialogState extends State<_FullScreenDialog> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    color: _kGold,
+                    color: _kYellow,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: const [
                       BoxShadow(
@@ -703,15 +686,14 @@ class _FullScreenDialogState extends State<_FullScreenDialog> {
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.star_rounded, size: 16, color: _kNight),
+                      Icon(Icons.star_rounded, size: 16, color: _kInk),
                       SizedBox(width: 4),
                       Text(
                         'Done',
                         style: TextStyle(
-                          fontFamily: 'Fredoka',
+                          fontFamily: 'Boogaloo',
                           fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: _kNight,
+                          color: _kInk,
                         ),
                       ),
                     ],
@@ -798,13 +780,13 @@ class _StarRow extends StatelessWidget {
     return Row(
       children: [
         Icon(Icons.star_rounded,
-            color: _kGold.withValues(alpha: 0.9), size: 22),
+            color: _kYellow.withValues(alpha: 0.9), size: 22),
         const SizedBox(width: 2),
         Icon(Icons.star_rounded,
-            color: _kGold.withValues(alpha: 0.6), size: 16),
+            color: _kYellow.withValues(alpha: 0.6), size: 16),
         const SizedBox(width: 2),
         Icon(Icons.star_rounded,
-            color: _kGold.withValues(alpha: 0.35), size: 12),
+            color: _kYellow.withValues(alpha: 0.35), size: 12),
       ],
     );
   }
@@ -824,7 +806,7 @@ class _PolkaPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFF6C48FF).withValues(alpha: 0.05)
+      ..color = _kInk.withValues(alpha: 0.04)
       ..style = PaintingStyle.fill;
     const spacing = 36.0;
     for (double y = 0; y < size.height; y += spacing) {
