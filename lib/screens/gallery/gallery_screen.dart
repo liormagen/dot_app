@@ -60,8 +60,9 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
       final stories = await assetService.loadStories();
       final allDrawings = <String, DrawingModel>{};
       final allImages = <String, ui.Image?>{};
+      final filtered = stories.where((s) => s.drawingIds.isNotEmpty).toList();
 
-      for (final story in stories.where((s) => s.drawingIds.isNotEmpty)) {
+      for (final story in filtered) {
         for (final id in story.drawingIds) {
           final d = await assetService.loadDrawing(id);
           allDrawings[id] = d;
@@ -71,7 +72,7 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
 
       if (!mounted) return;
       setState(() {
-        _stories = stories.where((s) => s.drawingIds.isNotEmpty).toList();
+        _stories = filtered;
         _drawings = allDrawings;
         _coloredImages = allImages;
         _loading = false;
