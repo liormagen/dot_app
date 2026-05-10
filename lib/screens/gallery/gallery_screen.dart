@@ -234,7 +234,7 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
                 isCompleted: isCompleted,
                 lang: lang,
                 onTap: isCompleted && image != null
-                    ? () => _showFullScreen(context, drawing, image, lang)
+                    ? () => _showFullScreen(context, drawing, image!, lang)
                     : null,
               );
             },
@@ -413,9 +413,9 @@ class _DrawingCardState extends State<_DrawingCard>
 
   Widget _buildCaption(BuildContext context) {
     return Container(
-      height: 44,
+      constraints: const BoxConstraints(minHeight: 44),
       alignment: Alignment.center,
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
         color: widget.isCompleted
             ? _kYellow.withValues(alpha: 0.18)
