@@ -32,6 +32,18 @@ List<Shadow> _inkOutline(double w) => [
         Shadow(color: _kInk, offset: Offset(dx, dy), blurRadius: 0),
 ];
 
+Future<ui.Image?> _decodeUiImage(String assetPath) async {
+  try {
+    final data = await rootBundle.load(assetPath);
+    final bytes = data.buffer.asUint8List();
+    final completer = Completer<ui.Image>();
+    ui.decodeImageFromList(bytes, (img) => completer.complete(img));
+    return completer.future;
+  } catch (_) {
+    return null;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Gallery Screen
 // ---------------------------------------------------------------------------
@@ -45,7 +57,6 @@ class GalleryScreen extends ConsumerStatefulWidget {
 class _GalleryScreenState extends ConsumerState<GalleryScreen> {
   List<StoryModel> _stories = [];
   Map<String, DrawingModel> _drawings = {};
-  Map<String, ui.Image?> _coloredImages = {};
   bool _loading = true;
 
   @override
@@ -59,14 +70,11 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
       final assetService = ref.read(assetServiceProvider);
       final stories = await assetService.loadStories();
       final allDrawings = <String, DrawingModel>{};
-      final allImages = <String, ui.Image?>{};
       final filtered = stories.where((s) => s.drawingIds.isNotEmpty).toList();
 
       for (final story in filtered) {
         for (final id in story.drawingIds) {
-          final d = await assetService.loadDrawing(id);
-          allDrawings[id] = d;
-          allImages[id] = await _loadUiImage(d.imageColored);
+          allDrawings[id] = await assetService.loadDrawing(id);
         }
       }
 
@@ -74,23 +82,10 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
       setState(() {
         _stories = filtered;
         _drawings = allDrawings;
-        _coloredImages = allImages;
         _loading = false;
       });
     } catch (_) {
       if (mounted) setState(() => _loading = false);
-    }
-  }
-
-  Future<ui.Image?> _loadUiImage(String assetPath) async {
-    try {
-      final data = await rootBundle.load(assetPath);
-      final bytes = data.buffer.asUint8List();
-      final completer = Completer<ui.Image>();
-      ui.decodeImageFromList(bytes, (img) => completer.complete(img));
-      return completer.future;
-    } catch (_) {
-      return null;
     }
   }
 
@@ -110,11 +105,12 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
               _buildHeader(context, l10n),
               Expanded(
                 child: _loading
-                    ? const Center(
-                        child: CircularProgressIndicator(
-                          color: _kBlue,
-                          strokeWidth: 3,
-                        ),
+                    ? ListView(
+                        padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+                        children: [
+                          _buildSkeletonSection(),
+                          _buildSkeletonSection(),
+                        ],
                       )
                     : ListView.builder(
                         padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
@@ -224,20 +220,59 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
             itemBuilder: (context, j) {
               final drawingId = story.drawingIds[j];
               final drawing = _drawings[drawingId];
-              final image = _coloredImages[drawingId];
               final isCompleted =
                   progress.completedDrawingIds.contains(drawingId);
               if (drawing == null) return const SizedBox.shrink();
               return _DrawingCard(
                 drawing: drawing,
-                image: image,
                 isCompleted: isCompleted,
                 lang: lang,
-                onTap: isCompleted && image != null
-                    ? () => _showFullScreen(context, drawing, image!, lang)
+                onImageTap: isCompleted
+                    ? (img) => _showFullScreen(context, drawing, img, lang)
                     : null,
               );
             },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSkeletonSection() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 200,
+            height: 28,
+            decoration: BoxDecoration(
+              color: _kInk.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          const SizedBox(height: 14),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 220,
+              childAspectRatio: 0.82,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+            ),
+            itemCount: 4,
+            itemBuilder: (_, __) => Container(
+              decoration: BoxDecoration(
+                color: _kInk.withValues(alpha: 0.06),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: _kInk.withValues(alpha: 0.10),
+                  width: 2,
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -262,22 +297,20 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
 }
 
 // ---------------------------------------------------------------------------
-// Drawing card (clay)
+// Drawing card — lazy-loads its own image
 // ---------------------------------------------------------------------------
 class _DrawingCard extends StatefulWidget {
   const _DrawingCard({
     required this.drawing,
-    required this.image,
     required this.isCompleted,
     required this.lang,
-    required this.onTap,
+    required this.onImageTap,
   });
 
   final DrawingModel drawing;
-  final ui.Image? image;
   final bool isCompleted;
   final String lang;
-  final VoidCallback? onTap;
+  final void Function(ui.Image)? onImageTap;
 
   @override
   State<_DrawingCard> createState() => _DrawingCardState();
@@ -287,6 +320,7 @@ class _DrawingCardState extends State<_DrawingCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _pressController;
   late Animation<double> _scaleAnim;
+  ui.Image? _image;
 
   @override
   void initState() {
@@ -298,6 +332,12 @@ class _DrawingCardState extends State<_DrawingCard>
     _scaleAnim = Tween<double>(begin: 1.0, end: 0.93).animate(
       CurvedAnimation(parent: _pressController, curve: Curves.easeOut),
     );
+    if (widget.isCompleted) _loadImage();
+  }
+
+  Future<void> _loadImage() async {
+    final img = await _decodeUiImage(widget.drawing.imageColored);
+    if (mounted) setState(() => _image = img);
   }
 
   @override
@@ -308,21 +348,21 @@ class _DrawingCardState extends State<_DrawingCard>
 
   @override
   Widget build(BuildContext context) {
+    final canTap = widget.isCompleted && _image != null;
     return GestureDetector(
-      onTapDown: widget.onTap != null ? (_) => _pressController.forward() : null,
-      onTapUp: widget.onTap != null
+      onTapDown: canTap ? (_) => _pressController.forward() : null,
+      onTapUp: canTap
           ? (_) {
               _pressController.reverse();
-              widget.onTap!();
+              widget.onImageTap?.call(_image!);
             }
           : null,
-      onTapCancel: widget.onTap != null ? () => _pressController.reverse() : null,
+      onTapCancel: canTap ? () => _pressController.reverse() : null,
       child: AnimatedBuilder(
         animation: _scaleAnim,
         builder: (_, child) =>
             Transform.scale(scale: _scaleAnim.value, child: child),
         child: Container(
-          // No fixed width — fills the grid cell
           decoration: BoxDecoration(
             color: _kPaper,
             borderRadius: BorderRadius.circular(16),
@@ -346,52 +386,54 @@ class _DrawingCardState extends State<_DrawingCard>
   }
 
   Widget _buildImageArea() {
-    if (widget.isCompleted && widget.image != null) {
-      return Stack(
-        fit: StackFit.expand,
-        children: [
-          CustomPaint(
-            painter: _ImagePainter(image: widget.image!),
-            size: Size.infinite,
-          ),
-          // Subtle shine at top
-          Positioned(
-            top: 0, left: 0, right: 0, height: 36,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.white.withValues(alpha: 0.22),
-                    Colors.transparent,
-                  ],
+    if (widget.isCompleted) {
+      if (_image != null) {
+        // Loaded — show artwork
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            CustomPaint(
+              painter: _ImagePainter(image: _image!),
+              size: Size.infinite,
+            ),
+            Positioned(
+              top: 0, left: 0, right: 0, height: 36,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.white.withValues(alpha: 0.22),
+                      Colors.transparent,
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          // Done badge
-          const Positioned(top: 8, right: 8, child: _DoneBadge()),
-          // Tap affordance
-          Positioned(
-            bottom: 8, right: 8,
-            child: Container(
-              width: 28, height: 28,
-              decoration: BoxDecoration(
-                color: _kInk.withValues(alpha: 0.55),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.open_in_full_rounded,
-                color: Colors.white,
-                size: 13,
+            const Positioned(top: 8, right: 8, child: _DoneBadge()),
+            Positioned(
+              bottom: 8, right: 8,
+              child: Container(
+                width: 28, height: 28,
+                decoration: BoxDecoration(
+                  color: _kInk.withValues(alpha: 0.55),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.open_in_full_rounded,
+                  color: Colors.white,
+                  size: 13,
+                ),
               ),
             ),
-          ),
-        ],
-      );
+          ],
+        );
+      }
+      // Loading — grey wash while image decodes
+      return Container(color: _kInk.withValues(alpha: 0.08));
     }
-    // Locked state
+    // Locked
     return Container(
       color: _kInk.withValues(alpha: 0.06),
       child: Center(
