@@ -449,6 +449,8 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
                       const SizedBox(height: 20),
                       if (_isNewRecord && widget.elapsedMs != null)
                         _PersonalBestBanner(elapsedMs: widget.elapsedMs!),
+                      if (_achievement != _AchievementType.none)
+                        _AchievementBanner(type: _achievement),
                       Text(
                         AppLocalizations.of(context)!.tapToContinue,
                         style: TextStyle(fontFamily: 'Boogaloo',
@@ -1194,6 +1196,129 @@ class _CelebButtonState extends State<_CelebButton> {
             color: Colors.white,
             fontSize: 24,
             fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Achievement Banner ────────────────────────────────────────────────────────
+
+class _AchievementBanner extends StatefulWidget {
+  const _AchievementBanner({required this.type});
+  final _AchievementType type;
+
+  @override
+  State<_AchievementBanner> createState() => _AchievementBannerState();
+}
+
+class _AchievementBannerState extends State<_AchievementBanner>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _scale;
+  late final Animation<double> _opacity;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 700),
+    );
+    _scale = Tween<double>(begin: 0.5, end: 1.0).animate(
+      CurvedAnimation(parent: _ctrl, curve: Curves.elasticOut),
+    );
+    _opacity = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _ctrl,
+        curve: const Interval(0.0, 0.35, curve: Curves.easeOut),
+      ),
+    );
+    _ctrl.forward();
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const kInk = Color(0xFF1A1A2E);
+    const kGreen = Color(0xFF2DB84B);
+    const kBlue = Color(0xFF1FA3E8);
+    const kYellow = Color(0xFFF5C800);
+
+    final (emoji, headline, subtext, bgColor) = switch (widget.type) {
+      _AchievementType.firstEver => (
+          '🎉',
+          'FIRST DRAWING!',
+          "You're amazing!",
+          kGreen,
+        ),
+      _AchievementType.sessionStreak => (
+          '🔥',
+          'ON A ROLL!',
+          'Keep going!',
+          kBlue,
+        ),
+      _AchievementType.none => ('', '', '', kGreen),
+    };
+
+    if (widget.type == _AchievementType.none) return const SizedBox.shrink();
+
+    return FadeTransition(
+      opacity: _opacity,
+      child: ScaleTransition(
+        scale: _scale,
+        child: Container(
+          margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: kInk, width: 3),
+            boxShadow: const [
+              BoxShadow(color: kInk, blurRadius: 0, offset: Offset(4, 4)),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(emoji, style: const TextStyle(fontSize: 28)),
+              const SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    headline,
+                    style: const TextStyle(
+                      fontFamily: 'Boogaloo',
+                      fontSize: 22,
+                      color: kYellow,
+                      fontWeight: FontWeight.bold,
+                      shadows: [
+                        Shadow(
+                            color: kInk,
+                            offset: Offset(2, 2),
+                            blurRadius: 0),
+                      ],
+                    ),
+                  ),
+                  Text(
+                    subtext,
+                    style: const TextStyle(
+                      fontFamily: 'Boogaloo',
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
