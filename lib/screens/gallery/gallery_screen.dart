@@ -38,7 +38,7 @@ Future<ui.Image?> _decodeUiImage(String assetPath) async {
     final bytes = data.buffer.asUint8List();
     final completer = Completer<ui.Image>();
     ui.decodeImageFromList(bytes, (img) => completer.complete(img));
-    return completer.future;
+    return await completer.future.timeout(const Duration(seconds: 10));
   } catch (_) {
     return null;
   }
@@ -226,7 +226,6 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
               return _DrawingCard(
                 drawing: drawing,
                 isCompleted: isCompleted,
-                lang: lang,
                 onImageTap: isCompleted
                     ? (img) => _showFullScreen(context, drawing, img, lang)
                     : null,
@@ -303,13 +302,11 @@ class _DrawingCard extends StatefulWidget {
   const _DrawingCard({
     required this.drawing,
     required this.isCompleted,
-    required this.lang,
     required this.onImageTap,
   });
 
   final DrawingModel drawing;
   final bool isCompleted;
-  final String lang;
   final void Function(ui.Image)? onImageTap;
 
   @override
@@ -321,6 +318,7 @@ class _DrawingCardState extends State<_DrawingCard>
   late AnimationController _pressController;
   late Animation<double> _scaleAnim;
   ui.Image? _image;
+  bool _loadFailed = false;
 
   @override
   void initState() {
@@ -337,7 +335,12 @@ class _DrawingCardState extends State<_DrawingCard>
 
   Future<void> _loadImage() async {
     final img = await _decodeUiImage(widget.drawing.imageColored);
-    if (mounted) setState(() => _image = img);
+    if (mounted) {
+      setState(() {
+        _image = img;
+        _loadFailed = img == null;
+      });
+    }
   }
 
   @override
@@ -388,7 +391,6 @@ class _DrawingCardState extends State<_DrawingCard>
   Widget _buildImageArea() {
     if (widget.isCompleted) {
       if (_image != null) {
-        // Loaded — show artwork
         return Stack(
           fit: StackFit.expand,
           children: [
@@ -430,7 +432,15 @@ class _DrawingCardState extends State<_DrawingCard>
           ],
         );
       }
-      // Loading — grey wash while image decodes
+      if (_loadFailed) {
+        return Container(
+          color: _kInk.withValues(alpha: 0.06),
+          child: const Center(
+            child: Icon(Icons.broken_image_outlined, color: Colors.white54, size: 32),
+          ),
+        );
+      }
+      // Still loading
       return Container(color: _kInk.withValues(alpha: 0.08));
     }
     // Locked
@@ -621,10 +631,10 @@ class _FullScreenDialogState extends State<_FullScreenDialog> {
                             boxShadow: _saving
                                 ? []
                                 : [
-                                    BoxShadow(
+                                    const BoxShadow(
                                       color: _kInk,
                                       blurRadius: 0,
-                                      offset: const Offset(3, 3),
+                                      offset: Offset(3, 3),
                                     ),
                                   ],
                           ),
