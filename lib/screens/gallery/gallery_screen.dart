@@ -198,60 +198,46 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
               Expanded(
                 child: Text(
                   story.getTitle(lang),
-                  style: const TextStyle(fontFamily: 'Boogaloo',
-                    fontSize: 26,
+                  style: const TextStyle(
+                    fontFamily: 'Boogaloo',
+                    fontSize: 28,
                     color: _kInk,
+                    height: 1.1,
                   ),
                 ),
               ),
-              if (total > 0)
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: completedCount == total
-                        ? _kGreen
-                        : _kBlue.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    '$completedCount / $total',
-                    style: TextStyle(fontFamily: 'Boogaloo',
-                      fontSize: 16,
-                      color: completedCount == total ? Colors.white : _kBlue,
-                    ),
-                  ),
-                ),
+              if (total > 0) _ProgressBadge(completed: completedCount, total: total),
             ],
           ),
           const SizedBox(height: 14),
-          // Drawing cards row
-          SizedBox(
-            height: 210,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: story.drawingIds.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 14),
-              itemBuilder: (context, j) {
-                final drawingId = story.drawingIds[j];
-                final drawing = _drawings[drawingId];
-                final image = _coloredImages[drawingId];
-                final isCompleted =
-                    progress.completedDrawingIds.contains(drawingId);
-
-                if (drawing == null) return const SizedBox(width: 150);
-
-                return _DrawingCard(
-                  drawing: drawing,
-                  image: image,
-                  isCompleted: isCompleted,
-                  lang: lang,
-                  onTap: isCompleted && image != null
-                      ? () => _showFullScreen(context, drawing, image, lang)
-                      : null,
-                );
-              },
+          // Drawing cards grid
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 220,
+              childAspectRatio: 0.82,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
             ),
+            itemCount: story.drawingIds.length,
+            itemBuilder: (context, j) {
+              final drawingId = story.drawingIds[j];
+              final drawing = _drawings[drawingId];
+              final image = _coloredImages[drawingId];
+              final isCompleted =
+                  progress.completedDrawingIds.contains(drawingId);
+              if (drawing == null) return const SizedBox.shrink();
+              return _DrawingCard(
+                drawing: drawing,
+                image: image,
+                isCompleted: isCompleted,
+                lang: lang,
+                onTap: isCompleted && image != null
+                    ? () => _showFullScreen(context, drawing, image, lang)
+                    : null,
+              );
+            },
           ),
         ],
       ),
@@ -323,91 +309,34 @@ class _DrawingCardState extends State<_DrawingCard>
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTapDown: widget.onTap != null
-          ? (_) => _pressController.forward()
-          : null,
+      onTapDown: widget.onTap != null ? (_) => _pressController.forward() : null,
       onTapUp: widget.onTap != null
           ? (_) {
               _pressController.reverse();
               widget.onTap!();
             }
           : null,
-      onTapCancel: widget.onTap != null
-          ? () => _pressController.reverse()
-          : null,
+      onTapCancel: widget.onTap != null ? () => _pressController.reverse() : null,
       child: AnimatedBuilder(
         animation: _scaleAnim,
         builder: (_, child) =>
             Transform.scale(scale: _scaleAnim.value, child: child),
         child: Container(
-          width: 150,
+          // No fixed width — fills the grid cell
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: _kInk.withValues(alpha: 0.25), width: 3),
-            boxShadow: [BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(3, 3))],
+            color: _kPaper,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: _kInk, width: 2.5),
+            boxShadow: const [
+              BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
+            ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(21),
+            borderRadius: BorderRadius.circular(13.5),
             child: Column(
               children: [
-                Expanded(
-                  child: widget.isCompleted && widget.image != null
-                      ? Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            CustomPaint(
-                              painter: _ImagePainter(image: widget.image!),
-                              size: Size.infinite,
-                            ),
-                            // Subtle shine overlay
-                            Positioned(
-                              top: 0,
-                              left: 0,
-                              right: 0,
-                              height: 40,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      Colors.white.withValues(alpha: 0.25),
-                                      Colors.transparent,
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        )
-                      : _buildLockedState(),
-                ),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: widget.isCompleted
-                        ? _kBlue.withValues(alpha: 0.06)
-                        : const Color(0xFFF5F5F5),
-                    border: Border(
-                        top: BorderSide(
-                            color: _kInk.withValues(alpha: 0.15),
-                            width: 1.5)),
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context)!.chapter(widget.drawing.chapter),
-                    style: TextStyle(fontFamily: 'Boogaloo',
-                      fontSize: 15,
-                      color:
-                          widget.isCompleted ? _kInk : _kInk.withValues(alpha: 0.45),
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
+                Expanded(child: _buildImageArea()),
+                _buildCaption(context),
               ],
             ),
           ),
@@ -416,37 +345,96 @@ class _DrawingCardState extends State<_DrawingCard>
     );
   }
 
-  Widget _buildLockedState() {
+  Widget _buildImageArea() {
+    if (widget.isCompleted && widget.image != null) {
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          CustomPaint(
+            painter: _ImagePainter(image: widget.image!),
+            size: Size.infinite,
+          ),
+          // Subtle shine at top
+          Positioned(
+            top: 0, left: 0, right: 0, height: 36,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.white.withValues(alpha: 0.22),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+            ),
+          ),
+          // Done badge
+          const Positioned(top: 8, right: 8, child: _DoneBadge()),
+          // Tap affordance
+          Positioned(
+            bottom: 8, right: 8,
+            child: Container(
+              width: 28, height: 28,
+              decoration: BoxDecoration(
+                color: _kInk.withValues(alpha: 0.55),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.open_in_full_rounded,
+                color: Colors.white,
+                size: 13,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+    // Locked state
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [_kInk.withValues(alpha: 0.06), _kInk.withValues(alpha: 0.10)],
-        ),
-      ),
+      color: _kInk.withValues(alpha: 0.06),
       child: Center(
         child: Container(
-          width: 52,
-          height: 52,
+          width: 48, height: 48,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: _kYellow,
             shape: BoxShape.circle,
-            border: Border.all(color: _kInk.withValues(alpha: 0.25), width: 2.5),
-            boxShadow: [
-              BoxShadow(
-                color: _kBlue.withValues(alpha: 0.18),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
+            border: Border.all(color: _kInk, width: 2.5),
+            boxShadow: const [
+              BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(2, 2)),
             ],
           ),
-          child: const Icon(
-            Icons.lock_rounded,
-            size: 26,
-            color: _kInk,
-          ),
+          child: const Icon(Icons.lock_rounded, color: _kInk, size: 24),
         ),
+      ),
+    );
+  }
+
+  Widget _buildCaption(BuildContext context) {
+    return Container(
+      height: 44,
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: BoxDecoration(
+        color: widget.isCompleted
+            ? _kYellow.withValues(alpha: 0.18)
+            : _kInk.withValues(alpha: 0.04),
+        border: Border(
+          top: BorderSide(color: _kInk.withValues(alpha: 0.20), width: 1.5),
+        ),
+      ),
+      child: Text(
+        AppLocalizations.of(context)!.chapter(widget.drawing.chapter),
+        style: const TextStyle(
+          fontFamily: 'Boogaloo',
+          fontSize: 16,
+          color: _kInk,
+          height: 1.0,
+        ),
+        textAlign: TextAlign.center,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }
@@ -775,6 +763,79 @@ class _StarRow extends StatelessWidget {
         Icon(Icons.star_rounded,
             color: _kYellow.withValues(alpha: 0.35), size: 12),
       ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Done badge (overlays completed drawing cards)
+// ---------------------------------------------------------------------------
+class _DoneBadge extends StatelessWidget {
+  const _DoneBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: _kYellow,
+        borderRadius: BorderRadius.circular(99),
+        border: Border.all(color: _kInk, width: 2),
+        boxShadow: const [
+          BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(2, 2)),
+        ],
+      ),
+      child: const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.star_rounded, color: _kInk, size: 12),
+          SizedBox(width: 3),
+          Text(
+            'Done',
+            style: TextStyle(
+              fontFamily: 'Boogaloo',
+              fontSize: 13,
+              color: _kInk,
+              height: 1.0,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Story progress badge (e.g. "2 / 4")
+// ---------------------------------------------------------------------------
+class _ProgressBadge extends StatelessWidget {
+  const _ProgressBadge({required this.completed, required this.total});
+
+  final int completed;
+  final int total;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDone = completed == total;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+      decoration: BoxDecoration(
+        color: isDone ? _kGreen : _kBlue,
+        borderRadius: BorderRadius.circular(99),
+        border: Border.all(color: _kInk, width: 2),
+        boxShadow: const [
+          BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(2, 2)),
+        ],
+      ),
+      child: Text(
+        '$completed / $total',
+        style: const TextStyle(
+          fontFamily: 'Boogaloo',
+          fontSize: 16,
+          color: Colors.white,
+          height: 1.0,
+        ),
+      ),
     );
   }
 }
