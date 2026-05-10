@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../../models/progress_model.dart';
 import '../../services/audio_service.dart';
 import '../../services/progress_service.dart';
 import '../../services/purchase_service.dart';
@@ -87,6 +88,17 @@ class SettingsSheet extends ConsumerWidget {
                               .setLanguage('ar'),
                         ),
                       ],
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Difficulty',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    _DifficultySelector(
+                      current: progress.difficulty,
+                      onChanged: (mode) =>
+                          ref.read(progressProvider.notifier).setDifficulty(mode),
                     ),
                     const SizedBox(height: 24),
                     // Music toggle
@@ -211,6 +223,70 @@ class _LangButton extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _DifficultySelector extends StatelessWidget {
+  const _DifficultySelector({
+    required this.current,
+    required this.onChanged,
+  });
+
+  final DifficultyMode current;
+  final void Function(DifficultyMode) onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    const modes = [
+      (DifficultyMode.easy,      'Easy',       Icons.sentiment_satisfied_rounded),
+      (DifficultyMode.normal,    'Normal',     Icons.sentiment_neutral_rounded),
+      (DifficultyMode.hard,      'Hard',       Icons.timer_rounded),
+      (DifficultyMode.superHard, 'Super Hard', Icons.whatshot_rounded),
+    ];
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        for (final (mode, label, icon) in modes)
+          GestureDetector(
+            onTap: () => onChanged(mode),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: current == mode
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(99),
+                border: Border.all(
+                  color: current == mode
+                      ? Theme.of(context).colorScheme.primary
+                      : Colors.grey.shade300,
+                  width: 2,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    icon,
+                    size: 18,
+                    color: current == mode ? Colors.white : Colors.black87,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: current == mode ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../l10n/app_localizations.dart';
-import '../../models/progress_model.dart';
 import '../../services/asset_service.dart';
 import '../../services/progress_service.dart';
 import '../../widgets/parental_gate.dart';
@@ -56,9 +55,6 @@ class StorySelectionScreen extends ConsumerWidget {
                 child: _BoldHeader(
                   onGalleryTap: () => context.go('/gallery'),
                   onSettingsTap: () => _openSettings(context),
-                  difficulty: progress.difficulty,
-                  onDifficultyChanged: (mode) =>
-                      ref.read(progressProvider.notifier).setDifficulty(mode),
                 ),
               ),
               storiesAsync.when(
@@ -80,6 +76,12 @@ class StorySelectionScreen extends ConsumerWidget {
                       child: Center(child: _EmptyState()),
                     );
                   }
+                  final sorted = [...stories]
+                    ..sort((a, b) {
+                      final aCs = a.drawingIds.isEmpty ? 1 : 0;
+                      final bCs = b.drawingIds.isEmpty ? 1 : 0;
+                      return aCs.compareTo(bCs);
+                    });
                   return SliverPadding(
                     padding: const EdgeInsets.fromLTRB(24, 20, 24, 48),
                     sliver: SliverGrid(
@@ -92,7 +94,7 @@ class StorySelectionScreen extends ConsumerWidget {
                       ),
                       delegate: SliverChildBuilderDelegate(
                         (context, index) {
-                          final story = stories[index];
+                          final story = sorted[index];
                           final completedCount = story.drawingIds
                               .where((id) =>
                                   progress.completedDrawingIds.contains(id))
@@ -121,7 +123,7 @@ class StorySelectionScreen extends ConsumerWidget {
                             ),
                           );
                         },
-                        childCount: stories.length,
+                        childCount: sorted.length,
                       ),
                     ),
                   );
@@ -347,21 +349,17 @@ class _BoldHeader extends StatelessWidget {
   const _BoldHeader({
     required this.onGalleryTap,
     required this.onSettingsTap,
-    required this.difficulty,
-    required this.onDifficultyChanged,
   });
 
   final VoidCallback onGalleryTap;
   final VoidCallback onSettingsTap;
-  final DifficultyMode difficulty;
-  final void Function(DifficultyMode) onDifficultyChanged;
 
   @override
   Widget build(BuildContext context) {
     final top = MediaQuery.of(context).padding.top;
 
     return SizedBox(
-      height: top + 200,
+      height: top + 130,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -416,17 +414,16 @@ class _BoldHeader extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Star left
                       Transform.rotate(
                         angle: -0.3,
                         child: const Icon(Icons.star_rounded,
                             color: _kInk, size: 30),
                       ),
                       const SizedBox(width: 8),
-                      // "Dot Story" — same style as welcome screen
                       Text(
                         'Dot Story',
-                        style: TextStyle(fontFamily: 'Boogaloo',
+                        style: TextStyle(
+                          fontFamily: 'Boogaloo',
                           fontSize: 58,
                           color: _kYellow,
                           height: 1.0,
@@ -434,7 +431,6 @@ class _BoldHeader extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      // Star right
                       Transform.rotate(
                         angle: 0.4,
                         child: const Icon(Icons.star_rounded,
@@ -447,88 +443,7 @@ class _BoldHeader extends StatelessWidget {
             ),
           ),
 
-          // Subtitle pill — centered below sticker
-          Positioned(
-            bottom: 56,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Transform.rotate(
-                angle: 0.015,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 18, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: _kGreen,
-                    borderRadius: BorderRadius.circular(99),
-                    border: Border.all(color: _kInk, width: 3),
-                    boxShadow: const [
-                      BoxShadow(
-                          color: _kInk,
-                          blurRadius: 0,
-                          offset: Offset(3, 3)),
-                    ],
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context)!.pickAStory,
-                    style: TextStyle(fontFamily: 'Boogaloo',
-                      fontSize: 20,
-                      color: Colors.white,
-                      height: 1.1,
-                      shadows: _inkOutline(1.5),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          // Difficulty toggle — 4 modes
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _DifficultyPill(
-                    label: 'Easy',
-                    icon: Icons.sentiment_satisfied_rounded,
-                    selected: difficulty == DifficultyMode.easy,
-                    color: _kGreen,
-                    onTap: () => onDifficultyChanged(DifficultyMode.easy),
-                  ),
-                  const SizedBox(width: 8),
-                  _DifficultyPill(
-                    label: 'Normal',
-                    icon: Icons.sentiment_neutral_rounded,
-                    selected: difficulty == DifficultyMode.normal,
-                    color: _kBlue,
-                    onTap: () => onDifficultyChanged(DifficultyMode.normal),
-                  ),
-                  const SizedBox(width: 8),
-                  _DifficultyPill(
-                    label: 'Hard',
-                    icon: Icons.timer_rounded,
-                    selected: difficulty == DifficultyMode.hard,
-                    color: _kRed,
-                    onTap: () => onDifficultyChanged(DifficultyMode.hard),
-                  ),
-                  const SizedBox(width: 8),
-                  _DifficultyPill(
-                    label: 'Super Hard',
-                    icon: Icons.whatshot_rounded,
-                    selected: difficulty == DifficultyMode.superHard,
-                    color: _kInk,
-                    onTap: () => onDifficultyChanged(DifficultyMode.superHard),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // Decorative scattered stars around header
+          // Decorative scattered stars
           Positioned(
             top: top + 18,
             left: 22,
@@ -614,69 +529,6 @@ class _InkIconButtonState extends State<_InkIconButton> {
                 ],
         ),
         child: Icon(widget.icon, color: Colors.white, size: 26),
-      ),
-    );
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Difficulty toggle pill
-// ---------------------------------------------------------------------------
-class _DifficultyPill extends StatelessWidget {
-  const _DifficultyPill({
-    required this.label,
-    required this.icon,
-    required this.selected,
-    required this.color,
-    required this.onTap,
-  });
-
-  final String label;
-  final IconData icon;
-  final bool selected;
-  final Color color;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.lightImpact();
-        onTap();
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 7),
-        decoration: BoxDecoration(
-          color: selected ? color : Colors.white,
-          borderRadius: BorderRadius.circular(99),
-          border: Border.all(color: _kInk, width: 3),
-          boxShadow: selected
-              ? [
-                  const BoxShadow(
-                      color: _kInk, blurRadius: 0, offset: Offset(3, 3)),
-                ]
-              : [],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              color: selected ? Colors.white : _kInk,
-              size: 18,
-            ),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: TextStyle(fontFamily: 'Boogaloo',
-                color: selected ? Colors.white : _kInk,
-                fontSize: 18,
-                height: 1.0,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
