@@ -61,7 +61,7 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
       final allDrawings = <String, DrawingModel>{};
       final allImages = <String, ui.Image?>{};
 
-      for (final story in stories) {
+      for (final story in stories.where((s) => s.drawingIds.isNotEmpty)) {
         for (final id in story.drawingIds) {
           final d = await assetService.loadDrawing(id);
           allDrawings[id] = d;
@@ -71,7 +71,7 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
 
       if (!mounted) return;
       setState(() {
-        _stories = stories;
+        _stories = stories.where((s) => s.drawingIds.isNotEmpty).toList();
         _drawings = allDrawings;
         _coloredImages = allImages;
         _loading = false;
@@ -203,23 +203,24 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
                   ),
                 ),
               ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(
-                  color: completedCount == total
-                      ? _kGreen
-                      : _kBlue.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  '$completedCount / $total',
-                  style: TextStyle(fontFamily: 'Boogaloo',
-                    fontSize: 16,
-                    color: completedCount == total ? Colors.white : _kBlue,
+              if (total > 0)
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: completedCount == total
+                        ? _kGreen
+                        : _kBlue.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '$completedCount / $total',
+                    style: TextStyle(fontFamily: 'Boogaloo',
+                      fontSize: 16,
+                      color: completedCount == total ? Colors.white : _kBlue,
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
           const SizedBox(height: 14),
@@ -395,9 +396,7 @@ class _DrawingCardState extends State<_DrawingCard>
                             width: 1.5)),
                   ),
                   child: Text(
-                    widget.isCompleted
-                        ? AppLocalizations.of(context)!.chapter(widget.drawing.chapter)
-                        : '???',
+                    AppLocalizations.of(context)!.chapter(widget.drawing.chapter),
                     style: TextStyle(fontFamily: 'Boogaloo',
                       fontSize: 15,
                       color:
@@ -426,39 +425,26 @@ class _DrawingCardState extends State<_DrawingCard>
         ),
       ),
       child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 52,
-              height: 52,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                border: Border.all(color: _kInk.withValues(alpha: 0.25), width: 2.5),
-                boxShadow: [
-                  BoxShadow(
-                    color: _kBlue.withValues(alpha: 0.18),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+        child: Container(
+          width: 52,
+          height: 52,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            border: Border.all(color: _kInk.withValues(alpha: 0.25), width: 2.5),
+            boxShadow: [
+              BoxShadow(
+                color: _kBlue.withValues(alpha: 0.18),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
               ),
-              child: const Icon(
-                Icons.lock_rounded,
-                size: 26,
-                color: _kInk,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              '?',
-              style: TextStyle(fontFamily: 'Boogaloo',
-                fontSize: 32,
-                color: _kInk,
-              ),
-            ),
-          ],
+            ],
+          ),
+          child: const Icon(
+            Icons.lock_rounded,
+            size: 26,
+            color: _kInk,
+          ),
         ),
       ),
     );
