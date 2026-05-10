@@ -572,45 +572,45 @@ class _WanderingBlobsLayerState extends State<_WanderingBlobsLayer>
       animation: _ctrl,
       builder: (_, __) {
         final t = _ctrl.value * 2 * math.pi;
-        double d(int freq, double phase, double amp) =>
-            amp * math.sin(freq * t + phase);
+        double d(double speed, double phase, double amp) =>
+            amp * math.sin(speed * t + phase);
 
         return Stack(
           children: [
-            // Top-left red blob
+            // Top-left red blob — slow (~31s effective)
             Positioned(
-              top: -50 + d(1, 0.0, 38),
-              left: -50 + d(1, math.pi / 3, 28),
+              top: -50 + d(0.7, 0.0, 38),
+              left: -50 + d(0.7, math.pi / 3, 28),
               child: const _WanderingBlob(color: _kRed, size: 180),
             ),
-            // Top-right blue blob
+            // Top-right blue blob — fast (~15s effective)
             Positioned(
-              top: 30 + d(1, math.pi * 0.7, 32),
-              right: -60 + d(1, math.pi * 1.2, 24),
+              top: 30 + d(1.5, math.pi * 0.7, 32),
+              right: -60 + d(1.5, math.pi * 1.2, 24),
               child: const _WanderingBlob(color: _kBlue, size: 150),
             ),
-            // Bottom-left green blob
+            // Bottom-left green blob — medium-slow (~26s effective)
             Positioned(
-              bottom: -40 + d(1, math.pi, 36),
-              left: -30 + d(1, math.pi * 1.5, 22),
+              bottom: -40 + d(0.85, math.pi, 36),
+              left: -30 + d(0.85, math.pi * 1.5, 22),
               child: const _WanderingBlob(color: _kGreen, size: 160),
             ),
-            // Bottom-right yellow blob
+            // Bottom-right yellow blob — medium-fast (~18s effective)
             Positioned(
-              bottom: size.height * 0.08 + d(2, 0.5, 28),
-              right: -45 + d(2, 0.5 + math.pi / 2, 20),
+              bottom: size.height * 0.08 + d(1.2, 0.5, 28),
+              right: -45 + d(1.2, 0.5 + math.pi / 2, 20),
               child: const _WanderingBlob(color: _kYellow, size: 130),
             ),
-            // Mid-left small red
+            // Mid-left small red — very slow (~37s effective)
             Positioned(
-              top: size.height * 0.38 + d(1, math.pi * 0.4, 30),
-              left: -30 + d(1, math.pi * 0.9, 16),
+              top: size.height * 0.38 + d(0.6, math.pi * 0.4, 30),
+              left: -30 + d(0.6, math.pi * 0.9, 16),
               child: const _WanderingBlob(color: _kRed, size: 90),
             ),
-            // Mid-right small blue
+            // Mid-right small blue — fast (~13s effective)
             Positioned(
-              top: size.height * 0.55 + d(2, math.pi * 1.3, 26),
-              right: -20 + d(2, math.pi * 1.7, 14),
+              top: size.height * 0.55 + d(1.7, math.pi * 1.3, 26),
+              right: -20 + d(1.7, math.pi * 1.7, 14),
               child: const _WanderingBlob(color: _kBlue, size: 80),
             ),
           ],
