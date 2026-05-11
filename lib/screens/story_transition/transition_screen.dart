@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,14 +10,13 @@ import '../../services/asset_service.dart';
 import '../../services/audio_service.dart';
 import '../../services/progress_service.dart';
 
-// Stardust Claymorphism tokens
-const _kPrimary = Color(0xFF6C48FF);
-const _kCoral = Color(0xFFFF6B6B);
-const _kGold = Color(0xFFFFD93D);
-const _kNight = Color(0xFF1A0E3F);
-const _kCard = Color(0xFFFFFFFF);
-const _kBorder = Color(0xFFD4C8FF);
-const _kForeground = Color(0xFF1A0A3F);
+// Toca Boca / Handmade tokens
+const _kRed    = Color(0xFFE82D2D);
+const _kYellow = Color(0xFFF5C800);
+const _kGreen  = Color(0xFF2DB84B);
+const _kBlue   = Color(0xFF1FA3E8);
+const _kInk    = Color(0xFF1A1A2E);
+const _kPaper  = Color(0xFFFFF8E7);
 
 class TransitionScreen extends ConsumerStatefulWidget {
   const TransitionScreen({
@@ -185,18 +183,12 @@ class _TransitionScreenState extends ConsumerState<TransitionScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _kNight,
+      backgroundColor: _kPaper,
       body: _loading
           ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFF9C6FFF)))
+              child: CircularProgressIndicator(color: _kBlue))
           : SafeArea(
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  const _TwinklingStars(),
-                  _buildLayout(),
-                ],
-              ),
+              child: _buildLayout(),
             ),
     );
   }
@@ -239,15 +231,15 @@ class _TransitionScreenState extends ConsumerState<TransitionScreen>
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.15),
+                    color: _kInk.withValues(alpha: 0.06),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.3),
-                      width: 1.5,
+                      color: _kInk.withValues(alpha: 0.2),
+                      width: 2,
                     ),
                   ),
                   child: const Icon(Icons.home_rounded,
-                      color: Colors.white, size: 22),
+                      color: _kInk, size: 22),
                 ),
               ),
             ),
@@ -272,13 +264,13 @@ class _TransitionScreenState extends ConsumerState<TransitionScreen>
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: _kPrimary.withValues(alpha: 0.5),
-                  blurRadius: 50,
-                  spreadRadius: 12,
+                  color: _kYellow.withValues(alpha: 0.4),
+                  blurRadius: 40,
+                  spreadRadius: 10,
                 ),
                 BoxShadow(
-                  color: _kGold.withValues(alpha: 0.2),
-                  blurRadius: 24,
+                  color: _kBlue.withValues(alpha: 0.2),
+                  blurRadius: 20,
                   spreadRadius: 4,
                 ),
               ],
@@ -308,19 +300,14 @@ class _TransitionScreenState extends ConsumerState<TransitionScreen>
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: _kCard,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: _kBorder, width: 3),
+        border: Border.all(color: _kInk, width: 3),
         boxShadow: const [
           BoxShadow(
-            color: Color(0xFF3B1FCC),
+            color: _kInk,
             blurRadius: 0,
             offset: Offset(6, 6),
-          ),
-          BoxShadow(
-            color: Color(0x556C48FF),
-            blurRadius: 30,
-            offset: Offset(0, 12),
           ),
         ],
       ),
@@ -335,9 +322,7 @@ class _TransitionScreenState extends ConsumerState<TransitionScreen>
               padding:
                   const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
               decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFF6C48FF), Color(0xFF9C6FFF)],
-                ),
+                color: _kBlue,
               ),
               child: Row(
                 children: [
@@ -346,20 +331,21 @@ class _TransitionScreenState extends ConsumerState<TransitionScreen>
                   const SizedBox(width: 8),
                   Text(
                     AppLocalizations.of(context)!.chapter(widget.chapterIndex + 1),
-                    style: const TextStyle(fontFamily: 'Fredoka',
+                    style: const TextStyle(
+                      fontFamily: 'Boogaloo',
                       color: Colors.white,
                       fontSize: 22,
-                      fontWeight: FontWeight.w600,
+                      height: 1.0,
                     ),
                   ),
                   const Spacer(),
                   if (_chunks.length > 1)
                     Text(
                       '${_chunkIndex + 1} / ${_chunks.length}',
-                      style: TextStyle(fontFamily: 'Nunito',
+                      style: TextStyle(
+                        fontFamily: 'Boogaloo',
                         color: Colors.white.withValues(alpha: 0.85),
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
                       ),
                     ),
                 ],
@@ -373,11 +359,11 @@ class _TransitionScreenState extends ConsumerState<TransitionScreen>
                 padding: const EdgeInsets.fromLTRB(32, 28, 32, 24),
                 child: Text(
                   _chunks.isNotEmpty ? _chunks[_chunkIndex] : '',
-                  style: const TextStyle(fontFamily: 'Nunito',
+                  style: const TextStyle(
+                    fontFamily: 'Boogaloo',
                     fontSize: 30,
-                    height: 1.6,
-                    color: _kForeground,
-                    fontWeight: FontWeight.w700,
+                    height: 1.5,
+                    color: _kInk,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -406,7 +392,7 @@ class _TransitionScreenState extends ConsumerState<TransitionScreen>
         if (_chunkIndex > 0) ...[
           _StardustButton(
             label: AppLocalizations.of(context)!.backButton,
-            color: const Color(0xFF6366F1),
+            color: _kBlue,
             onTap: _onPrev,
           ),
           const SizedBox(width: 16),
@@ -414,14 +400,14 @@ class _TransitionScreenState extends ConsumerState<TransitionScreen>
         if (_isLastChunk)
           _StardustButton(
             label: AppLocalizations.of(context)!.letsDraw,
-            color: _canContinue ? _kCoral : const Color(0xFF9CA3AF),
+            color: _canContinue ? _kRed : const Color(0xFF9CA3AF),
             onTap: _canContinue ? _onContinue : null,
             wide: true,
           )
         else
           _StardustButton(
             label: AppLocalizations.of(context)!.nextButton,
-            color: _kCoral,
+            color: _kRed,
             onTap: _onNext,
             wide: true,
           ),
@@ -451,12 +437,12 @@ class _PageDots extends StatelessWidget {
           height: 8,
           margin: const EdgeInsets.symmetric(horizontal: 3),
           decoration: BoxDecoration(
-            color: active ? _kPrimary : _kBorder,
+            color: active ? _kBlue : const Color(0xFFCCCCCC),
             borderRadius: BorderRadius.circular(4),
             boxShadow: active
                 ? [
                     BoxShadow(
-                      color: _kPrimary.withValues(alpha: 0.55),
+                      color: _kBlue.withValues(alpha: 0.5),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     )
@@ -515,124 +501,27 @@ class _StardustButtonState extends State<_StardustButton> {
         decoration: BoxDecoration(
           color: widget.color,
           borderRadius: BorderRadius.circular(26),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.3),
-            width: 2,
-          ),
+          border: Border.all(color: _kInk, width: 3),
           boxShadow: _pressed || !enabled
               ? []
-              : [
+              : const [
                   BoxShadow(
-                    color: widget.color.withValues(alpha: 0.75),
+                    color: _kInk,
                     blurRadius: 0,
-                    offset: const Offset(0, 5),
-                  ),
-                  BoxShadow(
-                    color: widget.color.withValues(alpha: 0.35),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
+                    offset: Offset(4, 4),
                   ),
                 ],
         ),
         child: Text(
           widget.label,
-          style: const TextStyle(fontFamily: 'Fredoka',
+          style: const TextStyle(
+            fontFamily: 'Boogaloo',
             color: Colors.white,
             fontSize: 22,
-            fontWeight: FontWeight.w700,
+            height: 1.0,
           ),
         ),
       ),
     );
   }
-}
-
-// ── Twinkling star background ────────────────────────────────────────────────
-
-class _TwinklingStars extends StatefulWidget {
-  const _TwinklingStars();
-
-  @override
-  State<_TwinklingStars> createState() => _TwinklingStarsState();
-}
-
-class _TwinklingStarsState extends State<_TwinklingStars>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _ctrl;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 3),
-    )..repeat(reverse: true);
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _ctrl,
-      builder: (_, __) => CustomPaint(
-        painter: _StarPainter(twinkle: _ctrl.value),
-      ),
-    );
-  }
-}
-
-class _StarPainter extends CustomPainter {
-  const _StarPainter({required this.twinkle});
-  final double twinkle;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rand = math.Random(42);
-    final paint = Paint()..style = PaintingStyle.fill;
-
-    for (int i = 0; i < 90; i++) {
-      final x = rand.nextDouble() * size.width;
-      final y = rand.nextDouble() * size.height;
-      final baseR = 0.7 + rand.nextDouble() * 2.2;
-      final phase = rand.nextDouble() * math.pi * 2;
-      final t = 0.4 + 0.6 * math.sin(twinkle * math.pi * 2 + phase);
-      final opacity = (0.2 + rand.nextDouble() * 0.6) * t;
-      final warmth = rand.nextDouble();
-      paint.color = warmth > 0.7
-          ? Color.lerp(Colors.white, const Color(0xFFFFD93D), 0.4)!
-              .withValues(alpha: opacity)
-          : Colors.white.withValues(alpha: opacity);
-      canvas.drawCircle(Offset(x, y), baseR, paint);
-    }
-
-    // Large sparkle stars (gold cross-shape via 4 overlapping circles)
-    final sparkPaint = Paint()..style = PaintingStyle.fill;
-    final rand2 = math.Random(99);
-    for (int i = 0; i < 14; i++) {
-      final x = rand2.nextDouble() * size.width;
-      final y = rand2.nextDouble() * size.height;
-      final phase = rand2.nextDouble() * math.pi * 2;
-      final t = 0.3 + 0.7 * math.sin(twinkle * math.pi * 2 + phase);
-      sparkPaint.color =
-          const Color(0xFFFFD93D).withValues(alpha: t * 0.65);
-      canvas.drawCircle(Offset(x, y), 2.8, sparkPaint);
-      // Tiny cross arms
-      sparkPaint.color =
-          const Color(0xFFFFD93D).withValues(alpha: t * 0.35);
-      canvas.drawOval(
-          Rect.fromCenter(center: Offset(x, y), width: 12, height: 2.5),
-          sparkPaint);
-      canvas.drawOval(
-          Rect.fromCenter(center: Offset(x, y), width: 2.5, height: 12),
-          sparkPaint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(_StarPainter old) => old.twinkle != twinkle;
 }
