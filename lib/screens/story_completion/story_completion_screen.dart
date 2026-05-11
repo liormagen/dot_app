@@ -8,7 +8,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../l10n/app_localizations.dart';
-import '../../models/drawing_model.dart';
 import '../../services/asset_service.dart';
 import '../../services/progress_service.dart';
 
@@ -32,7 +31,6 @@ class StoryCompletionScreen extends ConsumerStatefulWidget {
 class _StoryCompletionScreenState extends ConsumerState<StoryCompletionScreen>
     with SingleTickerProviderStateMixin {
   String _storyTitle = '';
-  List<DrawingModel> _drawings = [];
   List<ui.Image?> _coloredImages = [];
   bool _loading = true;
 
@@ -73,7 +71,6 @@ class _StoryCompletionScreenState extends ConsumerState<StoryCompletionScreen>
       if (!mounted) return;
       setState(() {
         _storyTitle = story.getTitle(lang);
-        _drawings = drawings;
         _coloredImages = images;
         _loading = false;
       });
@@ -222,7 +219,7 @@ class _StoryCompletionScreenState extends ConsumerState<StoryCompletionScreen>
         const spacing = 14.0;
         final itemSize =
             (constraints.maxWidth - spacing * (crossCount - 1)) / crossCount;
-        final cappedSize = itemSize.clamp(0.0, constraints.maxHeight);
+        final cappedSize = itemSize.clamp(0.0, 220.0);
 
         return Wrap(
           spacing: spacing,
