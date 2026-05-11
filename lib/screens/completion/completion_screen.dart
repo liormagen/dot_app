@@ -540,8 +540,8 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
                       const SizedBox(width: 16),
                       _CelebButton(
                         label: _nextDrawingId != null
-                            ? l10n.letsDraw
-                            : l10n.keepGoing,
+                            ? l10n.drawNextChapter(_chapterNumber + 1)
+                            : l10n.finishStory,
                         onTap: _nextPhase,
                       ),
                     ],
@@ -561,93 +561,8 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
     final drawing = _drawing!;
     final l10n = AppLocalizations.of(context)!;
 
-    if (drawing.tutorialSteps.isEmpty) {
-      return GestureDetector(
-        onTap: () {
-          HapticFeedback.lightImpact();
-          _nextPhase();
-        },
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFF1A0E3F),
-                    Color(0xFF6C48FF),
-                    Color(0xFF9C3FFF),
-                  ],
-                ),
-              ),
-            ),
-            AnimatedBuilder(
-              animation: _celebController,
-              builder: (_, __) => CustomPaint(
-                painter:
-                    _CelebStarsPainter(progress: _celebController.value),
-              ),
-            ),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color: _kGold,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: _kGold.withValues(alpha: 0.6),
-                          blurRadius: 0,
-                          offset: const Offset(0, 6),
-                        ),
-                        BoxShadow(
-                          color: _kGold.withValues(alpha: 0.4),
-                          blurRadius: 30,
-                          offset: const Offset(0, 12),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(Icons.star_rounded,
-                        color: Color(0xFF1A0E3F), size: 72),
-                  ),
-                  const SizedBox(height: 32),
-                  Text(
-                    l10n.amazing,
-                    style: const TextStyle(fontFamily: 'Fredoka',
-                      color: Colors.white,
-                      fontSize: 56,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    l10n.youConnectedAllDots,
-                    style: TextStyle(fontFamily: 'Nunito',
-                      color: Colors.white.withValues(alpha: 0.85),
-                      fontSize: 22,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 48),
-                  _CelebButton(
-                    label: l10n.keepGoing,
-                    onTap: _nextPhase,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
+    // drawing.tutorialSteps is guaranteed non-empty here: _nextPhase() only
+    // enters this phase when tutorialSteps.isNotEmpty.
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
@@ -676,24 +591,21 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
                 padding: const EdgeInsets.symmetric(
                     horizontal: 28, vertical: 12),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF6C48FF), Color(0xFF9C6FFF)],
-                  ),
+                  color: _kInk,
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: const [
                     BoxShadow(
-                      color: Color(0xFF3B1FCC),
-                      blurRadius: 0,
-                      offset: Offset(0, 4),
-                    ),
+                        color: _kInk,
+                        blurRadius: 0,
+                        offset: Offset(0, 4)),
                   ],
                 ),
                 child: Text(
                   '${_tutorialStepIndex + 1} / ${drawing.tutorialSteps.length}  ·  ${l10n.tapToContinue}',
-                  style: const TextStyle(fontFamily: 'Fredoka',
+                  style: const TextStyle(
+                      fontFamily: 'Boogaloo',
                       color: Colors.white,
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600),
+                      fontSize: 17),
                 ),
               ),
             ),
