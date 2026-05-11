@@ -16,7 +16,8 @@ const _kYellow = Color(0xFFF5C800);
 const _kGreen  = Color(0xFF2DB84B);
 const _kBlue   = Color(0xFF1FA3E8);
 const _kInk    = Color(0xFF1A1A2E);
-const _kPaper  = Color(0xFFFFF8E7);
+const _kPaper    = Color(0xFFFFF8E7);
+const _kDisabled = Color(0xFF9CA3AF);
 
 class TransitionScreen extends ConsumerStatefulWidget {
   const TransitionScreen({
@@ -48,10 +49,11 @@ class _TransitionScreenState extends ConsumerState<TransitionScreen>
   late Animation<double> _pageFade;
 
   bool _audioFinished = false;
+  bool _animating = false;
   StreamSubscription<void>? _audioSub;
   Timer? _fallbackTimer;
 
-  bool get _isLastChunk => _chunkIndex >= _chunks.length - 1;
+  bool get _isLastChunk => _chunks.isEmpty || _chunkIndex >= _chunks.length - 1;
   bool get _canContinue => _isLastChunk && _audioFinished;
 
   @override
@@ -116,7 +118,8 @@ class _TransitionScreenState extends ConsumerState<TransitionScreen>
   }
 
   void _markAudioDone() {
-    if (!mounted) return;
+    if (!mounted || _audioFinished) return;
+    _audioSub?.cancel();
     _fallbackTimer?.cancel();
     setState(() => _audioFinished = true);
   }
@@ -144,22 +147,27 @@ class _TransitionScreenState extends ConsumerState<TransitionScreen>
       _onContinue();
       return;
     }
+    if (_animating) return;
+    _animating = true;
     HapticFeedback.lightImpact();
     await _pageCtrl.animateTo(0.0,
         duration: const Duration(milliseconds: 180), curve: Curves.easeIn);
     setState(() => _chunkIndex++);
     await _pageCtrl.animateTo(1.0,
         duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
+    _animating = false;
   }
 
   Future<void> _onPrev() async {
-    if (_chunkIndex == 0) return;
+    if (_chunkIndex == 0 || _animating) return;
+    _animating = true;
     HapticFeedback.lightImpact();
     await _pageCtrl.animateTo(0.0,
         duration: const Duration(milliseconds: 180), curve: Curves.easeIn);
     setState(() => _chunkIndex--);
     await _pageCtrl.animateTo(1.0,
         duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
+    _animating = false;
   }
 
   void _onContinue() {
@@ -288,9 +296,7 @@ class _TransitionScreenState extends ConsumerState<TransitionScreen>
                   color: Colors.white54,
                 ),
               ),
-            )
-          else
-            const SizedBox.shrink(),
+            ),
         ],
       ),
     );
@@ -390,7 +396,7 @@ class _TransitionScreenState extends ConsumerState<TransitionScreen>
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (_chunkIndex > 0) ...[
-          _StardustButton(
+          _HandmadeButton(
             label: AppLocalizations.of(context)!.backButton,
             color: _kBlue,
             onTap: _onPrev,
@@ -398,14 +404,14 @@ class _TransitionScreenState extends ConsumerState<TransitionScreen>
           const SizedBox(width: 16),
         ],
         if (_isLastChunk)
-          _StardustButton(
+          _HandmadeButton(
             label: AppLocalizations.of(context)!.letsDraw,
-            color: _canContinue ? _kRed : const Color(0xFF9CA3AF),
+            color: _canContinue ? _kRed : _kDisabled,
             onTap: _canContinue ? _onContinue : null,
             wide: true,
           )
         else
-          _StardustButton(
+          _HandmadeButton(
             label: AppLocalizations.of(context)!.nextButton,
             color: _kRed,
             onTap: _onNext,
@@ -455,10 +461,10 @@ class _PageDots extends StatelessWidget {
   }
 }
 
-// ── Stardust nav button ───────────────────────────────────────────────────────
+// ── Handmade nav button ──────────────────────────────────────────────────────
 
-class _StardustButton extends StatefulWidget {
-  const _StardustButton({
+class _HandmadeButton extends StatefulWidget {
+  const _HandmadeButton({
     required this.label,
     required this.color,
     required this.onTap,
@@ -471,10 +477,10 @@ class _StardustButton extends StatefulWidget {
   final bool wide;
 
   @override
-  State<_StardustButton> createState() => _StardustButtonState();
+  State<_HandmadeButton> createState() => _HandmadeButtonState();
 }
 
-class _StardustButtonState extends State<_StardustButton> {
+class _HandmadeButtonState extends State<_HandmadeButton> {
   bool _pressed = false;
 
   @override
