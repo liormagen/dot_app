@@ -54,5 +54,14 @@
   "restoringPurchases": "משחזר רכישות...",
   "storyComplete": "הסיפור הושלם",
   "ourStory": "הסיפור שלנו",
-  "playVoice": "השמע קול"
+  "playVoice": "השמע קול",
+  "drawNextChapter": "צייר פרק {number}!",
+  "@drawNextChapter": {
+    "description": "CTA button label for drawing the next chapter",
+    "placeholders": {"number": {"type": "int"}}
+  },
+  "finishStory": "סיים את הסיפור!",
+  "@finishStory": {"description": "CTA button label on the last chapter narration screen"},
+  "playAgain": "שחק שוב!",
+  "@playAgain": {"description": "Button to replay the story from the beginning on the story complete screen"}
 }

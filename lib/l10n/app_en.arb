@@ -115,5 +115,14 @@
   "ourStory": "Our Story",
   "@ourStory": {"description": "Storybook section heading"},
   "playVoice": "Play voice",
-  "@playVoice": {"description": "Tooltip for voice replay button"}
+  "@playVoice": {"description": "Tooltip for voice replay button"},
+  "drawNextChapter": "Draw Chapter {number}!",
+  "@drawNextChapter": {
+    "description": "CTA button label for drawing the next chapter",
+    "placeholders": {"number": {"type": "int"}}
+  },
+  "finishStory": "Finish Story!",
+  "@finishStory": {"description": "CTA button label on the last chapter narration screen"},
+  "playAgain": "Play Again!",
+  "@playAgain": {"description": "Button to replay the story from the beginning on the story complete screen"}
 }

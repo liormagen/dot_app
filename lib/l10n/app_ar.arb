@@ -54,5 +54,14 @@
   "restoringPurchases": "جارٍ استعادة المشتريات...",
   "storyComplete": "اكتملت القصة",
   "ourStory": "قصتنا",
-  "playVoice": "تشغيل الصوت"
+  "playVoice": "تشغيل الصوت",
+  "drawNextChapter": "ارسم الفصل {number}!",
+  "@drawNextChapter": {
+    "description": "CTA button label for drawing the next chapter",
+    "placeholders": {"number": {"type": "int"}}
+  },
+  "finishStory": "أنهِ القصة!",
+  "@finishStory": {"description": "CTA button label on the last chapter narration screen"},
+  "playAgain": "العب مجددًا!",
+  "@playAgain": {"description": "Button to replay the story from the beginning on the story complete screen"}
 }
