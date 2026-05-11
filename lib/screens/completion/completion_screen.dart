@@ -593,12 +593,6 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
                 decoration: BoxDecoration(
                   color: _kInk,
                   borderRadius: BorderRadius.circular(24),
-                  boxShadow: const [
-                    BoxShadow(
-                        color: _kInk,
-                        blurRadius: 0,
-                        offset: Offset(0, 4)),
-                  ],
                 ),
                 child: Text(
                   '${_tutorialStepIndex + 1} / ${drawing.tutorialSteps.length}  ·  ${l10n.tapToContinue}',
