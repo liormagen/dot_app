@@ -9,19 +9,16 @@ import 'package:go_router/go_router.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../models/drawing_model.dart';
-import '../../models/story_model.dart';
 import '../../services/asset_service.dart';
-import '../../services/audio_service.dart';
 import '../../services/progress_service.dart';
 
-// Stardust Claymorphism tokens
-const _kNight = Color(0xFF1A0E3F);
-const _kPrimary = Color(0xFF6C48FF);
-const _kPrimaryLight = Color(0xFF9C6FFF);
-const _kGold = Color(0xFFFFD93D);
-const _kCoral = Color(0xFFFF6B6B);
-const _kBorder = Color(0xFFD4C8FF);
-const _kForeground = Color(0xFF1A0A3F);
+// Toca Boca / Handmade tokens
+const _kRed    = Color(0xFFE82D2D);
+const _kYellow = Color(0xFFF5C800);
+const _kGreen  = Color(0xFF2DB84B);
+const _kBlue   = Color(0xFF1FA3E8);
+const _kInk    = Color(0xFF1A1A2E);
+const _kPaper  = Color(0xFFFFF8E7);
 
 class StoryCompletionScreen extends ConsumerStatefulWidget {
   const StoryCompletionScreen({super.key, required this.storyId});
@@ -32,26 +29,19 @@ class StoryCompletionScreen extends ConsumerStatefulWidget {
       _StoryCompletionScreenState();
 }
 
-class _StoryCompletionScreenState
-    extends ConsumerState<StoryCompletionScreen>
+class _StoryCompletionScreenState extends ConsumerState<StoryCompletionScreen>
     with SingleTickerProviderStateMixin {
-  StoryModel? _story;
+  String _storyTitle = '';
   List<DrawingModel> _drawings = [];
   List<ui.Image?> _coloredImages = [];
-  List<String> _narrations = [];
   bool _loading = true;
 
-  // Which chapter's narration is currently playing (-1 = none)
-  int _playingIndex = -1;
-  StreamSubscription<void>? _narrationSub;
-  Timer? _narrationDelay;
-
-  late AnimationController _starsCtrl;
+  late AnimationController _celebCtrl;
 
   @override
   void initState() {
     super.initState();
-    _starsCtrl = AnimationController(
+    _celebCtrl = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 4),
     )..repeat();
@@ -60,16 +50,9 @@ class _StoryCompletionScreenState
 
   @override
   void dispose() {
-    _starsCtrl.dispose();
-    _narrationSub?.cancel();
-    _narrationDelay?.cancel();
-    try {
-      ref.read(audioServiceProvider).voiceoverPlayer.stop();
-    } catch (_) {}
+    _celebCtrl.dispose();
     super.dispose();
   }
-
-  // ── Data loading ──────────────────────────────────────────────────────────
 
   Future<void> _loadData() async {
     try {
@@ -87,21 +70,13 @@ class _StoryCompletionScreenState
         images.add(await _loadUiImage(d.imageColored));
       }
 
-      final narrations = story.chapters
-          .map((c) => c.getNarration(lang))
-          .toList();
-
       if (!mounted) return;
       setState(() {
-        _story = story;
+        _storyTitle = story.getTitle(lang);
         _drawings = drawings;
         _coloredImages = images;
-        _narrations = narrations;
         _loading = false;
       });
-
-      // Auto-play all narrations in sequence
-      _playNarrationSequence(0);
     } catch (_) {
       if (mounted) setState(() => _loading = false);
     }
@@ -119,478 +94,222 @@ class _StoryCompletionScreenState
     }
   }
 
-  // ── Audio ─────────────────────────────────────────────────────────────────
-
-  void _playNarrationSequence(int index) {
-    if (!mounted) return;
-    if (index >= (_story?.chapters.length ?? 0)) {
-      setState(() => _playingIndex = -1);
-      return;
-    }
-    _playChapter(index, autoAdvance: true);
-  }
-
-  void _playChapter(int index, {bool autoAdvance = false}) {
-    if (!mounted) return;
-    _narrationSub?.cancel();
-    _narrationDelay?.cancel();
-    final story = _story;
-    if (story == null || index >= story.chapters.length) return;
-
-    final lang = ref.read(progressProvider).selectedLanguage;
-    ref.read(audioServiceProvider).playChapterNarration(
-        lang, story.id, story.chapters[index].chapter);
-    setState(() => _playingIndex = index);
-
-    _narrationSub =
-        ref.read(audioServiceProvider).voiceoverPlayer.onPlayerComplete
-            .listen((_) {
-      if (!mounted) return;
-      setState(() => _playingIndex = -1);
-      if (autoAdvance) {
-        // 1.5-second pause between chapters
-        _narrationDelay =
-            Timer(const Duration(milliseconds: 1500), () {
-          _playNarrationSequence(index + 1);
-        });
-      }
-    });
-  }
-
-  void _replayChapter(int index) {
-    HapticFeedback.lightImpact();
-    _playChapter(index, autoAdvance: false);
-  }
-
-  void _replayAll() {
-    HapticFeedback.mediumImpact();
-    _playNarrationSequence(0);
-  }
-
-  // ── Build ─────────────────────────────────────────────────────────────────
-
   @override
   Widget build(BuildContext context) {
     if (_loading) {
       return const Scaffold(
-        backgroundColor: _kNight,
+        backgroundColor: _kPaper,
         body: Center(
-          child: CircularProgressIndicator(
-            color: _kPrimaryLight,
-            strokeWidth: 3,
-          ),
+          child: CircularProgressIndicator(color: _kBlue, strokeWidth: 3),
         ),
       );
     }
 
-    final story = _story!;
-    final lang = ref.read(progressProvider).selectedLanguage;
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: _kNight,
-      body: Stack(
-        children: [
-          // Twinkling star background
-          Positioned.fill(
-            child: AnimatedBuilder(
-              animation: _starsCtrl,
+      backgroundColor: _kPaper,
+      body: SafeArea(
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            AnimatedBuilder(
+              animation: _celebCtrl,
               builder: (_, __) => CustomPaint(
-                painter: _StarFieldPainter(t: _starsCtrl.value),
+                painter: _ConfettiPainter(progress: _celebCtrl.value),
               ),
             ),
-          ),
-          // Main content
-          CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              // ── Header ──────────────────────────────────────────────────
-              SliverToBoxAdapter(
-                child: _buildHeader(story, lang, l10n),
-              ),
-              // ── Chapter cards ────────────────────────────────────────────
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, i) => _buildChapterCard(i, story, lang, l10n),
-                    childCount:
-                        math.min(_drawings.length, story.chapters.length),
-                  ),
-                ),
-              ),
-              // ── Bottom actions ───────────────────────────────────────────
-              SliverToBoxAdapter(
-                child: _buildBottomActions(l10n),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ── Header ────────────────────────────────────────────────────────────────
-
-  Widget _buildHeader(StoryModel story, String lang, AppLocalizations l10n) {
-    final top = MediaQuery.of(context).padding.top;
-    return Container(
-      padding: EdgeInsets.fromLTRB(24, top + 20, 24, 32),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF2A1060), Color(0xFF4B2EA0)],
-        ),
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(36)),
-        boxShadow: [
-          BoxShadow(
-            color: Color(0xFF3B1FCC),
-            blurRadius: 0,
-            offset: Offset(0, 6),
-          ),
-          BoxShadow(
-            color: Color(0x556C48FF),
-            blurRadius: 28,
-            offset: Offset(0, 14),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          // Quest complete badge
-          Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-            decoration: BoxDecoration(
-              color: _kGold,
-              borderRadius: BorderRadius.circular(99),
-              boxShadow: [
-                BoxShadow(
-                  color: _kGold.withValues(alpha: 0.6),
-                  blurRadius: 0,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
+            Column(
               children: [
-                const Icon(Icons.star_rounded,
-                    color: _kForeground, size: 20),
-                const SizedBox(width: 6),
-                Text(
-                  l10n.storyComplete,
-                  style: const TextStyle(fontFamily: 'Fredoka',
-                    color: _kForeground,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
+                // ── Header ────────────────────────────────────────────
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 32, 24, 0),
+                  child: Column(
+                    children: [
+                      const Text('🎉', style: TextStyle(fontSize: 64)),
+                      const SizedBox(height: 8),
+                      Text(
+                        l10n.storyComplete,
+                        style: const TextStyle(
+                          fontFamily: 'Boogaloo',
+                          fontSize: 48,
+                          color: _kInk,
+                          height: 1.0,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 18, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: _kYellow,
+                          borderRadius: BorderRadius.circular(99),
+                          border: Border.all(color: _kInk, width: 2),
+                          boxShadow: const [
+                            BoxShadow(
+                                color: _kInk,
+                                blurRadius: 0,
+                                offset: Offset(3, 3)),
+                          ],
+                        ),
+                        child: Text(
+                          _storyTitle,
+                          style: const TextStyle(
+                            fontFamily: 'Boogaloo',
+                            fontSize: 22,
+                            color: _kInk,
+                            height: 1.0,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 6),
-                const Icon(Icons.star_rounded,
-                    color: _kForeground, size: 20),
+                const SizedBox(height: 28),
+                // ── Chapter thumbnails ─────────────────────────────────
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: _buildThumbnailGrid(),
+                  ),
+                ),
+                // ── Action buttons ─────────────────────────────────────
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _TocaButton(
+                          label: l10n.playAgain,
+                          color: _kGreen,
+                          onTap: () {
+                            HapticFeedback.mediumImpact();
+                            context.go('/transition/${widget.storyId}/0');
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _TocaButton(
+                          label: l10n.backToStories,
+                          color: _kBlue,
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+                            context.go('/stories');
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          // Story title
-          Text(
-            story.getTitle(lang),
-            style: const TextStyle(fontFamily: 'Fredoka',
-              color: Colors.white,
-              fontSize: 40,
-              fontWeight: FontWeight.w700,
-              height: 1.1,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 6),
-          Text(
-            l10n.ourStory,
-            style: TextStyle(fontFamily: 'Nunito',
-              color: Colors.white.withValues(alpha: 0.75),
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 20),
-          // Play all button
-          GestureDetector(
-            onTap: _replayAll,
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 28, vertical: 12),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.35),
-                  width: 2,
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.play_circle_rounded,
-                      color: Colors.white, size: 22),
-                  const SizedBox(width: 8),
-                  Text(
-                    l10n.replay,
-                    style: const TextStyle(fontFamily: 'Fredoka',
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ── Chapter card ──────────────────────────────────────────────────────────
-
-  Widget _buildChapterCard(
-    int i,
-    StoryModel story,
-    String lang,
-    AppLocalizations l10n,
-  ) {
-    final image = i < _coloredImages.length ? _coloredImages[i] : null;
-    final narration = i < _narrations.length ? _narrations[i] : '';
-    final chapter = story.chapters[i];
-    final isPlaying = _playingIndex == i;
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 24),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: _kBorder, width: 3),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0xFF3B1FCC),
-              blurRadius: 0,
-              offset: Offset(5, 5),
-            ),
-            BoxShadow(
-              color: Color(0x336C48FF),
-              blurRadius: 24,
-              offset: Offset(0, 10),
             ),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(25),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // ── Chapter image ──────────────────────────────────────────
-              AspectRatio(
-                aspectRatio: 4 / 3,
-                child: image != null
-                    ? CustomPaint(
-                        painter: _ImagePainter(image: image),
-                        size: Size.infinite,
-                      )
-                    : Container(
-                        color: const Color(0xFFE0D9FF),
-                        child: Center(
-                          child: Icon(
-                            Icons.image_rounded,
-                            size: 60,
-                            color: _kPrimary.withValues(alpha: 0.3),
-                          ),
-                        ),
-                      ),
-              ),
-              // ── Chapter header bar ─────────────────────────────────────
-              Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 20, vertical: 14),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFF6C48FF), Color(0xFF9C6FFF)],
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.auto_stories_rounded,
-                        color: Colors.white, size: 20),
-                    const SizedBox(width: 8),
-                    Text(
-                      l10n.chapter(chapter.chapter),
-                      style: const TextStyle(fontFamily: 'Fredoka',
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // ── Narration text + replay ────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 20, 20, 20),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        narration.isNotEmpty ? narration : '…',
-                        style: const TextStyle(fontFamily: 'Nunito',
-                          fontSize: 18,
-                          height: 1.65,
-                          color: _kForeground,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    // Replay button
-                    _ChapterReplayButton(
-                      playing: isPlaying,
-                      onTap: () => _replayChapter(i),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
 
-  // ── Bottom actions ────────────────────────────────────────────────────────
+  Widget _buildThumbnailGrid() {
+    if (_coloredImages.isEmpty) return const SizedBox.shrink();
 
-  Widget _buildBottomActions(AppLocalizations l10n) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        24,
-        8,
-        24,
-        MediaQuery.of(context).padding.bottom + 32,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final count = _coloredImages.length;
+        final crossCount = count <= 3 ? count : (count <= 6 ? 3 : 4);
+        const spacing = 14.0;
+        final itemSize =
+            (constraints.maxWidth - spacing * (crossCount - 1)) / crossCount;
+        final cappedSize = itemSize.clamp(0.0, constraints.maxHeight);
+
+        return Wrap(
+          spacing: spacing,
+          runSpacing: spacing,
+          alignment: WrapAlignment.center,
+          children: [
+            for (int i = 0; i < _coloredImages.length; i++)
+              _buildThumbnail(i, cappedSize),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildThumbnail(int i, double size) {
+    final img = i < _coloredImages.length ? _coloredImages[i] : null;
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: _kInk, width: 3),
+        boxShadow: const [
+          BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(4, 4)),
+        ],
       ),
-      child: _StoryButton(
-        label: l10n.backToStories,
-        icon: Icons.home_rounded,
-        onTap: () => context.go('/stories'),
-      ),
+      clipBehavior: Clip.antiAlias,
+      child: img != null
+          ? RawImage(image: img, fit: BoxFit.cover)
+          : Container(color: _kPaper),
     );
   }
 }
 
-// ── Chapter replay icon button ────────────────────────────────────────────────
+// ── Confetti painter ──────────────────────────────────────────────────────────
 
-class _ChapterReplayButton extends StatefulWidget {
-  const _ChapterReplayButton({
-    required this.playing,
-    required this.onTap,
-  });
-  final bool playing;
-  final VoidCallback onTap;
+class _ConfettiPainter extends CustomPainter {
+  const _ConfettiPainter({required this.progress});
+  final double progress;
 
   @override
-  State<_ChapterReplayButton> createState() => _ChapterReplayButtonState();
+  void paint(Canvas canvas, Size size) {
+    final rand = math.Random(12);
+    final paint = Paint()..style = PaintingStyle.fill;
+    const colors = [_kYellow, _kRed, _kGreen, _kBlue, Colors.white];
+
+    for (int i = 0; i < 40; i++) {
+      final x = rand.nextDouble() * size.width;
+      final baseY = rand.nextDouble() * size.height;
+      final speed = 0.3 + rand.nextDouble() * 0.7;
+      final y = (baseY - progress * size.height * speed) % size.height;
+      final r = 1.5 + rand.nextDouble() * 3.5;
+      final phase = rand.nextDouble() * math.pi * 2;
+      final t = 0.4 + 0.6 * math.sin(progress * math.pi * 4 + phase);
+      paint.color = colors[i % colors.length].withValues(alpha: t * 0.6);
+      canvas.drawCircle(Offset(x, y < 0 ? y + size.height : y), r, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_ConfettiPainter old) => old.progress != progress;
 }
 
-class _ChapterReplayButtonState extends State<_ChapterReplayButton>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _pulse;
+// ── Toca Boca button ──────────────────────────────────────────────────────────
 
-  @override
-  void initState() {
-    super.initState();
-    _pulse = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
-    )..repeat(reverse: true);
-  }
-
-  @override
-  void dispose() {
-    _pulse.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: widget.onTap,
-      child: AnimatedBuilder(
-        animation: _pulse,
-        builder: (_, child) {
-          final scale =
-              widget.playing ? (1.0 + _pulse.value * 0.15) : 1.0;
-          return Transform.scale(scale: scale, child: child);
-        },
-        child: Container(
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(
-            color: widget.playing
-                ? _kPrimary
-                : _kPrimary.withValues(alpha: 0.12),
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: _kPrimary.withValues(alpha: 0.4),
-              width: 2,
-            ),
-            boxShadow: widget.playing
-                ? [
-                    BoxShadow(
-                      color: _kPrimary.withValues(alpha: 0.5),
-                      blurRadius: 14,
-                      spreadRadius: 1,
-                    ),
-                  ]
-                : null,
-          ),
-          child: Icon(
-            widget.playing
-                ? Icons.volume_up_rounded
-                : Icons.replay_rounded,
-            color: widget.playing ? Colors.white : _kPrimary,
-            size: 22,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ── Story action button ───────────────────────────────────────────────────────
-
-class _StoryButton extends StatefulWidget {
-  const _StoryButton({
+class _TocaButton extends StatefulWidget {
+  const _TocaButton({
     required this.label,
-    required this.icon,
+    required this.color,
     required this.onTap,
   });
   final String label;
-  final IconData icon;
+  final Color color;
   final VoidCallback onTap;
 
   @override
-  State<_StoryButton> createState() => _StoryButtonState();
+  State<_TocaButton> createState() => _TocaButtonState();
 }
 
-class _StoryButtonState extends State<_StoryButton> {
+class _TocaButtonState extends State<_TocaButton> {
   bool _pressed = false;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTapDown: (_) {
-        setState(() => _pressed = true);
-        HapticFeedback.lightImpact();
-      },
+      onTapDown: (_) => setState(() => _pressed = true),
       onTapUp: (_) {
         setState(() => _pressed = false);
         widget.onTap();
@@ -601,90 +320,32 @@ class _StoryButtonState extends State<_StoryButton> {
         transform: _pressed
             ? Matrix4.translationValues(0, 4, 0)
             : Matrix4.identity(),
-        padding: const EdgeInsets.symmetric(vertical: 18),
+        padding:
+            const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
         decoration: BoxDecoration(
-          color: _kCoral,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.3),
-            width: 2,
-          ),
+          color: widget.color,
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(color: _kInk, width: 3),
           boxShadow: _pressed
               ? []
-              : [
+              : const [
                   BoxShadow(
-                    color: _kCoral.withValues(alpha: 0.75),
-                    blurRadius: 0,
-                    offset: const Offset(0, 5),
-                  ),
-                  BoxShadow(
-                    color: _kCoral.withValues(alpha: 0.35),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  ),
+                      color: _kInk,
+                      blurRadius: 0,
+                      offset: Offset(4, 4)),
                 ],
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(widget.icon, color: Colors.white, size: 22),
-            const SizedBox(width: 10),
-            Text(
-              widget.label,
-              style: const TextStyle(fontFamily: 'Fredoka',
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
+        child: Text(
+          widget.label,
+          style: const TextStyle(
+            fontFamily: 'Boogaloo',
+            color: Colors.white,
+            fontSize: 22,
+            height: 1.0,
+          ),
+          textAlign: TextAlign.center,
         ),
       ),
     );
   }
-}
-
-// ── Painters ──────────────────────────────────────────────────────────────────
-
-class _StarFieldPainter extends CustomPainter {
-  const _StarFieldPainter({required this.t});
-  final double t;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rand = math.Random(42);
-    final paint = Paint()..style = PaintingStyle.fill;
-    for (int i = 0; i < 80; i++) {
-      final x = rand.nextDouble() * size.width;
-      final y = rand.nextDouble() * size.height;
-      final phase = rand.nextDouble() * math.pi * 2;
-      final brightness =
-          0.3 + 0.7 * math.sin(t * math.pi * 2 + phase);
-      paint.color = (rand.nextDouble() > 0.85
-              ? const Color(0xFFFFD93D)
-              : Colors.white)
-          .withValues(alpha: brightness * 0.55);
-      canvas.drawCircle(
-          Offset(x, y), 0.8 + rand.nextDouble() * 1.6, paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(_StarFieldPainter old) => old.t != t;
-}
-
-class _ImagePainter extends CustomPainter {
-  const _ImagePainter({required this.image});
-  final ui.Image image;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final src = Rect.fromLTWH(
-        0, 0, image.width.toDouble(), image.height.toDouble());
-    final dst = Rect.fromLTWH(0, 0, size.width, size.height);
-    canvas.drawImageRect(image, src, dst, Paint());
-  }
-
-  @override
-  bool shouldRepaint(_ImagePainter old) => old.image != image;
 }
