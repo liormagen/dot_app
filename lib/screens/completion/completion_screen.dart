@@ -22,13 +22,9 @@ const _kBlue   = Color(0xFF1FA3E8);
 const _kInk    = Color(0xFF1A1A2E);
 const _kPaper  = Color(0xFFFFF8E7);
 
-// Legacy aliases so unchanged sub-widgets compile without edits
-const _kGold    = _kYellow;
+// Aliases used by sub-widgets
 const _kCoral   = _kRed;
-const _kNight   = _kInk;
 const _kPrimary = _kBlue;
-const _kPrimaryLight = Color(0xFF6BBFFF);
-const _kBorder  = _kInk;
 
 enum _CompletionPhase {
   colorReveal,       // Colored image sweeps in
@@ -610,58 +606,6 @@ class _CompletionScreenState extends ConsumerState<CompletionScreen>
   }
 }
 
-// ── Chapter badge ─────────────────────────────────────────────────────────────
-
-class _ChapterBadge extends StatelessWidget {
-  const _ChapterBadge({required this.chapterLabel});
-  final String chapterLabel;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF6C48FF), Color(0xFF9C6FFF)],
-        ),
-        borderRadius: BorderRadius.circular(99),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.3),
-          width: 2,
-        ),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0xFF3B1FCC),
-            blurRadius: 0,
-            offset: Offset(0, 4),
-          ),
-          BoxShadow(
-            color: Color(0x446C48FF),
-            blurRadius: 16,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.auto_stories_rounded,
-              color: Colors.white, size: 18),
-          const SizedBox(width: 8),
-          Text(
-            chapterLabel,
-            style: const TextStyle(fontFamily: 'Fredoka',
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 // ── Voice replay button ───────────────────────────────────────────────────────
 
 class _VoiceReplayButton extends StatefulWidget {
@@ -859,24 +803,6 @@ class _TocaChapterBadge extends StatelessWidget {
   }
 }
 
-// ── Full-image painter ────────────────────────────────────────────────────────
-
-class _FullImagePainter extends CustomPainter {
-  const _FullImagePainter({required this.image});
-  final ui.Image image;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final src = Rect.fromLTWH(
-        0, 0, image.width.toDouble(), image.height.toDouble());
-    final dst = Rect.fromLTWH(0, 0, size.width, size.height);
-    canvas.drawImageRect(image, src, dst, Paint());
-  }
-
-  @override
-  bool shouldRepaint(_FullImagePainter old) => old.image != image;
-}
-
 // ── Celebration particles ─────────────────────────────────────────────────────
 
 class _CelebStarsPainter extends CustomPainter {
@@ -913,30 +839,6 @@ class _CelebStarsPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_CelebStarsPainter old) => old.progress != progress;
-}
-
-// ── Static twinkling stars (for narration bg) ─────────────────────────────────
-
-class _StarsPainter extends CustomPainter {
-  const _StarsPainter({required this.t});
-  final double t;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rand = math.Random(77);
-    final paint = Paint()..style = PaintingStyle.fill;
-    for (int i = 0; i < 60; i++) {
-      final x = rand.nextDouble() * size.width;
-      final y = rand.nextDouble() * size.height;
-      final phase = rand.nextDouble() * math.pi * 2;
-      final brightness = 0.3 + 0.7 * math.sin(t * math.pi * 2 + phase);
-      paint.color = Colors.white.withValues(alpha: brightness * 0.6);
-      canvas.drawCircle(Offset(x, y), 1.0 + rand.nextDouble() * 1.5, paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(_StarsPainter old) => old.t != t;
 }
 
 // ── Personal best banner ──────────────────────────────────────────────────────
@@ -1098,10 +1000,11 @@ class _CelebButtonState extends State<_CelebButton> {
         ),
         child: Text(
           widget.label,
-          style: const TextStyle(fontFamily: 'Fredoka',
+          style: const TextStyle(
+            fontFamily: 'Boogaloo',
             color: Colors.white,
             fontSize: 24,
-            fontWeight: FontWeight.w700,
+            height: 1.0,
           ),
         ),
       ),
