@@ -9,7 +9,6 @@ import 'package:go_router/go_router.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/asset_service.dart';
 import '../../services/progress_service.dart';
-import '../../services/purchase_service.dart';
 import '../../widgets/parental_gate.dart';
 import '../../widgets/story_card.dart';
 import 'purchase_sheet.dart';
@@ -71,7 +70,6 @@ class _StorySelectionScreenState extends ConsumerState<StorySelectionScreen> {
   Widget build(BuildContext context) {
     final storiesAsync = ref.watch(storiesProvider);
     final progress = ref.watch(progressProvider);
-    final isPurchased = ref.watch(purchaseServiceProvider).isPurchased;
 
     return Scaffold(
       backgroundColor: _kPaper,
@@ -146,7 +144,7 @@ class _StorySelectionScreenState extends ConsumerState<StorySelectionScreen> {
                       delegate: SliverChildBuilderDelegate(
                         (context, index) {
                           final story = sorted[index];
-                          final isLocked = !story.isFree && !isPurchased;
+                          final isLocked = !story.isFree && !progress.purchaseUnlocked;
                           final completedCount = story.drawingIds
                               .where((id) =>
                                   progress.completedDrawingIds.contains(id))

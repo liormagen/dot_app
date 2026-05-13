@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../services/progress_service.dart';
 import '../../services/purchase_service.dart';
 
 const _kRed    = Color(0xFFE82D2D);
@@ -23,6 +24,20 @@ class PurchaseSheet extends ConsumerStatefulWidget {
 
 class _PurchaseSheetState extends ConsumerState<PurchaseSheet> {
   bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Auto-dismiss when purchase completes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.listenManual(
+        progressProvider.select((p) => p.purchaseUnlocked),
+        (prev, next) {
+          if (next && mounted) Navigator.of(context).pop();
+        },
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -121,15 +136,14 @@ class _PurchaseSheetState extends ConsumerState<PurchaseSheet> {
                         await ref.read(purchaseServiceProvider).buyFullAccess();
                     if (mounted) {
                       setState(() => _loading = false);
-                      if (ok) {
-                        Navigator.of(context).pop();
-                      } else {
+                      if (!ok) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Purchase unavailable. Please try again.'),
                           ),
                         );
                       }
+                      // On ok == true: StoreKit sheet shown; sheet auto-dismisses via progressProvider listener
                     }
                   },
             child: AnimatedContainer(
@@ -181,7 +195,15 @@ class _PurchaseSheetState extends ConsumerState<PurchaseSheet> {
                     await ref.read(purchaseServiceProvider).restorePurchases();
                     if (mounted) {
                       setState(() => _loading = false);
-                      Navigator.of(context).pop();
+                      final restored = ref.read(progressProvider).purchaseUnlocked;
+                      if (!restored) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('No purchases found to restore.'),
+                          ),
+                        );
+                      }
+                      // If restored == true, the progressProvider listener will pop automatically
                     }
                   },
             child: const Text(
