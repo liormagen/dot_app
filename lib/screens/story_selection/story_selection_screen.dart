@@ -9,8 +9,10 @@ import 'package:go_router/go_router.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/asset_service.dart';
 import '../../services/progress_service.dart';
+import '../../services/purchase_service.dart';
 import '../../widgets/parental_gate.dart';
 import '../../widgets/story_card.dart';
+import 'purchase_sheet.dart';
 import 'settings_sheet.dart';
 
 // ---------------------------------------------------------------------------
@@ -106,6 +108,7 @@ class _StorySelectionScreenState extends ConsumerState<StorySelectionScreen> {
                       child: Center(child: _EmptyState()),
                     );
                   }
+                  final isPurchased = ref.watch(purchaseServiceProvider).isPurchased;
                   final sorted = [...stories]
                     ..sort((a, b) {
                       final aCs = a.drawingIds.isEmpty ? 1 : 0;
@@ -143,6 +146,7 @@ class _StorySelectionScreenState extends ConsumerState<StorySelectionScreen> {
                       delegate: SliverChildBuilderDelegate(
                         (context, index) {
                           final story = sorted[index];
+                          final isLocked = !story.isFree && !isPurchased;
                           final completedCount = story.drawingIds
                               .where((id) =>
                                   progress.completedDrawingIds.contains(id))
@@ -152,14 +156,21 @@ class _StorySelectionScreenState extends ConsumerState<StorySelectionScreen> {
                             index: index,
                             isContinue: index == continueIndex,
                             isIdleBouncing: index == _idleBounceIndex,
+                            isLocked: isLocked,
                             baseTilt: index.isEven ? 0.026 : -0.026,
                             accentColor:
                                 cardColors[index % cardColors.length],
-                            onTap: () => _onStoryTap(
-                              context,
-                              story.drawingIds,
-                              progress.completedDrawingIds,
-                            ),
+                            onTap: () {
+                              if (isLocked) {
+                                _openPurchaseSheet(context);
+                              } else {
+                                _onStoryTap(
+                                  context,
+                                  story.drawingIds,
+                                  progress.completedDrawingIds,
+                                );
+                              }
+                            },
                             child: AbsorbPointer(
                               child: StoryCard(
                                 story: story,
@@ -215,6 +226,15 @@ class _StorySelectionScreenState extends ConsumerState<StorySelectionScreen> {
     context.go('/drawing/$target');
   }
 
+  void _openPurchaseSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const PurchaseSheet(),
+    );
+  }
+
   Future<void> _openSettings(BuildContext context) async {
     final allowed = await ParentalGate.show(context);
     if (!allowed || !context.mounted) return;
@@ -247,6 +267,7 @@ class _TocaStoryCard extends StatefulWidget {
     required this.child,
     this.isContinue = false,
     this.isIdleBouncing = false,
+    this.isLocked = false,
   });
 
   final int index;
@@ -256,6 +277,7 @@ class _TocaStoryCard extends StatefulWidget {
   final Widget child;
   final bool isContinue;
   final bool isIdleBouncing;
+  final bool isLocked;
 
   @override
   State<_TocaStoryCard> createState() => _TocaStoryCardState();
@@ -458,6 +480,21 @@ class _TocaStoryCardState extends State<_TocaStoryCard>
                 top: -12,
                 left: 6,
                 child: _ContinueBadge(),
+              ),
+            if (widget.isLocked)
+              Positioned.fill(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(22),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1A1A2E).withValues(alpha: 0.50),
+                      borderRadius: BorderRadius.circular(22),
+                    ),
+                    child: const Center(
+                      child: Icon(Icons.lock_rounded, color: Colors.white, size: 40),
+                    ),
+                  ),
+                ),
               ),
           ],
         );
