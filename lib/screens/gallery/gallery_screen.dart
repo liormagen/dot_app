@@ -150,12 +150,11 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
               Expanded(
                 child: Text(
                   l10n.gallery,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: 'Boogaloo',
                     fontSize: 32,
                     color: _kInk,
                     height: 1.1,
-                    shadows: _inkOutline(1.5),
                   ),
                 ),
               ),
