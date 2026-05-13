@@ -121,7 +121,15 @@ class _PurchaseSheetState extends ConsumerState<PurchaseSheet> {
                         await ref.read(purchaseServiceProvider).buyFullAccess();
                     if (mounted) {
                       setState(() => _loading = false);
-                      if (ok) Navigator.of(context).pop();
+                      if (ok) {
+                        Navigator.of(context).pop();
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Purchase unavailable. Please try again.'),
+                          ),
+                        );
+                      }
                     }
                   },
             child: AnimatedContainer(
@@ -166,10 +174,16 @@ class _PurchaseSheetState extends ConsumerState<PurchaseSheet> {
 
           // Restore purchase
           GestureDetector(
-            onTap: () async {
-              await ref.read(purchaseServiceProvider).restorePurchases();
-              if (mounted) Navigator.of(context).pop();
-            },
+            onTap: _loading
+                ? null
+                : () async {
+                    setState(() => _loading = true);
+                    await ref.read(purchaseServiceProvider).restorePurchases();
+                    if (mounted) {
+                      setState(() => _loading = false);
+                      Navigator.of(context).pop();
+                    }
+                  },
             child: const Text(
               'Restore Purchase',
               style: TextStyle(
