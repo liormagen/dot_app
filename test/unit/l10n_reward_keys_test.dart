@@ -16,4 +16,16 @@ void main() {
   test('playAgain key exists', () {
     expect(l10n.playAgain, 'Play Again!');
   });
+
+  test('nextChapter key exists', () {
+    expect(l10n.nextChapter, 'Next Chapter!');
+  });
+
+  test('readMyStory key exists', () {
+    expect(l10n.readMyStory, 'Read My Story!');
+  });
+
+  test('readAgain key exists', () {
+    expect(l10n.readAgain, 'Read Again!');
+  });
 }

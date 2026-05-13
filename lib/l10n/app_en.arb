@@ -124,5 +124,11 @@
   "finishStory": "Finish Story!",
   "@finishStory": {"description": "CTA button label on the last chapter narration screen"},
   "playAgain": "Play Again!",
-  "@playAgain": {"description": "Button to replay the story from the beginning on the story complete screen"}
+  "@playAgain": {"description": "Button to replay the story from the beginning on the story complete screen"},
+  "nextChapter": "Next Chapter!",
+  "@nextChapter": {"description": "Button in narration panel to proceed to the next drawing"},
+  "readMyStory": "Read My Story!",
+  "@readMyStory": {"description": "Button in narration panel on the last chapter to open the StoryBook"},
+  "readAgain": "Read Again!",
+  "@readAgain": {"description": "Button on StoryBook screen to replay all chapter narrations from the start"}
 }

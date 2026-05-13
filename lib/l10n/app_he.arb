@@ -63,5 +63,11 @@
   "finishStory": "סיים את הסיפור!",
   "@finishStory": {"description": "CTA button label on the last chapter narration screen"},
   "playAgain": "שחק שוב!",
-  "@playAgain": {"description": "Button to replay the story from the beginning on the story complete screen"}
+  "@playAgain": {"description": "Button to replay the story from the beginning on the story complete screen"},
+  "nextChapter": "הפרק הבא!",
+  "@nextChapter": {"description": "Button in narration panel to proceed to the next drawing"},
+  "readMyStory": "קרא לי את הסיפור!",
+  "@readMyStory": {"description": "Button in narration panel on the last chapter to open the StoryBook"},
+  "readAgain": "קרא שוב!",
+  "@readAgain": {"description": "Button on StoryBook screen to replay all chapter narrations from the start"}
 }
