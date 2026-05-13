@@ -89,7 +89,7 @@ class _StoryCardState extends State<StoryCard>
   Widget build(BuildContext context) {
     final total = widget.story.drawingIds.length;
     final completed = widget.completedCount;
-    final isComplete = completed >= total;
+    final isComplete = total > 0 && completed >= total;
 
     return GestureDetector(
       onTapDown: _onTapDown,

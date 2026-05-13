@@ -70,12 +70,14 @@ class _PurchaseSheetState extends ConsumerState<PurchaseSheet> {
           // Title
           Text(
             'Unlock All Stories',
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: 'Boogaloo',
               fontSize: 36,
               color: _kYellow,
               height: 1.0,
-              shadows: _inkOutline(3),
+              shadows: [
+                Shadow(color: _kInk, blurRadius: 0, offset: Offset(2, 2)),
+              ],
             ),
           ),
           const SizedBox(height: 6),
