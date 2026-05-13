@@ -27,6 +27,7 @@ class StoryModel {
     required this.previewAsset,
     required this.drawingIds,
     required this.chapters,
+    this.isFree = false,
   });
 
   final String id;
@@ -35,6 +36,7 @@ class StoryModel {
   final String previewAsset;
   final List<String> drawingIds;
   final List<StoryChapter> chapters;
+  final bool isFree;
 
   String getTitle(String lang) => titles[lang] ?? titles['en'] ?? id;
 
@@ -52,6 +54,7 @@ class StoryModel {
       chapters: chaptersRaw
           .map((e) => StoryChapter.fromJson(e as Map<String, dynamic>))
           .toList(),
+      isFree: json['is_free'] as bool? ?? false,
     );
   }
 }

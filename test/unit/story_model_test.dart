@@ -132,4 +132,33 @@ void main() {
       expect(chapter.getNarration('ar'), 'مرحبا');
     });
   });
+
+  group('StoryModel.isFree', () {
+    test('parses is_free: true from JSON', () {
+      final json = {
+        'id': 'story1',
+        'titles': {'en': 'Test'},
+        'companion_asset': 'a.png',
+        'preview_asset': 'b.png',
+        'drawing_ids': ['story1_ch1'],
+        'chapters': [],
+        'is_free': true,
+      };
+      final model = StoryModel.fromJson(json);
+      expect(model.isFree, isTrue);
+    });
+
+    test('defaults isFree to false when is_free absent', () {
+      final json = {
+        'id': 'story2',
+        'titles': {'en': 'Test'},
+        'companion_asset': 'a.png',
+        'preview_asset': 'b.png',
+        'drawing_ids': ['story2_ch1'],
+        'chapters': [],
+      };
+      final model = StoryModel.fromJson(json);
+      expect(model.isFree, isFalse);
+    });
+  });
 }

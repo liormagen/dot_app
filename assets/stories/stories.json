@@ -2,6 +2,7 @@
   "stories": [
     {
       "id": "story1",
+      "is_free": true,
       "titles": {
         "en": "The Brave Little Knight",
         "he": "הפרש האמיץ הקטן",
