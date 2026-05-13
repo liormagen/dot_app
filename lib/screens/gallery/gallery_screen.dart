@@ -18,7 +18,6 @@ import '../../services/progress_service.dart';
 // ---------------------------------------------------------------------------
 // Toca Boca / Handmade tokens (matches the rest of the app)
 // ---------------------------------------------------------------------------
-const _kRed    = Color(0xFFE82D2D);
 const _kYellow = Color(0xFFF5C800);
 const _kGreen  = Color(0xFF2DB84B);
 const _kBlue   = Color(0xFF1FA3E8);
