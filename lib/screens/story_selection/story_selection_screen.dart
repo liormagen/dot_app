@@ -715,7 +715,7 @@ class _WanderingBlobsLayerState extends State<_WanderingBlobsLayer>
     _ctrl = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 22),
-    )..repeat();
+    )..repeat(reverse: true);
   }
 
   @override
