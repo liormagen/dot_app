@@ -197,6 +197,41 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
             ],
           ),
           const SizedBox(height: 14),
+          // "Read Story" CTA — only when all chapters are done
+          if (total > 0 && completedCount == total) ...[
+            GestureDetector(
+              onTap: () => context.go('/story-complete/${story.id}'),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                decoration: BoxDecoration(
+                  color: _kGreen,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: _kInk, width: 3),
+                  boxShadow: const [
+                    BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(4, 4)),
+                  ],
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.auto_stories_rounded, color: Colors.white, size: 22),
+                    SizedBox(width: 10),
+                    Text(
+                      'Read Story',
+                      style: TextStyle(
+                        fontFamily: 'Boogaloo',
+                        fontSize: 22,
+                        color: Colors.white,
+                        height: 1.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 14),
+          ],
           // Drawing cards grid
           GridView.builder(
             shrinkWrap: true,
