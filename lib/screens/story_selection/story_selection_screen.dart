@@ -71,6 +71,7 @@ class _StorySelectionScreenState extends ConsumerState<StorySelectionScreen> {
   Widget build(BuildContext context) {
     final storiesAsync = ref.watch(storiesProvider);
     final progress = ref.watch(progressProvider);
+    final isPurchased = ref.watch(purchaseServiceProvider).isPurchased;
 
     return Scaffold(
       backgroundColor: _kPaper,
@@ -108,7 +109,6 @@ class _StorySelectionScreenState extends ConsumerState<StorySelectionScreen> {
                       child: Center(child: _EmptyState()),
                     );
                   }
-                  final isPurchased = ref.watch(purchaseServiceProvider).isPurchased;
                   final sorted = [...stories]
                     ..sort((a, b) {
                       final aCs = a.drawingIds.isEmpty ? 1 : 0;
@@ -466,7 +466,23 @@ class _TocaStoryCardState extends State<_TocaStoryCard>
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(14),
-                            child: widget.child,
+                            child: Stack(
+                              children: [
+                                widget.child,
+                                if (widget.isLocked)
+                                  Positioned.fill(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF1A1A2E).withValues(alpha: 0.50),
+                                        borderRadius: BorderRadius.circular(18),
+                                      ),
+                                      child: const Center(
+                                        child: Icon(Icons.lock_rounded, color: Colors.white, size: 40),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -480,21 +496,6 @@ class _TocaStoryCardState extends State<_TocaStoryCard>
                 top: -12,
                 left: 6,
                 child: _ContinueBadge(),
-              ),
-            if (widget.isLocked)
-              Positioned.fill(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(22),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1A1A2E).withValues(alpha: 0.50),
-                      borderRadius: BorderRadius.circular(22),
-                    ),
-                    child: const Center(
-                      child: Icon(Icons.lock_rounded, color: Colors.white, size: 40),
-                    ),
-                  ),
-                ),
               ),
           ],
         );
