@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../services/asset_service.dart';
+import '../../services/audio_service.dart';
 import '../../services/progress_service.dart';
 
 // Toca Boca / Handmade tokens
@@ -18,6 +19,17 @@ const _kGreen  = Color(0xFF2DB84B);
 const _kBlue   = Color(0xFF1FA3E8);
 const _kInk    = Color(0xFF1A1A2E);
 const _kPaper  = Color(0xFFFFF8E7);
+
+class _ChapterEntry {
+  const _ChapterEntry({
+    required this.chapterNumber,
+    required this.narrationText,
+    required this.image,
+  });
+  final int chapterNumber;
+  final String narrationText;
+  final ui.Image? image;
+}
 
 class StoryCompletionScreen extends ConsumerStatefulWidget {
   const StoryCompletionScreen({super.key, required this.storyId});
@@ -31,9 +43,16 @@ class StoryCompletionScreen extends ConsumerStatefulWidget {
 class _StoryCompletionScreenState extends ConsumerState<StoryCompletionScreen>
     with SingleTickerProviderStateMixin {
   String _storyTitle = '';
-  List<ui.Image?> _coloredImages = [];
+  List<_ChapterEntry> _entries = [];
   bool _loading = true;
 
+  // Narration sequencing
+  int _activeIndex = -1;
+  bool _narrationPlaying = false;
+  StreamSubscription<void>? _narrationSub;
+  Timer? _fallbackTimer;
+
+  final ScrollController _scrollController = ScrollController();
   late AnimationController _celebCtrl;
 
   @override
@@ -48,7 +67,9 @@ class _StoryCompletionScreenState extends ConsumerState<StoryCompletionScreen>
 
   @override
   void dispose() {
+    _stopNarration();
     _celebCtrl.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -63,17 +84,26 @@ class _StoryCompletionScreenState extends ConsumerState<StoryCompletionScreen>
       );
       final drawings = await assetSvc.loadStoryDrawings(story);
 
-      final images = <ui.Image?>[];
-      for (final d in drawings) {
-        images.add(await _loadUiImage(d.imageColored));
+      final entries = <_ChapterEntry>[];
+      for (int i = 0; i < drawings.length; i++) {
+        final img = await _loadUiImage(drawings[i].imageColored);
+        final chapter = i < story.chapters.length ? story.chapters[i] : null;
+        entries.add(_ChapterEntry(
+          chapterNumber: chapter?.chapter ?? (i + 1),
+          narrationText: chapter?.getNarration(lang) ?? '',
+          image: img,
+        ));
       }
 
       if (!mounted) return;
       setState(() {
         _storyTitle = story.getTitle(lang);
-        _coloredImages = images;
+        _entries = entries;
         _loading = false;
       });
+
+      // Start sequential narration from chapter 1
+      _playChapterAt(0);
     } catch (_) {
       if (mounted) setState(() => _loading = false);
     }
@@ -89,6 +119,79 @@ class _StoryCompletionScreenState extends ConsumerState<StoryCompletionScreen>
     } catch (_) {
       return null;
     }
+  }
+
+  void _playChapterAt(int index) {
+    if (!mounted || index >= _entries.length) return;
+
+    _narrationSub?.cancel();
+    _fallbackTimer?.cancel();
+
+    final entry = _entries[index];
+    final lang = ref.read(progressProvider).selectedLanguage;
+
+    setState(() {
+      _activeIndex = index;
+      _narrationPlaying = true;
+    });
+
+    // Auto-scroll to this chapter card (~520px per card including margin)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_scrollController.hasClients) return;
+      _scrollController.animateTo(
+        index * 520.0,
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeInOut,
+      );
+    });
+
+    ref.read(audioServiceProvider).playChapterNarration(
+        lang, widget.storyId, entry.chapterNumber);
+
+    void advance() {
+      if (!mounted) return;
+      _narrationSub?.cancel();
+      _fallbackTimer?.cancel();
+      _narrationSub = null;
+      _fallbackTimer = null;
+      setState(() => _narrationPlaying = false);
+      // Brief pause between chapters before auto-advancing
+      Future.delayed(const Duration(milliseconds: 800), () {
+        if (mounted) _playChapterAt(index + 1);
+      });
+    }
+
+    _narrationSub = ref
+        .read(audioServiceProvider)
+        .voiceoverPlayer
+        .onPlayerComplete
+        .listen((_) => advance());
+    // Fallback: if audio file is missing, advance after 4 seconds
+    _fallbackTimer = Timer(const Duration(seconds: 4), advance);
+  }
+
+  void _stopNarration() {
+    _narrationSub?.cancel();
+    _narrationSub = null;
+    _fallbackTimer?.cancel();
+    _fallbackTimer = null;
+    try {
+      ref.read(audioServiceProvider).voiceoverPlayer.stop();
+    } catch (_) {}
+    if (mounted) setState(() => _narrationPlaying = false);
+  }
+
+  void _readAgain() {
+    HapticFeedback.lightImpact();
+    _stopNarration();
+    _scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeInOut,
+    );
+    Future.delayed(const Duration(milliseconds: 450), () {
+      if (mounted) _playChapterAt(0);
+    });
   }
 
   @override
@@ -110,6 +213,7 @@ class _StoryCompletionScreenState extends ConsumerState<StoryCompletionScreen>
         child: Stack(
           fit: StackFit.expand,
           children: [
+            // Background confetti
             AnimatedBuilder(
               animation: _celebCtrl,
               builder: (_, __) => CustomPaint(
@@ -118,89 +222,16 @@ class _StoryCompletionScreenState extends ConsumerState<StoryCompletionScreen>
             ),
             Column(
               children: [
-                // ── Header ────────────────────────────────────────────
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 32, 24, 0),
-                  child: Column(
-                    children: [
-                      const Text('🎉', style: TextStyle(fontSize: 64)),
-                      const SizedBox(height: 8),
-                      Text(
-                        l10n.storyComplete,
-                        style: const TextStyle(
-                          fontFamily: 'Boogaloo',
-                          fontSize: 48,
-                          color: _kInk,
-                          height: 1.0,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 18, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: _kYellow,
-                          borderRadius: BorderRadius.circular(99),
-                          border: Border.all(color: _kInk, width: 2),
-                          boxShadow: const [
-                            BoxShadow(
-                                color: _kInk,
-                                blurRadius: 0,
-                                offset: Offset(3, 3)),
-                          ],
-                        ),
-                        child: Text(
-                          _storyTitle,
-                          style: const TextStyle(
-                            fontFamily: 'Boogaloo',
-                            fontSize: 22,
-                            color: _kInk,
-                            height: 1.0,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 28),
-                // ── Chapter thumbnails ─────────────────────────────────
+                _buildHeader(l10n),
                 Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: _buildThumbnailGrid(),
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.fromLTRB(24, 8, 24, 8),
+                    itemCount: _entries.length,
+                    itemBuilder: (context, i) => _buildChapterCard(i, l10n),
                   ),
                 ),
-                // ── Action buttons ─────────────────────────────────────
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: _TocaButton(
-                          label: l10n.playAgain,
-                          color: _kGreen,
-                          onTap: () {
-                            HapticFeedback.mediumImpact();
-                            context.go('/transition/${widget.storyId}/0');
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _TocaButton(
-                          label: l10n.backToStories,
-                          color: _kBlue,
-                          onTap: () {
-                            HapticFeedback.lightImpact();
-                            context.go('/stories');
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                _buildFooter(l10n),
               ],
             ),
           ],
@@ -209,48 +240,193 @@ class _StoryCompletionScreenState extends ConsumerState<StoryCompletionScreen>
     );
   }
 
-  Widget _buildThumbnailGrid() {
-    if (_coloredImages.isEmpty) return const SizedBox.shrink();
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final count = _coloredImages.length;
-        final crossCount = count <= 3 ? count : (count <= 6 ? 3 : 4);
-        const spacing = 14.0;
-        final itemSize =
-            (constraints.maxWidth - spacing * (crossCount - 1)) / crossCount;
-        final cappedSize = itemSize.clamp(0.0, 220.0);
-
-        return Wrap(
-          spacing: spacing,
-          runSpacing: spacing,
-          alignment: WrapAlignment.center,
-          children: [
-            for (int i = 0; i < _coloredImages.length; i++)
-              _buildThumbnail(i, cappedSize),
-          ],
-        );
-      },
+  Widget _buildHeader(AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Back button — left
+          Align(
+            alignment: Alignment.centerLeft,
+            child: _StoryBookButton(
+              label: l10n.backToStories,
+              color: _kBlue,
+              onTap: () {
+                _stopNarration();
+                context.go('/stories');
+              },
+            ),
+          ),
+          // Title — centered
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('🎉', style: TextStyle(fontSize: 28)),
+              Text(
+                l10n.storyComplete,
+                style: const TextStyle(
+                  fontFamily: 'Boogaloo',
+                  fontSize: 28,
+                  color: _kInk,
+                  height: 1.0,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildThumbnail(int i, double size) {
-    final img = i < _coloredImages.length ? _coloredImages[i] : null;
-    return Container(
-      width: size,
-      height: size,
+  Widget _buildChapterCard(int i, AppLocalizations l10n) {
+    final entry = _entries[i];
+    final isActive = i == _activeIndex;
+    final img = entry.image;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: _kInk, width: 3),
-        boxShadow: const [
-          BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(4, 4)),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isActive ? _kYellow : _kInk,
+          width: isActive ? 5 : 3,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isActive ? _kYellow : _kInk,
+            blurRadius: 0,
+            offset: const Offset(5, 5),
+          ),
         ],
       ),
-      clipBehavior: Clip.antiAlias,
-      child: img != null
-          ? RawImage(image: img, fit: BoxFit.cover)
-          : Container(color: _kPaper),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(17),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Chapter header bar
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              color: isActive ? _kYellow : _kBlue,
+              child: Row(
+                children: [
+                  const Icon(Icons.auto_stories_rounded,
+                      color: Colors.white, size: 20),
+                  const SizedBox(width: 8),
+                  Text(
+                    l10n.chapter(entry.chapterNumber),
+                    style: TextStyle(
+                      fontFamily: 'Boogaloo',
+                      color: isActive ? _kInk : Colors.white,
+                      fontSize: 20,
+                      height: 1.0,
+                    ),
+                  ),
+                  const Spacer(),
+                  if (isActive && _narrationPlaying) const _PulsingVolumeIcon(),
+                ],
+              ),
+            ),
+            // Illustration
+            if (img != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: RawImage(
+                    image: img,
+                    fit: BoxFit.contain,
+                    width: double.infinity,
+                  ),
+                ),
+              )
+            else
+              Container(
+                height: 180,
+                margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                decoration: BoxDecoration(
+                  color: _kPaper,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: _kInk, width: 2),
+                ),
+              ),
+            // Narration text
+            if (entry.narrationText.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
+                child: Text(
+                  entry.narrationText,
+                  style: const TextStyle(
+                    fontFamily: 'Boogaloo',
+                    fontSize: 20,
+                    height: 1.6,
+                    color: _kInk,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              )
+            else
+              const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFooter(AppLocalizations l10n) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 4, 24, 24),
+      child: _StoryBookButton(
+        label: l10n.readAgain,
+        color: _kGreen,
+        onTap: _readAgain,
+        fullWidth: true,
+      ),
+    );
+  }
+}
+
+// ── Pulsing volume icon shown next to active chapter ─────────────────────────
+
+class _PulsingVolumeIcon extends StatefulWidget {
+  const _PulsingVolumeIcon();
+
+  @override
+  State<_PulsingVolumeIcon> createState() => _PulsingVolumeIconState();
+}
+
+class _PulsingVolumeIconState extends State<_PulsingVolumeIcon>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _pulse;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulse = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 700),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _pulse.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _pulse,
+      builder: (_, __) => Opacity(
+        opacity: 0.4 + 0.6 * _pulse.value,
+        child: const Icon(Icons.volume_up_rounded,
+            color: _kInk, size: 20),
+      ),
     );
   }
 }
@@ -286,21 +462,23 @@ class _ConfettiPainter extends CustomPainter {
 
 // ── Toca Boca button ──────────────────────────────────────────────────────────
 
-class _TocaButton extends StatefulWidget {
-  const _TocaButton({
+class _StoryBookButton extends StatefulWidget {
+  const _StoryBookButton({
     required this.label,
     required this.color,
     required this.onTap,
+    this.fullWidth = false,
   });
   final String label;
   final Color color;
   final VoidCallback onTap;
+  final bool fullWidth;
 
   @override
-  State<_TocaButton> createState() => _TocaButtonState();
+  State<_StoryBookButton> createState() => _StoryBookButtonState();
 }
 
-class _TocaButtonState extends State<_TocaButton> {
+class _StoryBookButtonState extends State<_StoryBookButton> {
   bool _pressed = false;
 
   @override
@@ -314,11 +492,11 @@ class _TocaButtonState extends State<_TocaButton> {
       onTapCancel: () => setState(() => _pressed = false),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 100),
+        width: widget.fullWidth ? double.infinity : null,
         transform: _pressed
             ? Matrix4.translationValues(0, 4, 0)
             : Matrix4.identity(),
-        padding:
-            const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
         decoration: BoxDecoration(
           color: widget.color,
           borderRadius: BorderRadius.circular(28),
