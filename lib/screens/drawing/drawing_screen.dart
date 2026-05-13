@@ -114,6 +114,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
   DrawingModel? _drawing;
   ui.Image? _coloredImage;
   bool _loading = true;
+  bool _navigating = false;
   String? _error;
 
   // Line animation
@@ -837,6 +838,8 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
   }
 
   Future<void> _finishAndNavigate() async {
+    if (_navigating) return;
+    _navigating = true;
     _stopNarration();
     _countdownTimer?.cancel();
     if (!mounted) return;
@@ -853,7 +856,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
     if (elapsedMs != null &&
         (progress.difficulty == DifficultyMode.hard ||
          progress.difficulty == DifficultyMode.superHard)) {
-      final previous = progress.bestTimeMs[widget.drawingId];
+      final previous = ref.read(progressProvider).bestTimeMs[widget.drawingId];
       if (previous == null || elapsedMs < previous) {
         await notifier.saveBestTime(widget.drawingId, elapsedMs);
         if (!mounted) return;
@@ -1449,7 +1452,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                         label: _nextDrawingId != null
                             ? l10n.nextChapter
                             : l10n.readMyStory,
-                        onTap: () { _finishAndNavigate(); },
+                        onTap: () => unawaited(_finishAndNavigate()),
                         fullWidth: true,
                       ),
                     ),
