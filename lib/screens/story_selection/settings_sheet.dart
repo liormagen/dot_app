@@ -8,6 +8,12 @@ import '../../services/audio_service.dart';
 import '../../services/progress_service.dart';
 import '../../services/purchase_service.dart';
 
+// ---------------------------------------------------------------------------
+// Toca Boca design tokens (local)
+// ---------------------------------------------------------------------------
+const _kYellow = Color(0xFFF5C800);
+const _kInk    = Color(0xFF1A1A2E);
+
 class SettingsSheet extends ConsumerWidget {
   const SettingsSheet({super.key});
 
@@ -245,41 +251,38 @@ class _DifficultySelector extends StatelessWidget {
       (DifficultyMode.superHard, 'Super Hard', Icons.whatshot_rounded),
     ];
     return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+      spacing: 10,
+      runSpacing: 10,
       children: [
         for (final (mode, label, icon) in modes)
           GestureDetector(
             onTap: () => onChanged(mode),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 180),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
-                color: current == mode
-                    ? Theme.of(context).colorScheme.primary
-                    : Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(99),
+                color: current == mode ? _kYellow : Colors.white,
+                borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: current == mode
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.grey.shade300,
-                  width: 2,
+                  color: _kInk,
+                  width: current == mode ? 3 : 2,
                 ),
+                boxShadow: current == mode
+                    ? const [BoxShadow(color: _kInk, blurRadius: 0, offset: Offset(3, 3))]
+                    : const [],
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    icon,
-                    size: 18,
-                    color: current == mode ? Colors.white : Colors.black87,
-                  ),
-                  const SizedBox(width: 6),
+                  Icon(icon, size: 20, color: _kInk),
+                  const SizedBox(width: 8),
                   Text(
                     label,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: current == mode ? Colors.white : Colors.black87,
+                    style: const TextStyle(
+                      fontFamily: 'Boogaloo',
+                      fontSize: 16,
+                      color: _kInk,
+                      height: 1.0,
                     ),
                   ),
                 ],

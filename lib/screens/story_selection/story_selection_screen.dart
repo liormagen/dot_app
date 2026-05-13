@@ -45,6 +45,7 @@ class _StorySelectionScreenState extends ConsumerState<StorySelectionScreen> {
   int _idleBounceIndex = -1;
   Timer? _idleTimer;
   int _cardCount = 0;
+  final _random = math.Random();
 
   @override
   void dispose() {
@@ -56,7 +57,7 @@ class _StorySelectionScreenState extends ConsumerState<StorySelectionScreen> {
     _idleTimer?.cancel();
     _idleTimer = Timer.periodic(const Duration(seconds: 4), (_) {
       if (!mounted || _cardCount == 0) return;
-      final next = math.Random().nextInt(_cardCount);
+      final next = _random.nextInt(_cardCount);
       setState(() => _idleBounceIndex = next);
       Future.delayed(const Duration(milliseconds: 600), () {
         if (mounted) setState(() => _idleBounceIndex = -1);
@@ -288,7 +289,7 @@ class _TocaStoryCardState extends State<_TocaStoryCard>
     _pressCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 90),
-    )..addListener(() => setState(() {}));
+    );
 
     _pressScale = Tween<double>(begin: 1.0, end: 0.88).animate(
       CurvedAnimation(parent: _pressCtrl, curve: Curves.easeOut),
@@ -297,8 +298,7 @@ class _TocaStoryCardState extends State<_TocaStoryCard>
     _springCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 550),
-    )..addListener(() => setState(() {}))
-      ..addStatusListener((s) {
+    )..addStatusListener((s) {
         if (s == AnimationStatus.completed) {
           setState(() => _springing = false);
           _springCtrl.reset();
@@ -312,7 +312,7 @@ class _TocaStoryCardState extends State<_TocaStoryCard>
     _entranceCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 620),
-    )..addListener(() => setState(() {}));
+    );
 
     _entranceScale = Tween<double>(begin: 0.82, end: 1.0).animate(
       CurvedAnimation(parent: _entranceCtrl, curve: Curves.elasticOut),
@@ -329,7 +329,7 @@ class _TocaStoryCardState extends State<_TocaStoryCard>
     _idleBounceCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
-    )..addListener(() => setState(() {}));
+    );
   }
 
   @override
@@ -392,71 +392,76 @@ class _TocaStoryCardState extends State<_TocaStoryCard>
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Transform.translate(
-          offset: Offset(0, _entranceSlide.value * 30.0),
-          child: Opacity(
-            opacity: (1.0 - _entranceSlide.value).clamp(0.0, 1.0),
-            child: Transform.scale(
-              scale: _entranceScale.value * _idleBounceScale,
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTapDown: _onTapDown,
-                onTapUp: _onTapUp,
-                onTapCancel: _onTapCancel,
-                child: Transform.rotate(
-                  angle: _currentTilt,
-                  child: Transform.scale(
-                    scale: _scale,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(18),
-                        border: Border.all(
-                          color: _pressed ? _kYellow : _kInk,
-                          width: _pressed ? 4.5 : 4,
+    return AnimatedBuilder(
+      animation: Listenable.merge([_entranceCtrl, _springCtrl, _idleBounceCtrl, _pressCtrl]),
+      builder: (context, _) {
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Transform.translate(
+              offset: Offset(0, _entranceSlide.value * 30.0),
+              child: Opacity(
+                opacity: (1.0 - _entranceSlide.value).clamp(0.0, 1.0),
+                child: Transform.scale(
+                  scale: _entranceScale.value * _idleBounceScale,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTapDown: _onTapDown,
+                    onTapUp: _onTapUp,
+                    onTapCancel: _onTapCancel,
+                    child: Transform.rotate(
+                      angle: _currentTilt,
+                      child: Transform.scale(
+                        scale: _scale,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(
+                              color: _pressed ? _kYellow : _kInk,
+                              width: _pressed ? 4.5 : 4,
+                            ),
+                            boxShadow: _isShadowActive
+                                ? [
+                                    BoxShadow(
+                                      color: _kInk,
+                                      blurRadius: 0,
+                                      offset: Offset(
+                                        widget.baseTilt > 0 ? 6 : -2,
+                                        6,
+                                      ),
+                                    ),
+                                    BoxShadow(
+                                      color: widget.accentColor.withValues(alpha: 0.5),
+                                      blurRadius: 0,
+                                      offset: Offset(
+                                        widget.baseTilt > 0 ? 11 : -7,
+                                        11,
+                                      ),
+                                    ),
+                                  ]
+                                : [],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(14),
+                            child: widget.child,
+                          ),
                         ),
-                        boxShadow: _isShadowActive
-                            ? [
-                                BoxShadow(
-                                  color: _kInk,
-                                  blurRadius: 0,
-                                  offset: Offset(
-                                    widget.baseTilt > 0 ? 6 : -2,
-                                    6,
-                                  ),
-                                ),
-                                BoxShadow(
-                                  color: widget.accentColor.withValues(alpha: 0.5),
-                                  blurRadius: 0,
-                                  offset: Offset(
-                                    widget.baseTilt > 0 ? 11 : -7,
-                                    11,
-                                  ),
-                                ),
-                              ]
-                            : [],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(14),
-                        child: widget.child,
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-        ),
-        if (widget.isContinue)
-          const Positioned(
-            top: -12,
-            left: 6,
-            child: _ContinueBadge(),
-          ),
-      ],
+            if (widget.isContinue)
+              const Positioned(
+                top: -12,
+                left: 6,
+                child: _ContinueBadge(),
+              ),
+          ],
+        );
+      },
     );
   }
 }
