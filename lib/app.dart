@@ -3,7 +3,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'screens/completion/completion_screen.dart';
 import 'screens/drawing/drawing_screen.dart';
 import 'screens/gallery/gallery_screen.dart';
 import 'screens/onboarding/onboarding_screen.dart';
@@ -39,29 +38,6 @@ final _router = GoRouter(
       builder: (context, state) {
         final drawingId = state.pathParameters['drawingId']!;
         return DrawingScreen(key: ValueKey(drawingId), drawingId: drawingId);
-      },
-    ),
-    GoRoute(
-      path: '/completion/:drawingId',
-      pageBuilder: (context, state) {
-        final drawingId = state.pathParameters['drawingId']!;
-        final skipReveal =
-            state.uri.queryParameters['skipReveal'] == 'true';
-        final elapsedMs = int.tryParse(
-          state.uri.queryParameters['elapsedMs'] ?? '',
-        );
-        return CustomTransitionPage(
-          key: state.pageKey,
-          child: CompletionScreen(
-              drawingId: drawingId,
-              skipReveal: skipReveal,
-              elapsedMs: elapsedMs),
-          transitionsBuilder:
-              (context, animation, secondaryAnimation, child) =>
-                  FadeTransition(opacity: animation, child: child),
-          transitionDuration: const Duration(milliseconds: 600),
-          reverseTransitionDuration: const Duration(milliseconds: 300),
-        );
       },
     ),
     GoRoute(
