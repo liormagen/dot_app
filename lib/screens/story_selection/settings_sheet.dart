@@ -59,43 +59,6 @@ class SettingsSheet extends ConsumerWidget {
                               ),
                     ),
                     const SizedBox(height: 24),
-                    // Language selector
-                    Text(
-                      AppLocalizations.of(context)!.language,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        _LangButton(
-                          label: 'English',
-                          code: 'en',
-                          selected: progress.selectedLanguage == 'en',
-                          onTap: () => ref
-                              .read(progressProvider.notifier)
-                              .setLanguage('en'),
-                        ),
-                        const SizedBox(width: 8),
-                        _LangButton(
-                          label: 'עברית',
-                          code: 'he',
-                          selected: progress.selectedLanguage == 'he',
-                          onTap: () => ref
-                              .read(progressProvider.notifier)
-                              .setLanguage('he'),
-                        ),
-                        const SizedBox(width: 8),
-                        _LangButton(
-                          label: 'العربية',
-                          code: 'ar',
-                          selected: progress.selectedLanguage == 'ar',
-                          onTap: () => ref
-                              .read(progressProvider.notifier)
-                              .setLanguage('ar'),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
                     Text(
                       'Difficulty',
                       style: Theme.of(context).textTheme.titleMedium,
@@ -181,54 +144,6 @@ class SettingsSheet extends ConsumerWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class _LangButton extends StatelessWidget {
-  const _LangButton({
-    required this.label,
-    required this.code,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String label;
-  final String code;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          decoration: BoxDecoration(
-            color: selected
-                ? Theme.of(context).colorScheme.primary
-                : Colors.grey.shade100,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: selected
-                  ? Theme.of(context).colorScheme.primary
-                  : Colors.grey.shade300,
-              width: 2,
-            ),
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            label,
-            style: TextStyle(
-              color: selected ? Colors.white : Colors.black87,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ),
     );
   }
 }

@@ -94,11 +94,11 @@ final _router = GoRouter(
 // ---------------------------------------------------------------------------
 // App
 // ---------------------------------------------------------------------------
-class DotStoryApp extends ConsumerWidget {
+class DotStoryApp extends StatelessWidget {
   const DotStoryApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'Dot Story',
       debugShowCheckedModeBanner: false,
@@ -117,26 +117,9 @@ class DotStoryApp extends ConsumerWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('en'),
-        Locale('he'),
-        Locale('ar'),
-      ],
-      locale: _localeFromLanguage(
-        ref.watch(progressProvider).selectedLanguage,
-      ),
+      supportedLocales: const [Locale('en')],
+      localeResolutionCallback: (_, __) => const Locale('en'),
     );
-  }
-
-  Locale _localeFromLanguage(String lang) {
-    switch (lang) {
-      case 'he':
-        return const Locale('he');
-      case 'ar':
-        return const Locale('ar');
-      default:
-        return const Locale('en');
-    }
   }
 }
 
