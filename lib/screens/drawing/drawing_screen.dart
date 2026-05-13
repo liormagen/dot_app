@@ -1154,11 +1154,6 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                   visibleDotCount: _visibleDotCount,
                   dotsOpacity: 1.0 - _dotsHideCtrl.value,
                   isEasyMode: _difficulty == DifficultyMode.easy,
-                  showNextDotRing: _difficulty == DifficultyMode.normal,
-                  easyPulse: _easyPulseCtrl.value,
-                  normalPulse: _normalPulseCtrl.value,
-                  wiggleProgress: _wiggleCtrl.value,
-                  isStreaking: _isStreaking,
                   squeezedDotId: _squeezedDotId,
                   squeezeProgress: _squeezeCtrl.value,
                   blinkOpacity: _blinkActive
