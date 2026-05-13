@@ -264,7 +264,7 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
             _overlayEnterCtrl.forward();
             _celebCtrl.repeat();
             ref.read(audioServiceProvider).playConfetti();
-            Future.delayed(const Duration(milliseconds: 2200), () {
+            Future.delayed(const Duration(milliseconds: 600), () {
               if (mounted && _overlayPhase == _OverlayPhase.celebration) {
                 _showNarration();
               }
@@ -836,22 +836,36 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
     _revealController.forward();
   }
 
-  void _finishAndNavigate() {
+  Future<void> _finishAndNavigate() async {
     _stopNarration();
     _countdownTimer?.cancel();
     if (!mounted) return;
-    // NOTE: do NOT call markDrawingComplete here — CompletionScreen does it in _navigateNext()
 
+    final progress = ref.read(progressProvider);
+    final notifier = ref.read(progressProvider.notifier);
     final elapsedMs = _drawingStartTime != null
         ? DateTime.now().difference(_drawingStartTime!).inMilliseconds
         : null;
-    final queryParts = <String, String>{};
-    if (elapsedMs != null) queryParts['elapsedMs'] = elapsedMs.toString();
-    final uri = Uri(
-      path: '/completion/${widget.drawingId}',
-      queryParameters: queryParts.isNotEmpty ? queryParts : null,
-    );
-    context.go(uri.toString());
+
+    await notifier.markDrawingComplete(widget.drawingId);
+    if (!mounted) return;
+
+    if (elapsedMs != null &&
+        (progress.difficulty == DifficultyMode.hard ||
+         progress.difficulty == DifficultyMode.superHard)) {
+      final previous = progress.bestTimeMs[widget.drawingId];
+      if (previous == null || elapsedMs < previous) {
+        await notifier.saveBestTime(widget.drawingId, elapsedMs);
+        if (!mounted) return;
+      }
+    }
+
+    final nextId = _nextDrawingId;
+    if (nextId != null) {
+      context.go('/drawing/$nextId');
+    } else {
+      context.go('/story-complete/$_storyId');
+    }
   }
 
   void _startCountdownTimer() {
@@ -1433,9 +1447,9 @@ class _DrawingScreenState extends ConsumerState<DrawingScreen>
                       padding: const EdgeInsets.symmetric(horizontal: 28),
                       child: _DrawingNextButton(
                         label: _nextDrawingId != null
-                            ? l10n.letsDraw
-                            : l10n.keepGoing,
-                        onTap: _finishAndNavigate,
+                            ? l10n.nextChapter
+                            : l10n.readMyStory,
+                        onTap: () { _finishAndNavigate(); },
                         fullWidth: true,
                       ),
                     ),
